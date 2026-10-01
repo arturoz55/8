@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- BEGIN-ARTIFACT -->
+<title>Kestrel Trading Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+/* Layout: terminal-first. A live board sits in the hero as the thesis; quiet sections below explain each tool. Dark-only by design. */
+:root{
+  --ink:#0A0D13;        /* page ground */
+  --panel:#11151E;      /* terminal panels */
+  --raise:#181D29;      /* hover / raised rows */
+  --line:#232A39;       /* hairlines */
+  --fg:#E6E9F0;         /* primary text */
+  --dim:#8A93A6;        /* secondary text */
+  --rufous:#E8833A;     /* brand accent (kestrel plumage) */
+  --rufous-soft:rgba(232,131,58,.14);
+  --up:#3DD68C; --down:#F0596B; --up-soft:rgba(61,214,140,.14); --down-soft:rgba(240,89,107,.14);
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --gutter:clamp(16px,4vw,40px);
+  --maxw:1240px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--ink);color:var(--fg)}
+body{margin:0;font:400 15px/1.6 var(--f-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.05}
+.wrap{max-width:var(--maxw);margin-inline:auto;padding-inline:var(--gutter)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font:500 12px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--rufous)}
+:focus-visible{outline:2px solid var(--rufous);outline-offset:2px;border-radius:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+
+/* ---- nav ---- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(10,13,19,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:24px;height:60px}
+.brand{display:flex;align-items:center;gap:10px;font:800 19px/1 var(--f-display);text-decoration:none;letter-spacing:-.01em}
+.brand svg{width:26px;height:26px}
+.nav-links{display:flex;gap:22px;margin-left:12px}
+.nav-links a{text-decoration:none;color:var(--dim);font-size:14px;transition:color .15s}
+.nav-links a:hover{color:var(--fg)}
+.nav-cta{margin-left:auto;display:flex;gap:10px;align-items:center}
+.btn{white-space:nowrap;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:transparent;border-radius:8px;padding:9px 16px;font-weight:500;font-size:14px;text-decoration:none;transition:background .15s,border-color .15s,transform .15s}
+.btn:hover{background:var(--raise);border-color:#2f3850}
+.btn-primary{background:var(--rufous);border-color:var(--rufous);color:#170B02;font-weight:600}
+.btn-primary:hover{background:#F2944F;border-color:#F2944F}
+.btn:active{transform:translateY(1px)}
+.status{display:flex;align-items:center;gap:6px;font:500 12px var(--f-mono);color:var(--dim)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--up);box-shadow:0 0 0 0 var(--up-soft);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(61,214,140,.5)}70%{box-shadow:0 0 0 7px rgba(61,214,140,0)}100%{box-shadow:0 0 0 0 rgba(61,214,140,0)}}
+
+/* ---- ticker ---- */
+.ticker{border-bottom:1px solid var(--line);overflow:hidden;white-space:nowrap;font:400 12.5px var(--f-mono);color:var(--dim);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.ticker-track{display:inline-flex;gap:32px;padding:9px 0;animation:marquee 60s linear infinite}
+.ticker-track span b{color:var(--fg);font-weight:500;margin-right:6px}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* ---- hero ---- */
+.hero{padding-block:clamp(40px,7vw,84px) 40px;position:relative}
+.hero::before{content:"";position:absolute;inset:-60px 0 auto;height:520px;background:radial-gradient(600px 300px at 18% 20%,rgba(232,131,58,.13),transparent 70%);pointer-events:none}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:36px;position:relative}
+.hero h1{font-size:clamp(40px,6.6vw,84px);font-weight:800;letter-spacing:-.035em;max-width:13ch}
+.hero h1 em{font-style:normal;color:var(--rufous)}
+.hero p.lede{font-size:clamp(16px,1.6vw,19px);color:var(--dim);max-width:52ch;margin:20px 0 28px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.hero-actions .btn{padding:12px 20px;font-size:15px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:28px;margin-top:34px}
+.hero-meta div{display:flex;flex-direction:column;gap:2px}
+.hero-meta strong{font:700 22px var(--f-mono);font-variant-numeric:tabular-nums}
+.hero-meta span{font-size:12px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+.rise{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+.rise:nth-child(2){animation-delay:.08s}.rise:nth-child(3){animation-delay:.16s}.rise:nth-child(4){animation-delay:.24s}.rise:nth-child(5){animation-delay:.32s}
+@keyframes rise{from{transform:translateY(14px)}to{transform:none}}
+
+/* ---- terminal ---- */
+.terminal{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 30px 80px -30px rgba(0,0,0,.7),0 0 0 1px rgba(232,131,58,.05)}
+.term-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tabs{display:flex;gap:4px}
+.tab{background:none;border:0;padding:6px 12px;border-radius:6px;font-size:13px;color:var(--dim)}
+.tab[aria-selected="true"]{background:var(--raise);color:var(--fg)}
+.term-bar .sim{margin-left:auto;font:500 11px var(--f-mono);color:var(--dim);letter-spacing:.08em;text-transform:uppercase;border:1px dashed var(--line);padding:4px 8px;border-radius:5px}
+.term-body{display:grid;grid-template-columns:minmax(0,1fr);min-height:0}
+.board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-right:1px solid var(--line)}
+.col{border-right:1px solid var(--line);min-width:0;display:flex;flex-direction:column}
+.col:last-child{border-right:0}
+.col-head{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;font-weight:600}
+.col-head small{font:400 11px var(--f-mono);color:var(--dim)}
+.col-list{flex:1 1 0;min-height:384px;overflow:hidden;position:relative}
+.row{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 12px;border-bottom:1px solid rgba(35,42,57,.6);cursor:pointer;transition:background .15s;background:none;border-left:0;border-right:0;border-top:0;width:100%;text-align:left}
+.row:hover,.row[aria-pressed="true"]{background:var(--raise)}
+.row[aria-pressed="true"]{box-shadow:inset 2px 0 0 var(--rufous)}
+.row.enter{animation:enter .45s ease-out}
+@keyframes enter{from{background:var(--rufous-soft);transform:translateY(-8px)}to{background:transparent;transform:none}}
+.av{width:36px;height:36px;border-radius:8px;display:grid;place-items:center;font:700 14px var(--f-display);color:#0A0D13}
+.tk-name{font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tk-sub{font:400 11px var(--f-mono);color:var(--dim);display:flex;gap:8px;white-space:nowrap;overflow:hidden}
+.tk-right{text-align:right;font:500 12px var(--f-mono);font-variant-numeric:tabular-nums}
+.tk-right .mc{color:var(--fg)}
+.chg{font-size:11px}
+.up{color:var(--up)}.down{color:var(--down)}
+.flash-up{animation:fu .6s}.flash-down{animation:fd .6s}
+@keyframes fu{from{background:var(--up-soft)}to{background:transparent}}
+@keyframes fd{from{background:var(--down-soft)}to{background:transparent}}
+.bond{height:3px;background:var(--line);border-radius:2px;margin-top:5px;overflow:hidden}
+.bond i{display:block;height:100%;background:linear-gradient(90deg,var(--rufous),#F5C07A);transition:width .6s}
+
+/* detail / trade panel */
+.detail{padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0;border-top:1px solid var(--line)}
+.d-head{display:flex;align-items:center;gap:10px}
+.d-head h3{font-size:18px}
+.d-price{margin-left:auto;text-align:right;white-space:nowrap}
+.d-price .p{font:700 17px var(--f-mono)}
+canvas#chart{width:100%;height:170px;display:block;background:linear-gradient(var(--ink),var(--panel));border:1px solid var(--line);border-radius:8px}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:3px}
+.seg button{border:0;background:none;padding:7px;border-radius:6px;font-weight:600;font-size:13px;color:var(--dim)}
+.seg button[aria-pressed="true"].buy{background:var(--up-soft);color:var(--up)}
+.seg button[aria-pressed="true"].sell{background:var(--down-soft);color:var(--down)}
+.amt{display:flex;gap:6px;flex-wrap:wrap}
+.amt button{flex:1;min-width:48px;border:1px solid var(--line);background:var(--ink);border-radius:6px;padding:6px 0;font:500 12px var(--f-mono)}
+.amt button[aria-pressed="true"]{border-color:var(--rufous);color:var(--rufous)}
+.field{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;background:var(--ink);padding:0 10px}
+.field input{flex:1;min-width:0;background:none;border:0;color:var(--fg);font:500 14px var(--f-mono);padding:9px 0;outline:none}
+.field label{font:500 11px var(--f-mono);color:var(--dim)}
+.go{width:100%;border:0;border-radius:8px;padding:11px;font-weight:700;font-size:14px;color:#06140D;background:var(--up);transition:filter .15s}
+.go.sell{background:var(--down);color:#1A0509}
+.go:hover{filter:brightness(1.08)}
+.go:disabled{opacity:.45;cursor:not-allowed}
+.pf{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;font-size:11px;color:var(--dim)}
+.pf b{display:block;font:600 13px var(--f-mono);color:var(--fg)}
+.msg{font:400 12px var(--f-mono);color:var(--dim);min-height:18px}
+
+@media (min-width:1000px){
+  .term-body{grid-template-columns:minmax(0,1fr) 320px}
+  .detail{border-top:0}
+}
+@media (max-width:820px){
+  .board{grid-template-columns:minmax(0,1fr);border-right:0}
+  .col{border-right:0;display:none}
+  .col.active{display:flex}
+  .nav-links{display:none}
+}
+@media (max-width:560px){.status{display:none}}
+@media (min-width:821px){.board-tabs{display:none}}
+
+/* ---- sections ---- */
+section{padding-block:clamp(56px,8vw,104px)}
+.sec-head{display:grid;gap:14px;max-width:720px;margin-bottom:44px}
+.sec-head h2{font-size:clamp(30px,4.2vw,52px);font-weight:700;letter-spacing:-.025em}
+.sec-head p{color:var(--dim);font-size:17px;margin:0;max-width:60ch}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.feat{background:var(--ink);padding:30px 28px;display:flex;flex-direction:column;gap:12px;transition:background .2s}
+.feat:hover{background:var(--panel)}
+.feat .ico{width:38px;height:38px;border-radius:9px;background:var(--rufous-soft);display:grid;place-items:center;color:var(--rufous)}
+.feat .ico svg{width:20px;height:20px}
+.feat h3{font-size:21px;font-weight:700;letter-spacing:-.01em}
+.feat p{margin:0;color:var(--dim);font-size:14.5px}
+.feat .kv{margin-top:auto;padding-top:14px;font:500 12px var(--f-mono);color:var(--fg);display:flex;gap:18px;flex-wrap:wrap}
+.feat .kv span{color:var(--dim)}
+
+.split{display:grid;grid-template-columns:minmax(0,1fr);gap:40px;align-items:center}
+@media (min-width:900px){.split{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.speed{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;display:grid;gap:16px}
+.lat{display:grid;grid-template-columns:120px minmax(0,1fr) 64px;gap:12px;align-items:center;font:500 12.5px var(--f-mono)}
+.lat .bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.lat .bar i{display:block;height:100%;border-radius:4px;background:var(--dim);transform-origin:left;animation:grow 1.2s cubic-bezier(.2,.7,.2,1) both}
+.lat.us .bar i{background:var(--rufous)}
+.lat.us{color:var(--fg)}
+.lat:not(.us){color:var(--dim)}
+.lat .v{text-align:right}
+@keyframes grow{from{transform:scaleX(.05)}to{transform:scaleX(1)}}
+.checks{list-style:none;padding:0;margin:24px 0 0;display:grid;gap:12px}
+.checks li{display:grid;grid-template-columns:20px 1fr;gap:10px;color:var(--dim)}
+.checks li b{color:var(--fg);font-weight:600}
+.checks svg{color:var(--rufous);margin-top:4px}
+
+.fees{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px}
+.tier{border:1px solid var(--line);border-radius:12px;padding:22px;display:grid;gap:6px;background:var(--panel)}
+.tier.hl{border-color:var(--rufous);background:linear-gradient(180deg,var(--rufous-soft),var(--panel) 60%)}
+.tier .t{font:500 12px var(--f-mono);color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+.tier .f{font:700 34px var(--f-mono);font-variant-numeric:tabular-nums}
+.tier .f small{font-size:14px;color:var(--dim);font-weight:500}
+.tier p{margin:0;color:var(--dim);font-size:13.5px}
+
+.faq{display:grid;gap:0;border-top:1px solid var(--line);max-width:860px}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;padding:20px 0;display:flex;justify-content:space-between;gap:16px;font-weight:600;font-size:17px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:400 22px/1 var(--f-mono);color:var(--rufous);transition:transform .2s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details p{margin:0 0 20px;color:var(--dim);max-width:68ch}
+
+.cta{border:1px solid var(--line);border-radius:18px;padding:clamp(28px,5vw,56px);background:radial-gradient(500px 240px at 85% 0%,rgba(232,131,58,.18),transparent 70%),var(--panel);display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between}
+.cta h2{font-size:clamp(28px,3.8vw,46px);letter-spacing:-.025em;max-width:16ch}
+
+footer{border-top:1px solid var(--line);padding-block:40px;color:var(--dim);font-size:13px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:20px 40px;justify-content:space-between}
+footer nav{display:flex;flex-wrap:wrap;gap:18px}
+footer a{text-decoration:none}footer a:hover{color:var(--fg)}
+.disclaimer{max-width:62ch}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--raise);border:1px solid var(--line);padding:10px 16px;border-radius:10px;font:500 13px var(--f-mono);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:50;max-width:calc(100vw - 32px)}
+.toast.show{opacity:1;transform:translateX(-50%)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<!-- BEGIN-BODY -->
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Kestrel home">
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M4 22 L16 6 L28 22 L20 18 L16 26 L12 18 Z" fill="#E8833A"/><path d="M16 6 L20 18 L16 26 L12 18 Z" fill="#F5C07A"/></svg>
+      Kestrel
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#terminal">Terminal</a>
+      <a href="#tools">Tools</a>
+      <a href="#speed">Execution</a>
+      <a href="#fees">Fees</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-cta">
+      <span class="status"><span class="dot"></span><span id="slot" class="mono">slot —</span></span>
+      <a class="btn btn-primary" href="#terminal">Open terminal</a>
+    </div>
+  </div>
+</header>
+
+<div class="ticker" aria-hidden="true"><div class="ticker-track" id="ticker"></div></div>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow rise">On-chain trading terminal · Solana</p>
+        <h1 class="rise" style="margin-top:16px">Spot it first. <em>Strike</em> in one click.</h1>
+        <p class="lede rise">Kestrel puts new launches, bonding curves, wallet flows and perps on one screen. Orders land through priority routing, so the gap between seeing a token and holding it is measured in milliseconds.</p>
+        <div class="hero-actions rise">
+          <a class="btn btn-primary" href="#terminal">Try the live demo</a>
+          <a class="btn" href="#tools">See every tool</a>
+        </div>
+        <div class="hero-meta rise">
+          <div><strong data-count="2.4" data-dec="1" data-suffix="B">0</strong><span>Monthly volume, USD</span></div>
+          <div><strong data-count="38" data-suffix="ms">0</strong><span>Median land time</span></div>
+          <div><strong data-count="0.75" data-dec="2" data-suffix="%">0</strong><span>Base fee</span></div>
+        </div>
+      </div>
+
+      <div class="terminal" id="terminal">
+        <div class="term-bar">
+          <div class="tabs" role="tablist" aria-label="Terminal view">
+            <button class="tab" role="tab" aria-selected="true" data-sort="new">Pulse</button>
+            <button class="tab" role="tab" aria-selected="false" data-sort="vol">Top volume</button>
+            <button class="tab" role="tab" aria-selected="false" data-sort="chg">Movers</button>
+          </div>
+          <div class="tabs board-tabs" role="tablist" aria-label="Board column">
+            <button class="tab" role="tab" aria-selected="true" data-col="0">Fresh</button>
+            <button class="tab" role="tab" aria-selected="false" data-col="1">Bonding</button>
+            <button class="tab" role="tab" aria-selected="false" data-col="2">Graduated</button>
+          </div>
+          <span class="sim">Simulated market · paper balance</span>
+        </div>
+        <div class="term-body">
+          <div class="board" id="board">
+            <div class="col active" data-stage="0"><div class="col-head">Fresh pairs <small id="c0">0</small></div><div class="col-list"></div></div>
+            <div class="col" data-stage="1"><div class="col-head">Bonding <small id="c1">0</small></div><div class="col-list"></div></div>
+            <div class="col" data-stage="2"><div class="col-head">Graduated <small id="c2">0</small></div><div class="col-list"></div></div>
+          </div>
+          <div class="detail" id="detail">
+            <div class="d-head">
+              <div class="av" id="d-av">?</div>
+              <div style="min-width:0"><h3 id="d-name">—</h3><div class="tk-sub" id="d-sub"></div></div>
+              <div class="d-price"><div class="p mono" id="d-price">—</div><div class="chg mono" id="d-chg"></div></div>
+            </div>
+            <canvas id="chart" width="600" height="340" aria-label="Price chart for selected token" role="img"></canvas>
+            <div class="seg" role="group" aria-label="Order side">
+              <button class="buy" aria-pressed="true" id="side-buy">Buy</button>
+              <button class="sell" aria-pressed="false" id="side-sell">Sell</button>
+            </div>
+            <div class="amt" id="presets"></div>
+            <div class="field"><input id="amount" inputmode="decimal" value="1" aria-label="Order amount"><label for="amount" id="unit">SOL</label></div>
+            <button class="go" id="go">Buy</button>
+            <div class="msg" id="msg" role="status" aria-live="polite"></div>
+            <div class="pf">
+              <div>Balance<b id="bal">—</b></div>
+              <div>Holding<b id="hold">—</b></div>
+              <div>PnL<b id="pnl">—</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tools">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Tools</p>
+        <h2>Every signal you hunt with, on one screen.</h2>
+        <p>Stop juggling five tabs. Kestrel pulls launchpads, DEX pools, wallets and perps into a single view that updates every block.</p>
+      </div>
+      <div class="features">
+        <article class="feat"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><h3>Pulse</h3><p>Watch tokens move from launch to bonding curve to a full DEX listing. Filter by dev holdings, top-10 concentration, socials and snipers.</p><div class="kv"><span>Refresh</span>every slot <span>Filters</span>24</div></article>
+        <article class="feat"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg></div><h3>Wallet tracker</h3><p>Follow up to 300 wallets. Get a line in your feed the moment one of them buys, sells or moves funds, with the size and price.</p><div class="kv"><span>Wallets</span>300 <span>Alerts</span>push + sound</div></article>
+        <article class="feat"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M8 15l4-4 3 3 5-6"/></svg></div><h3>Perpetuals</h3><p>Long or short majors with up to 50x leverage from the same wallet. Set take-profit and stop-loss on entry.</p><div class="kv"><span>Markets</span>120+ <span>Leverage</span>up to 50x</div></article>
+        <article class="feat"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><h3>Idle yield</h3><p>SOL that is not in a trade earns staking yield in the background. Withdraw to your trading balance in one step.</p><div class="kv"><span>Est. APY</span>6.8% <span>Lockup</span>none</div></article>
+        <article class="feat"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg></div><h3>Rewards</h3><p>Earn points on every trade and a share of fees from traders you refer. Points unlock lower fee tiers.</p><div class="kv"><span>Referral share</span>up to 30%</div></article>
+        <article class="feat"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div><h3>Self-custody</h3><p>Your keys stay in a non-custodial wallet you can export at any time. Kestrel never holds your funds.</p><div class="kv"><span>Export</span>anytime</div></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="speed">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">Execution</p>
+        <h2 style="font-size:clamp(30px,4.2vw,52px);letter-spacing:-.025em;margin-top:14px">Orders that land in the next block.</h2>
+        <ul class="checks">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg><span><b>Priority routing.</b> Transactions go out through several relays at once and the first to land wins.</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg><span><b>MEV protection.</b> Sandwich-resistant submission is on by default for every swap.</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg><span><b>Presets.</b> Save slippage, priority fee and size per hotkey so a buy is one press.</span></li>
+        </ul>
+      </div>
+      <div class="speed" aria-label="Median time from click to confirmed transaction">
+        <div class="eyebrow" style="color:var(--dim)">Click to confirmation, median</div>
+        <div class="lat us"><span>Kestrel</span><div class="bar"><i style="width:9%"></i></div><span class="v">38 ms</span></div>
+        <div class="lat"><span>Web DEX UI</span><div class="bar"><i style="width:58%"></i></div><span class="v">240 ms</span></div>
+        <div class="lat"><span>Telegram bot</span><div class="bar"><i style="width:76%"></i></div><span class="v">310 ms</span></div>
+        <div class="lat"><span>Browser wallet</span><div class="bar"><i style="width:100%"></i></div><span class="v">410 ms</span></div>
+        <p style="margin:0;font-size:12px;color:var(--dim)">Illustrative figures for this demo page.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="fees">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Fees</p>
+        <h2>Trade more, pay less.</h2>
+        <p>One flat fee per swap, lowered by your 30-day volume. No subscription, no deposit fee.</p>
+      </div>
+      <div class="fees">
+        <div class="tier"><span class="t">Starter</span><span class="f">0.75<small>%</small></span><p>Under 100 SOL traded in 30 days.</p></div>
+        <div class="tier hl"><span class="t">Hunter</span><span class="f">0.60<small>%</small></span><p>100 to 2,500 SOL. Most active traders sit here.</p></div>
+        <div class="tier"><span class="t">Apex</span><span class="f">0.45<small>%</small></span><p>Over 2,500 SOL, plus a direct support channel.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <div class="sec-head"><p class="eyebrow">FAQ</p><h2>Questions traders ask.</h2></div>
+      <div class="faq">
+        <details open><summary>Is the terminal on this page real?</summary><p>No. The board, prices and trades above are simulated in your browser with a paper balance of 10 SOL. Nothing connects to a wallet or a blockchain.</p></details>
+        <details><summary>Who holds my funds?</summary><p>You do. Kestrel is designed around a non-custodial wallet whose private key you can export whenever you want.</p></details>
+        <details><summary>What does "graduated" mean?</summary><p>A token graduates when its bonding curve fills and liquidity moves to a regular DEX pool. Pulse shows each token's progress so you can see it coming.</p></details>
+        <details><summary>Which chains are supported?</summary><p>Solana for spot trading. Perpetuals settle on a Solana-native perps venue.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="cta">
+        <h2>Your edge is the next block. Don't miss it.</h2>
+        <a class="btn btn-primary" href="#terminal" style="padding:13px 22px;font-size:15px">Open terminal</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div style="display:grid;gap:10px">
+      <a class="brand" href="#top">Kestrel</a>
+      <p class="disclaimer" style="margin:0">Concept site with a simulated market. Not financial advice. Trading tokens carries a high risk of loss.</p>
+      <p style="margin:0">© 2026 Kestrel. Code released under the MIT License.</p>
+    </div>
+    <nav aria-label="Footer">
+      <a href="#tools">Tools</a><a href="#speed">Execution</a><a href="#fees">Fees</a><a href="#faq">FAQ</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const rand = (a, b) => a + Math.random() * (b - a);
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+
+  const fmtUsd = n => n >= 1e6 ? "$" + (n / 1e6).toFixed(2) + "M" : n >= 1e3 ? "$" + (n / 1e3).toFixed(1) + "K" : "$" + n.toFixed(0);
+  const fmtPct = n => (n >= 0 ? "+" : "") + n.toFixed(1) + "%";
+  const ago = t => { const s = Math.max(0, Math.floor((Date.now() - t) / 1000)); return s < 60 ? s + "s" : s < 3600 ? Math.floor(s / 60) + "m" : Math.floor(s / 3600) + "h"; };
+
+  /* ---------- simulated market ---------- */
+  const A = ["Glow","Moss","Rust","Volt","Pixel","Lunar","Crisp","Echo","Drift","Fable","Nimbus","Quill","Tidal","Orbit","Ember","Frost","Sable","Cobalt","Velvet","Pebble"];
+  const B = ["Toad","Hound","Finch","Otter","Koi","Moth","Lynx","Crab","Yak","Ferret","Heron","Gecko","Wasp","Badger","Squid","Mole"];
+  const HUES = [24, 42, 160, 190, 210, 270, 320, 350];
+  let uid = 0;
+  const SUPPLY = 1e9;
+
+  function mkToken(stage) {
+    const name = pick(A) + " " + pick(B);
+    const sym = (name.split(" ").map(w => w.slice(0, 3)).join("")).toUpperCase().slice(0, 6);
+    const base = stage === 0 ? rand(4e3, 12e3) : stage === 1 ? rand(15e3, 60e3) : rand(80e3, 2.5e6);
+    const price = base / SUPPLY;
+    const hist = [];
+    let p = price * rand(.6, .95);
+    for (let i = 0; i < 40; i++) { const o = p; p *= 1 + rand(-.06, .075); hist.push({ o, c: p, h: Math.max(o, p) * (1 + rand(0, .03)), l: Math.min(o, p) * (1 - rand(0, .03)) }); }
+    hist[hist.length - 1].c = price;
+    return {
+      id: ++uid, name, sym, hue: pick(HUES), stage,
+      price, open: hist[0].o, vol: base * rand(.2, 1.4), holders: Math.floor(rand(8, 60) * (stage + 1) ** 2),
+      bond: stage === 0 ? rand(2, 30) : stage === 1 ? rand(40, 92) : 100,
+      born: Date.now() - rand(5, stage === 2 ? 7200 : 600) * 1000, hist, fresh: false
+    };
+  }
+
+  const tokens = [];
+  [10, 9, 9].forEach((n, s) => { for (let i = 0; i < n; i++) tokens.push(mkToken(s)); });
+  tokens.sort((a, b) => b.born - a.born);
+
+  /* ---------- paper account ---------- */
+  const acct = { sol: 10, pos: {} };   // pos[id] = { qty, cost (SOL) }
+  const SOL_USD = 182.4;
+  let selected = tokens.find(t => t.stage === 1) || tokens[0];
+  let side = "buy";
+  let sortBy = "new";
+
+  /* ---------- board render ---------- */
+  const lists = $$(".col-list");
+  const rowEls = new Map();
+
+  function rowHTML(t) {
+    const chg = (t.price / t.open - 1) * 100;
+    return `<div class="av" style="background:hsl(${t.hue} 75% 62%)">${t.sym[0]}</div>
+      <div style="min-width:0"><div class="tk-name">${t.name} <span style="color:var(--dim);font-weight:400">${t.sym}</span></div>
+      <div class="tk-sub"><span>${ago(t.born)}</span><span>${t.holders} holders</span><span>V ${fmtUsd(t.vol)}</span></div>
+      ${t.stage < 2 ? `<div class="bond" title="Bonding curve ${t.bond.toFixed(0)}%"><i style="width:${t.bond.toFixed(1)}%"></i></div>` : ""}</div>
+      <div class="tk-right"><div class="mc">${fmtUsd(t.price * SUPPLY)}</div><div class="chg ${chg >= 0 ? "up" : "down"}">${fmtPct(chg)}</div></div>`;
+  }
+
+  function sorted(stage) {
+    const arr = tokens.filter(t => t.stage === stage);
+    if (sortBy === "vol") arr.sort((a, b) => b.vol - a.vol);
+    else if (sortBy === "chg") arr.sort((a, b) => Math.abs(b.price / b.open) - Math.abs(a.price / a.open));
+    else arr.sort((a, b) => b.born - a.born);
+    return arr.slice(0, 9);
+  }
+
+  function renderBoard() {
+    [0, 1, 2].forEach(stage => {
+      const list = lists[stage];
+      const arr = sorted(stage);
+      $("#c" + stage).textContent = tokens.filter(t => t.stage === stage).length;
+      const keep = new Set(arr.map(t => t.id));
+      [...list.children].forEach(el => { if (!keep.has(+el.dataset.id)) { rowEls.delete(+el.dataset.id); el.remove(); } });
+      arr.forEach((t, i) => {
+        let el = rowEls.get(t.id);
+        if (!el || el.parentNode !== list) {
+          if (el) el.remove();
+          el = document.createElement("button");
+          el.className = "row" + (t.fresh && !reduce ? " enter" : "");
+          el.dataset.id = t.id;
+          el.type = "button";
+          el.addEventListener("click", () => select(t.id));
+          rowEls.set(t.id, el);
+          t.fresh = false;
+        }
+        el.setAttribute("aria-pressed", String(t.id === selected.id));
+        el.setAttribute("aria-label", `${t.name}, market cap ${fmtUsd(t.price * SUPPLY)}`);
+        el.innerHTML = rowHTML(t);
+        if (list.children[i] !== el) list.insertBefore(el, list.children[i] || null);
+      });
+    });
+  }
+
+  /* ---------- tick ---------- */
+  function tick() {
+    tokens.forEach(t => {
+      const vol = t.stage === 0 ? .05 : t.stage === 1 ? .035 : .018;
+      const drift = t.stage < 2 ? .004 : .0005;
+      const prev = t.price;
+      t.price = Math.max(1e-9, t.price * (1 + rand(-vol, vol) + drift));
+      t.vol += Math.abs(t.price - prev) * SUPPLY * rand(.5, 3);
+      if (Math.random() < .3) t.holders += Math.floor(rand(0, 4));
+      if (t.stage < 2) t.bond = Math.min(100, t.bond + rand(-.4, 2.2) * (t.stage + 1));
+      const last = t.hist[t.hist.length - 1];
+      last.c = t.price; last.h = Math.max(last.h, t.price); last.l = Math.min(last.l, t.price);
+      t._dir = t.price >= prev ? 1 : -1;
+    });
+    // stage transitions
+    tokens.forEach(t => {
+      if (t.stage === 0 && t.bond > 35) { t.stage = 1; t.fresh = true; }
+      else if (t.stage === 1 && t.bond >= 100) { t.stage = 2; t.fresh = true; toast(`${t.sym} graduated to a DEX pool`); }
+    });
+    // new launches
+    if (Math.random() < .45) { const n = mkToken(0); n.born = Date.now(); n.fresh = true; tokens.unshift(n); }
+    // prune dead tokens (never the selected or a held one)
+    while (tokens.length > 48) {
+      const idx = tokens.findLastIndex(t => t.id !== selected.id && !acct.pos[t.id]);
+      if (idx < 0) break;
+      tokens.splice(idx, 1);
+    }
+    renderBoard();
+    renderDetail();
+  }
+
+  function rollCandles() {
+    tokens.forEach(t => {
+      const c = t.price;
+      t.hist.push({ o: c, c, h: c, l: c });
+      if (t.hist.length > 60) t.hist.shift();
+    });
+  }
+
+  /* ---------- detail ---------- */
+  const cv = $("#chart"), cx = cv.getContext("2d");
+  function sizeCanvas() {
+    const r = cv.getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1);
+    if (!r.width) return;
+    cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d);
+    cx.setTransform(d, 0, 0, d, 0, 0);
+    drawChart();
+  }
+  function drawChart() {
+    const t = selected, W = cv.clientWidth, H = cv.clientHeight;
+    if (!W || !H) return;
+    cx.clearRect(0, 0, W, H);
+    const hs = t.hist, padR = 52, padY = 12;
+    let lo = Infinity, hi = -Infinity;
+    hs.forEach(k => { lo = Math.min(lo, k.l); hi = Math.max(hi, k.h); });
+    if (hi === lo) hi = lo * 1.01 + 1e-12;
+    const y = v => padY + (1 - (v - lo) / (hi - lo)) * (H - padY * 2);
+    const cw = (W - padR) / hs.length;
+    cx.strokeStyle = "rgba(138,147,166,.12)"; cx.lineWidth = 1;
+    cx.fillStyle = "#8A93A6"; cx.font = "10px 'JetBrains Mono', monospace"; cx.textAlign = "left";
+    for (let i = 0; i <= 3; i++) {
+      const v = lo + (hi - lo) * i / 3, yy = Math.round(y(v)) + .5;
+      cx.beginPath(); cx.moveTo(0, yy); cx.lineTo(W - padR, yy); cx.stroke();
+      cx.fillText(fmtUsd(v * SUPPLY), W - padR + 6, yy + 3);
+    }
+    hs.forEach((k, i) => {
+      const up = k.c >= k.o, x = i * cw + cw / 2;
+      cx.strokeStyle = cx.fillStyle = up ? "#3DD68C" : "#F0596B";
+      cx.beginPath(); cx.moveTo(x, y(k.h)); cx.lineTo(x, y(k.l)); cx.stroke();
+      const top = y(Math.max(k.o, k.c)), bh = Math.max(1, Math.abs(y(k.o) - y(k.c)));
+      cx.fillRect(x - Math.max(1, cw * .32), top, Math.max(2, cw * .64), bh);
+    });
+    const ly = Math.round(y(t.price)) + .5;
+    cx.setLineDash([3, 3]); cx.strokeStyle = "#E8833A";
+    cx.beginPath(); cx.moveTo(0, ly); cx.lineTo(W - padR, ly); cx.stroke(); cx.setLineDash([]);
+    cx.fillStyle = "#E8833A"; cx.fillRect(W - padR + 2, ly - 8, padR - 2, 16);
+    cx.fillStyle = "#170B02"; cx.fillText(fmtUsd(t.price * SUPPLY), W - padR + 5, ly + 3);
+  }
+
+  let lastPrice = null;
+  function renderDetail() {
+    const t = selected;
+    $("#d-av").textContent = t.sym[0];
+    $("#d-av").style.background = `hsl(${t.hue} 75% 62%)`;
+    $("#d-name").textContent = t.name;
+    $("#d-sub").innerHTML = `<span>${t.sym}</span><span>${["Fresh", "Bonding", "Graduated"][t.stage]}</span><span>${t.holders} holders</span>`;
+    const pEl = $("#d-price");
+    pEl.textContent = fmtUsd(t.price * SUPPLY);
+    if (lastPrice !== null && lastPrice !== t.price && !reduce) {
+      pEl.classList.remove("flash-up", "flash-down"); void pEl.offsetWidth;
+      pEl.classList.add(t.price > lastPrice ? "flash-up" : "flash-down");
+    }
+    lastPrice = t.price;
+    const chg = (t.price / t.open - 1) * 100;
+    const c = $("#d-chg"); c.textContent = fmtPct(chg); c.className = "chg mono " + (chg >= 0 ? "up" : "down");
+    drawChart();
+    renderAccount();
+  }
+
+  function renderAccount() {
+    const p = acct.pos[selected.id];
+    $("#bal").textContent = acct.sol.toFixed(3) + " SOL";
+    if (p && p.qty > 0) {
+      const val = p.qty * selected.price / SOL_USD;
+      const pnl = val - p.cost;
+      $("#hold").textContent = val.toFixed(3) + " SOL";
+      const el = $("#pnl"); el.textContent = (pnl >= 0 ? "+" : "") + pnl.toFixed(3); el.className = pnl >= 0 ? "up" : "down";
+    } else { $("#hold").textContent = "0"; $("#pnl").textContent = "—"; $("#pnl").className = ""; }
+    updateGo();
+  }
+
+  function select(id) {
+    const t = tokens.find(x => x.id === id); if (!t) return;
+    selected = t; lastPrice = null;
+    $$(".row").forEach(r => r.setAttribute("aria-pressed", String(+r.dataset.id === id)));
+    $("#msg").textContent = "";
+    renderDetail();
+  }
+
+  /* ---------- order entry ---------- */
+  const presetsBuy = ["0.1", "0.5", "1", "2"];
+  const presetsSell = ["25%", "50%", "75%", "100%"];
+  function renderPresets() {
+    const list = side === "buy" ? presetsBuy : presetsSell;
+    $("#presets").innerHTML = list.map(v => `<button type="button" aria-pressed="false" data-v="${v}">${v}</button>`).join("");
+    $("#unit").textContent = side === "buy" ? "SOL" : "%";
+    $("#amount").value = side === "buy" ? "1" : "100";
+  }
+  $("#presets").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    $$("#presets button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    $("#amount").value = b.dataset.v.replace("%", "");
+    updateGo();
+  });
+  function setSide(s) {
+    side = s;
+    $("#side-buy").setAttribute("aria-pressed", String(s === "buy"));
+    $("#side-sell").setAttribute("aria-pressed", String(s === "sell"));
+    const g = $("#go"); g.classList.toggle("sell", s === "sell");
+    renderPresets(); updateGo();
+  }
+  $("#side-buy").addEventListener("click", () => setSide("buy"));
+  $("#side-sell").addEventListener("click", () => setSide("sell"));
+  $("#amount").addEventListener("input", updateGo);
+
+  function parseAmt() { const v = parseFloat(String($("#amount").value).replace(",", ".")); return Number.isFinite(v) ? v : NaN; }
+  function updateGo() {
+    const v = parseAmt(), g = $("#go"), p = acct.pos[selected.id];
+    let ok = v > 0, label;
+    if (side === "buy") { ok = ok && v <= acct.sol + 1e-9; label = ok ? `Buy ${v} SOL of ${selected.sym}` : (v > acct.sol ? "Not enough SOL" : "Enter an amount"); }
+    else { ok = ok && v <= 100 && !!p && p.qty > 0; label = !p || !p.qty ? `No ${selected.sym} to sell` : ok ? `Sell ${v}% of ${selected.sym}` : "Enter 1 to 100"; }
+    g.disabled = !ok; g.textContent = label;
+  }
+
+  $("#go").addEventListener("click", () => {
+    const v = parseAmt(), t = selected, fee = 0.0075;
+    if (side === "buy") {
+      if (!(v > 0) || v > acct.sol + 1e-9) return;
+      t.price *= 1 + Math.min(.08, v / 40);   // price impact: buyer fills after their own impact
+      const qty = (v * (1 - fee) * SOL_USD) / t.price;
+      const p = acct.pos[t.id] || (acct.pos[t.id] = { qty: 0, cost: 0 });
+      p.qty += qty; p.cost += v; acct.sol = Math.max(0, acct.sol - v);
+      $("#msg").textContent = `Filled · ${qty.toLocaleString(undefined, { maximumFractionDigits: 0 })} ${t.sym} in ${Math.floor(rand(24, 52))} ms`;
+      toast(`Bought ${v} SOL of ${t.sym}`);
+    } else {
+      const p = acct.pos[t.id]; if (!p || !(v > 0) || v > 100) return;
+      const q = p.qty * v / 100;
+      t.price *= 1 - Math.min(.08, (q * t.price / SOL_USD) / 40);   // seller fills after their own impact
+      const out = q * t.price / SOL_USD * (1 - fee);
+      p.cost *= 1 - v / 100; p.qty -= q; acct.sol += out;
+      if (p.qty <= 1e-9) delete acct.pos[t.id];
+      $("#msg").textContent = `Filled · received ${out.toFixed(3)} SOL`;
+      toast(`Sold ${v}% of ${t.sym}`);
+    }
+    renderDetail(); renderBoard();
+  });
+
+  /* ---------- tabs ---------- */
+  $$('[data-sort]').forEach(b => b.addEventListener("click", () => {
+    sortBy = b.dataset.sort;
+    $$('[data-sort]').forEach(x => x.setAttribute("aria-selected", String(x === b)));
+    renderBoard();
+  }));
+  $$('[data-col]').forEach(b => b.addEventListener("click", () => {
+    $$('[data-col]').forEach(x => x.setAttribute("aria-selected", String(x === b)));
+    $$(".col").forEach((c, i) => c.classList.toggle("active", i === +b.dataset.col));
+  }));
+
+  /* ---------- toast ---------- */
+  let tt;
+  function toast(s) { const el = $("#toast"); el.textContent = s; el.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => el.classList.remove("show"), 2200); }
+
+  /* ---------- ticker & slot ---------- */
+  const majors = [["SOL", 182.4], ["BTC", 104210], ["ETH", 3890], ["JUP", 1.12], ["BONK", .0000281], ["WIF", 2.31], ["JTO", 3.44], ["PYTH", .41]];
+  function renderTicker() {
+    const html = majors.map(([s, p]) => { const c = rand(-6, 9); return `<span><b>${s}</b>${p < 1 ? "$" + p.toPrecision(3) : "$" + p.toLocaleString(undefined, { maximumFractionDigits: 2 })} <em class="${c >= 0 ? "up" : "down"}" style="font-style:normal">${fmtPct(c)}</em></span>`; }).join("");
+    $("#ticker").innerHTML = html + html;
+  }
+  let slot = 312_480_000 + Math.floor(rand(0, 9999));
+  function bumpSlot() { slot += 1; $("#slot").textContent = "slot " + slot.toLocaleString("en-US"); }
+
+  /* ---------- count-up ---------- */
+  function countUp() {
+    $$("[data-count]").forEach(el => {
+      const end = +el.dataset.count, dec = +(el.dataset.dec || 0), suf = el.dataset.suffix || "";
+      if (reduce) { el.textContent = end.toFixed(dec) + suf; return; }
+      const t0 = performance.now(), dur = 1400;
+      const step = now => { const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = (end * e).toFixed(dec) + suf; if (k < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+    });
+  }
+
+  /* ---------- boot ---------- */
+  renderTicker(); bumpSlot(); renderPresets(); renderBoard(); renderDetail(); countUp();
+  sizeCanvas();
+  addEventListener("resize", sizeCanvas);
+  if (window.ResizeObserver) new ResizeObserver(sizeCanvas).observe(cv);
+  setInterval(tick, 1100);
+  setInterval(rollCandles, 5000);
+  setInterval(bumpSlot, 400);
+  setInterval(() => $$(".row .tk-sub span:first-child").forEach((s, i) => { const id = +s.closest(".row").dataset.id; const t = tokens.find(x => x.id === id); if (t) s.textContent = ago(t.born); }), 1000);
+})();
+</script>
+<!-- END-BODY -->
+</body>
+</html>

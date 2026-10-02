@@ -16,5 +16,5 @@ MIT licensed. See `LICENSE`.
 
 ## Wallets and X
 
-- **Connect wallet** detects Phantom, Solflare and Backpack. It only reads the public address and the SOL balance from a public mainnet RPC. It never signs transactions or asks for a seed phrase. Wallets that are not installed link to their download pages.
+- **Connect wallet** lists 11 Solana wallets (Phantom, Solflare, Backpack, OKX, Coinbase, Trust, Magic Eden, Bitget, Exodus, Glow, Nightly) and also picks up any other installed wallet through the Wallet Standard, using the icon the wallet itself provides. Icons for wallets that are not installed come from the open-source `@solana/wallet-adapter-*` packages. It only reads the public address and the SOL balance from a public mainnet RPC. It never signs transactions or asks for a seed phrase. Wallets that are not installed link to their download pages.
 - **X profile:** set `X_URL` near the bottom of the script in `index.html` to your profile, for example `https://x.com/yourhandle`. The "Share on X" button in the terminal posts the user's open positions.

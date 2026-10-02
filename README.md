@@ -1,4 +1,4 @@
-# Orbita
+# Apogee
 
 Landing page for a concept Solana trading terminal. It is a single static file, `index.html`, with no build step.
 

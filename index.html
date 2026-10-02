@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='25' fill='%235B6CFF'/%3E%3Cellipse cx='50' cy='50' rx='46' ry='10' fill='none' stroke='%235B6CFF' stroke-width='6' transform='rotate(-18 50 50)'/%3E%3C/svg%3E">
 <!-- BEGIN-ARTIFACT -->
-<title>Orbita Trading Terminal</title>
+<title>Apogee Trading Terminal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap">
@@ -83,7 +83,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .hero-mark{width:84px;height:84px;margin-bottom:26px;animation:float 6s ease-in-out infinite}
 @keyframes float{50%{transform:translateY(-6px) rotate(-3deg)}}
 .hero h1{font-size:clamp(40px,5.2vw,64px);font-weight:600;letter-spacing:-.02em;max-width:24ch;line-height:1.1}
-.hero p.lede{font-size:clamp(17px,1.7vw,24px);color:var(--dim);max-width:46ch;margin:28px 0 22px}
+.hero p.lede{font-size:clamp(17px,1.7vw,22px);color:var(--dim);max-width:44ch;margin:24px 0 22px;text-wrap:pretty}
 .hero-actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
 .hero-actions .btn{padding:10px 22px;font-size:18px}
 .built{margin-top:34px;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:14px;color:var(--dim)}
@@ -512,6 +512,69 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
 .share-x{display:inline-flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-size:12px;color:var(--fg);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:3px 10px}
 .share-x svg{width:12px;height:12px}
 .share-x:hover{border-color:var(--rufous)}
+
+/* ---- v10: interactive HUD, starfield, polish ---- */
+@property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}
+.stars-bg{position:absolute;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none}
+.hud{position:relative;width:min(440px,100%);height:150px;display:grid;place-items:center;margin-bottom:10px}
+.hud-orbit{position:absolute;left:0;top:15px;width:100%;height:120px;overflow:visible;opacity:0;transition:opacity .4s}
+.hud-orbit ellipse{fill:none;stroke:#5B6CFF;stroke-opacity:.45;stroke-dasharray:3 6;animation:dash 1.6s linear infinite}
+.hud.open .hud-orbit{opacity:1}
+.hud-planet{position:relative;z-index:2;width:110px;height:110px;border:0;background:none;padding:0;border-radius:50%;cursor:pointer;display:grid;place-items:center;-webkit-tap-highlight-color:transparent}
+.hud-planet:focus-visible{outline:2px solid var(--rufous);outline-offset:6px}
+.hud-svg{width:96px;height:96px;transition:transform .25s ease-out,filter .3s;transform:perspective(500px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(var(--sc,1));filter:drop-shadow(0 0 0 rgba(91,108,255,0));animation:float 6s ease-in-out infinite}
+.hud.open .hud-svg{--sc:1.12;filter:drop-shadow(0 0 18px rgba(91,108,255,.75));animation:none}
+.hud-hint{position:absolute;inset:4px;border-radius:50%;border:1px solid rgba(91,108,255,.55);animation:ping 2.4s ease-out infinite}
+.hud.seen .hud-hint{display:none}
+@keyframes ping{0%{transform:scale(.75);opacity:.9}100%{transform:scale(1.35);opacity:0}}
+.hud-moon{position:absolute;width:9px;height:9px;border-radius:50%;background:#9AA6FF;box-shadow:0 0 10px #9AA6FF;left:50%;top:50%;margin:-4.5px;opacity:0;transition:opacity .3s}
+.hud.open .hud-moon{opacity:1;animation:moon 3.2s linear infinite}
+@keyframes moon{from{transform:rotate(0) translateX(70px) rotate(0)}to{transform:rotate(360deg) translateX(70px) rotate(-360deg)}}
+.hud-chips{position:absolute;inset:0;pointer-events:none;z-index:3}
+.hud-chip{position:absolute;left:50%;top:50%;width:172px;margin:-31px 0 0 -86px;display:grid;gap:1px;text-align:left;padding:8px 11px;border-radius:10px;
+  background:rgba(13,14,20,.92);border:1px solid #2A3047;box-shadow:0 10px 30px -10px rgba(0,0,0,.8),0 0 0 1px rgba(91,108,255,.08);
+  opacity:0;transform:translate(0,0) scale(.4);transition:transform .45s cubic-bezier(.2,.9,.25,1.15),opacity .3s,border-color .2s;pointer-events:none}
+.hud-chip .k{font:500 10.5px var(--f-mono);color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+.hud-chip b{font:700 15px var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px}
+.hud-chip b i{display:inline-block;width:18px;height:18px;border-radius:5px;overflow:hidden;flex:none}
+.hud-chip b i svg{width:100%;height:100%;display:block}
+.hud-chip small{font-size:11px;color:var(--dim)}
+.hud-chip:hover{border-color:var(--rufous)}
+.hud-chip .spark{width:80px;height:22px}
+.hud-chip .spark path{fill:none;stroke:var(--up);stroke-width:1.6}
+.hud.open .hud-chip{opacity:1;pointer-events:auto}
+.hud.open .c1{transform:translate(-215px,-38px)}
+.hud.open .c2{transform:translate(215px,-38px);transition-delay:.04s}
+.hud.open .c3{transform:translate(-215px,38px);transition-delay:.08s}
+.hud.open .c4{transform:translate(228px,38px);transition-delay:.12s}
+.hud-burst{position:absolute;left:50%;top:50%;width:320px;height:320px;margin:-160px;pointer-events:none;z-index:4}
+.hud-tip{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);font:500 11px var(--f-mono);color:var(--dim);letter-spacing:.06em;white-space:nowrap;transition:opacity .3s}
+.hud.open .hud-tip,.hud.seen .hud-tip{opacity:0}
+@media (max-width:760px){
+  .hud{height:auto;padding-top:6px}
+  .hud-orbit{display:none}
+  .hud-chips{position:static;display:none;grid-template-columns:1fr 1fr;gap:8px;width:100%;margin-top:14px;pointer-events:auto}
+  .hud.open .hud-chips{display:grid}
+  .hud-chip{position:static;width:auto;margin:0;opacity:1;transform:none!important;pointer-events:auto;animation:pop .3s both}
+  .hud-tip{position:static;transform:none;margin-top:4px}
+  .hud.open .hud-tip,.hud.seen .hud-tip{display:none}
+}
+.odiv{position:relative;height:1px;max-width:var(--maxw);margin:0 auto;background:linear-gradient(90deg,transparent,var(--line) 20%,var(--line) 80%,transparent)}
+.odiv i{position:absolute;top:-3px;left:0;width:7px;height:7px;border-radius:50%;background:var(--rufous);box-shadow:0 0 12px var(--rufous);animation:travel 9s linear infinite}
+@keyframes travel{from{left:10%}to{left:90%}}
+.cta2,.tier.hl{border:1px solid transparent;background:radial-gradient(500px 260px at 20% 30%,rgba(91,108,255,.22),transparent 70%) padding-box,linear-gradient(var(--panel),var(--panel)) padding-box,conic-gradient(from var(--ang),var(--line) 0 60%,#5B6CFF 78%,#C9CEFF 82%,var(--line) 92%) border-box;animation:spinb 6s linear infinite}
+@keyframes spinb{to{--ang:360deg}}
+.glow-card{position:relative;isolation:isolate}
+.glow-card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .3s;z-index:-1;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(91,108,255,.14),transparent 70%)}
+.glow-card:hover::after{opacity:1}
+.steps li,.secgrid>div,.tier,.feat,.pillars div{transition:transform .25s,background .2s,border-color .2s}
+.steps li:hover,.tier:hover{transform:translateY(-4px);border-color:#2E3550}
+.cmp tbody tr{transition:background .15s}.cmp tbody tr:hover{background:var(--raise)}
+.rip{position:absolute;border-radius:50%;background:rgba(255,255,255,.45);transform:scale(0);animation:rip .6s ease-out forwards;pointer-events:none}
+@keyframes rip{to{transform:scale(4);opacity:0}}
+.btn,.go{position:relative;overflow:hidden}
+.detail.filled{animation:filled .7s ease-out}
+@keyframes filled{0%{box-shadow:inset 0 0 0 2px var(--up)}100%{box-shadow:inset 0 0 0 2px transparent}}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
@@ -617,16 +680,16 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
 </symbol></svg>
 <header class="nav">
   <div class="wrap">
-    <a class="brand" href="#top" aria-label="Orbita Pro home">
+    <a class="brand" href="#top" aria-label="Apogee Pro home">
       <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo"/></svg>
-      Orbita <small>Pro</small>
+      Apogee <small>Pro</small>
     </a>
     <nav class="nav-links" id="nav-links" aria-label="Sections">
       <a href="#terminal">Terminal</a><a href="#tracker">Tracker</a><a href="#perps">Perps</a><a href="#yield">Yield</a><a href="#leaders">Leaderboard</a><a href="#rewards">Rewards</a><a href="#security">Security</a><a href="#faq">FAQ</a>
     </nav>
     <div class="nav-cta">
       <span class="status"><span class="dot"></span><span id="slot" class="mono">slot —</span></span>
-      <a class="icon-btn" id="x-nav" href="https://x.com/" target="_blank" rel="noopener noreferrer" aria-label="Orbita on X"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M17.8 3h3.1l-6.8 7.7L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.3-8.3L2 3h6.4l4.4 5.8zm-1.1 16.2h1.7L7.4 4.7H5.6z"/></svg></a>
+      <a class="icon-btn" id="x-nav" href="https://x.com/" target="_blank" rel="noopener noreferrer" aria-label="Apogee on X"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M17.8 3h3.1l-6.8 7.7L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.3-8.3L2 3h6.4l4.4 5.8zm-1.1 16.2h1.7L7.4 4.7H5.6z"/></svg></a>
       <button class="btn btn-dark wbtn" type="button" id="wallet-btn" aria-haspopup="dialog"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h13v4"/><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="16.5" cy="13.5" r="1.5" fill="currentColor"/></svg><span id="wallet-label">Connect wallet</span></button>
       <span id="auth-out" class="nav-auth"><button class="btn btn-dark" type="button" data-auth="login">Login</button><button class="btn btn-primary" type="button" data-auth="signup">Sign up</button></span>
       <span id="auth-in" class="nav-auth" hidden><span class="who" id="who"></span><button class="btn btn-dark" type="button" id="logout">Log out</button></span>
@@ -635,10 +698,11 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   </div>
 </header>
 
-<div class="ticker" aria-hidden="true" hidden><div class="ticker-track" id="ticker"></div></div>
+<div class="ticker" aria-hidden="true"><div class="ticker-track" id="ticker"></div></div>
 
 <main id="top">
   <section class="hero">
+    <canvas class="stars-bg" id="stars-bg" aria-hidden="true"></canvas>
     <div class="stack" aria-hidden="true">
       <i style="--r:2.5%;--t:0px;--w:46%;--d:.0s"></i>
       <i style="--r:3%;--t:90px;--w:36%;--d:.1s"></i>
@@ -648,9 +712,24 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
       <i style="--r:35%;--t:500px;--w:10%;--d:.5s"></i>
     </div>
     <div class="wrap hero-center">
-      <svg class="hero-mark rise logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo"/></svg>
+      <div class="hud rise" id="hud">
+        <svg class="hud-orbit" viewBox="0 0 440 120" aria-hidden="true" preserveAspectRatio="none"><ellipse cx="220" cy="60" rx="210" ry="44"/></svg>
+        <button class="hud-planet" id="hud-btn" type="button" aria-expanded="false" aria-controls="hud-chips" aria-label="Show live market stats">
+          <span class="hud-hint" aria-hidden="true"></span>
+          <svg class="logo hud-svg" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo"/></svg>
+          <span class="hud-moon" aria-hidden="true"></span>
+        </button>
+        <div class="hud-chips" id="hud-chips" aria-live="polite">
+          <button type="button" class="hud-chip c1" data-k="pairs"><span class="k">New pairs</span><b id="hud-pairs">—</b><small>on the Pulse board</small></button>
+          <button type="button" class="hud-chip c2" data-k="block"><span class="k">Block</span><b id="hud-block">—</b><small>~400 ms per block</small></button>
+          <button type="button" class="hud-chip c3" data-k="mover"><span class="k">Top mover</span><b id="hud-mover">—</b><small id="hud-mover-s">tap to open</small></button>
+          <button type="button" class="hud-chip c4" data-k="sol"><span class="k">SOL</span><b id="hud-sol">—</b><svg class="spark" viewBox="0 0 80 22" aria-hidden="true"><path id="hud-spark" d=""/></svg></button>
+        </div>
+        <canvas class="hud-burst" id="hud-burst" aria-hidden="true"></canvas>
+        <span class="hud-tip" id="hud-tip">Hover the planet</span>
+      </div>
       <h1 class="rise">Trade What Moves, First</h1>
-      <p class="lede rise">Orbita puts every launch, wallet and market on a single screen.</p>
+      <p class="lede rise">Apogee puts every launch, wallet and market on a single screen, so you reach the top of the move before everyone else.</p>
       <div class="hero-actions rise"><a class="btn btn-primary" href="#terminal">Start Trading</a></div>
       <div class="built rise">Built on<span><svg width="22" height="18" viewBox="0 0 22 18" aria-hidden="true"><path d="M4 0h18l-4 4H0zM0 7h18l4 4H4zM4 14h18l-4 4H0z" fill="#9AA6FF"/></svg>Solana</span></div>
     </div>
@@ -711,6 +790,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     </div>
   </section>
 
+  <div class="odiv" aria-hidden="true"><i></i></div>
   <section id="tools">
     <div class="wrap">
       <div class="prod-tabs" role="tablist" aria-label="Products">
@@ -748,7 +828,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     <div class="wrap">
       <div class="chead"><h2>Start in three steps</h2><p>From sign-up to your first trade takes about a minute.</p></div>
       <ol class="steps">
-        <li><span class="n">1</span><h3>Create your account</h3><p>Sign up with email or a passkey. Orbita creates a self-custody wallet for you on the spot. You can also connect a wallet you already use.</p></li>
+        <li><span class="n">1</span><h3>Create your account</h3><p>Sign up with email or a passkey. Apogee creates a self-custody wallet for you on the spot. You can also connect a wallet you already use.</p></li>
         <li><span class="n">2</span><h3>Fund it</h3><p>Send SOL from any exchange or wallet, or buy with a card. Funds show up after one confirmation, usually in under a second.</p></li>
         <li><span class="n">3</span><h3>Set your presets and trade</h3><p>Choose your buy sizes, slippage and priority fee once. After that every buy is one click or one key press.</p></li>
       </ol>
@@ -759,7 +839,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     <div class="wrap">
       <div class="chead"><h2>Why traders switch</h2><p>Everything a fast on-chain trader needs, without five tabs and three bots.</p></div>
       <div class="tbl-wrap"><table class="cmp">
-        <thead><tr><th></th><th class="us">Orbita</th><th>Chat trading bots</th><th>DEX websites</th></tr></thead>
+        <thead><tr><th></th><th class="us">Apogee</th><th>Chat trading bots</th><th>DEX websites</th></tr></thead>
         <tbody>
           <tr><td>New launches, bonding curves and DEX pairs on one screen</td><td class="us">Yes</td><td>No</td><td>Partly</td></tr>
           <tr><td>Wallet tracking with one-click copy</td><td class="us">Yes</td><td>Paid add-on</td><td>No</td></tr>
@@ -777,7 +857,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     <div class="wrap">
       <div class="chead"><h2>Wallet Tracker</h2><p>Follow the wallets that move first. Every buy and sell shows up the moment it lands.</p></div>
       <div class="pillars">
-        <div><b>Import any address</b><p>Paste a wallet, give it a name and an emoji. Orbita starts watching it on the next block.</p></div>
+        <div><b>Import any address</b><p>Paste a wallet, give it a name and an emoji. Apogee starts watching it on the next block.</p></div>
         <div><b>Alerts your way</b><p>Get a sound, a browser notification or a push on your phone. Set a minimum size so small trades stay quiet.</p></div>
         <div><b>Copy in one click</b><p>Every feed line has a buy button that uses your preset size, slippage and priority fee.</p></div>
       </div>
@@ -836,7 +916,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     <div class="wrap">
       <div class="chead"><h2>Yield</h2><p>SOL you are not trading keeps earning. Drag the sliders to see what it could grow into.</p></div>
       <div class="pillars">
-        <div><b>Always liquid</b><p>There is no lockup. When a trade needs SOL, Orbita pulls it from your yield balance automatically.</p></div>
+        <div><b>Always liquid</b><p>There is no lockup. When a trade needs SOL, Apogee pulls it from your yield balance automatically.</p></div>
         <div><b>Native staking</b><p>Idle SOL is delegated to a set of high-uptime validators. Rewards are added every epoch, about every two days.</p></div>
         <div><b>One balance</b><p>Your trading and earning balances show as a single number, so you never have to move funds by hand.</p></div>
       </div>
@@ -879,6 +959,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     </div>
   </section>
 
+  <div class="odiv" aria-hidden="true"><i></i></div>
   <section id="rewards" style="padding-bottom:0">
     <div class="wrap"><div class="chead"><h2>Rewards</h2><p>Every trade pays you back.</p></div></div>
     <div class="band" aria-hidden="true"></div>
@@ -887,7 +968,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
         <h3>Cashback</h3><p class="sub">Get SOL back on every trade you make.</p>
         <div class="stage"><div style="display:grid;justify-items:center">
           <div class="notif" id="notif" role="status" aria-live="polite"><div class="t"><span id="notif-t">0.12 SOL received</span><small>now</small></div><p>Cashback for your last trade. Keep trading to earn more.</p></div>
-          <button class="fakebuy" id="fakebuy" type="button">Buy ORBT · 1 SOL</button>
+          <button class="fakebuy" id="fakebuy" type="button">Buy APGE · 1 SOL</button>
         </div></div>
       </div>
       <div class="b-tier">
@@ -918,7 +999,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
         </div>
       </div>
       <div class="b-pts">
-        <h3>Orbita Points</h3><p class="sub">Collect points from trading, referrals and quests.</p>
+        <h3>Apogee Points</h3><p class="sub">Collect points from trading, referrals and quests.</p>
         <div class="stage"><div style="display:grid;justify-items:center">
           <svg class="pts-mark logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo"/></svg>
           <div class="pts-total"><b id="pts">0</b> pts</div>
@@ -938,7 +1019,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
       <div class="phone" aria-hidden="true">
         <div class="notch"></div>
         <div class="screen">
-          <div class="ph-top"><b>Orbita</b><span class="mono" id="ph-bal">10.00 SOL</span></div>
+          <div class="ph-top"><b>Apogee</b><span class="mono" id="ph-bal">10.00 SOL</span></div>
           <div class="ph-chart"><canvas id="phchart"></canvas></div>
           <div id="ph-rows"></div>
           <div class="ph-btns"><span class="b">Buy</span><span class="s">Sell</span></div>
@@ -967,8 +1048,8 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
       <div class="arch">
         <div>
           <h3>Integrations</h3>
-          <p>Orbita routes through the DEXs, launchpads, perps venues and staking pools you already use, all from one account.</p>
-          <svg viewBox="0 0 280 130" role="img" aria-label="Orbita connected to DEX, launchpad, perps, lending, staking and bridge integrations">
+          <p>Apogee routes through the DEXs, launchpads, perps venues and staking pools you already use, all from one account.</p>
+          <svg viewBox="0 0 280 130" role="img" aria-label="Apogee connected to DEX, launchpad, perps, lending, staking and bridge integrations">
             <rect x="124" y="10" width="32" height="32" rx="3" fill="#5B6CFF"/><svg x="126" y="12" width="28" height="28" viewBox="0 0 100 100" style="color:#05061A"><use href="#logo"/></svg>
             <path class="flow" d="M140 42 V64 M30 64 H250 M30 64 V84 M74 64 V84 M118 64 V84 M162 64 V84 M206 64 V84 M250 64 V84" stroke="#5B6CFF" fill="none"/>
             <g fill="#12141D" stroke="#2A3047"><circle cx="30" cy="94" r="10"/><circle cx="74" cy="94" r="10"/><circle cx="118" cy="94" r="10"/><circle cx="162" cy="94" r="10"/><circle cx="206" cy="94" r="10"/><circle cx="250" cy="94" r="10"/></g>
@@ -978,9 +1059,9 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
         </div>
         <div>
           <h3>Non-custodial</h3>
-          <p>Your wallet key is generated and stored on your side. Orbita can sign only what you approve and can never move funds on its own.</p>
-          <svg viewBox="0 0 280 130" role="img" aria-label="Diagram: Orbita is blocked from the key, which only the user controls">
-            <text x="20" y="20">Orbita</text>
+          <p>Your wallet key is generated and stored on your side. Apogee can sign only what you approve and can never move funds on its own.</p>
+          <svg viewBox="0 0 280 130" role="img" aria-label="Diagram: Apogee is blocked from the key, which only the user controls">
+            <text x="20" y="20">Apogee</text>
             <rect x="12" y="58" width="16" height="16" fill="none" stroke="#F0596B"/><path d="M16 62l8 8M24 62l-8 8" stroke="#F0596B"/>
             <path d="M28 66 H70" stroke="#F0596B" stroke-dasharray="3 3"/>
             <text x="74" y="22">Enclave</text>
@@ -996,9 +1077,10 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     </div>
   </section>
 
+  <div class="odiv" aria-hidden="true"><i></i></div>
   <section id="security">
     <div class="wrap">
-      <div class="chead"><h2>Security</h2><p>Speed is useless if your funds are not safe. Here is how Orbita protects them.</p></div>
+      <div class="chead"><h2>Security</h2><p>Speed is useless if your funds are not safe. Here is how Apogee protects them.</p></div>
       <div class="secgrid">
         <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><h3>Your keys, always</h3><p>Wallet keys are created and stored in a secure enclave tied to your login. Export them whenever you like and take them to any other wallet.</p></div>
         <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg><h3>MEV protection</h3><p>Swaps go out through private relays by default, which keeps sandwich bots from front-running your orders.</p></div>
@@ -1014,8 +1096,8 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     <div class="wrap faq-split">
       <h2>FAQ</h2>
       <div class="faq">
-        <details open><summary>What is Orbita?</summary><p>Orbita is a trading terminal for Solana. It puts new token launches, bonding curves, DEX pairs, wallet tracking, perps and yield on a single screen, with hotkeys so you can act in one press.</p></details>
-        <details><summary>Who holds my funds?</summary><p>You do. Orbita creates a self-custody wallet for you and never takes control of your keys. You can export the private key at any time and use it in any Solana wallet.</p></details>
+        <details open><summary>What is Apogee?</summary><p>Apogee is a trading terminal for Solana. It puts new token launches, bonding curves, DEX pairs, wallet tracking, perps and yield on a single screen, with hotkeys so you can act in one press.</p></details>
+        <details><summary>Who holds my funds?</summary><p>You do. Apogee creates a self-custody wallet for you and never takes control of your keys. You can export the private key at any time and use it in any Solana wallet.</p></details>
         <details><summary>What does "graduated" mean?</summary><p>Many new tokens start on a bonding curve. When the curve fills, its liquidity moves to a regular DEX pool and the token "graduates". Pulse shows each token's progress so you can see it coming.</p></details>
         <details><summary>How much does it cost?</summary><p>There is no subscription. Each swap pays a flat fee of 0.75%, and part of that comes back to you as cashback. Higher tiers return more, up to half of your fees.</p></details>
         <details><summary>How do referrals pay?</summary><p>You earn 30% of the fees paid by traders you invite directly, 3% from the people they invite, and 2% from the level after that. Earnings are paid in SOL.</p></details>
@@ -1050,17 +1132,17 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
 <footer>
   <div class="wrap foot">
     <div class="foot-brand">
-      <a class="brand" href="#top"><svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo"/></svg>Orbita <small>Pro</small></a>
+      <a class="brand" href="#top"><svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo"/></svg>Apogee <small>Pro</small></a>
       <p>The trading terminal for people who want to see it first and act in one click.</p>
-      <div class="socials"><a class="icon-btn" id="x-foot" href="https://x.com/" target="_blank" rel="noopener noreferrer" aria-label="Follow Orbita on X"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M17.8 3h3.1l-6.8 7.7L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.3-8.3L2 3h6.4l4.4 5.8zm-1.1 16.2h1.7L7.4 4.7H5.6z"/></svg></a><span>Follow us on X for launches, updates and status.</span></div>
+      <div class="socials"><a class="icon-btn" id="x-foot" href="https://x.com/" target="_blank" rel="noopener noreferrer" aria-label="Follow Apogee on X"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M17.8 3h3.1l-6.8 7.7L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.3-8.3L2 3h6.4l4.4 5.8zm-1.1 16.2h1.7L7.4 4.7H5.6z"/></svg></a><span>Follow us on X for launches, updates and status.</span></div>
     </div>
     <nav aria-label="Product"><b>Product</b><a href="#terminal">Terminal</a><a href="#tracker">Wallet Tracker</a><a href="#perps">Perps</a><a href="#yield">Yield</a><a href="#app">Mobile</a></nav>
     <nav aria-label="Earn"><b>Earn</b><a href="#rewards">Rewards</a><a href="#rewards">Referrals</a><a href="#leaders">Leaderboard</a></nav>
-    <nav aria-label="Learn"><b>Learn</b><a href="#how">Getting started</a><a href="#why">Why Orbita</a><a href="#security">Security</a><a href="#faq">FAQ</a></nav>
+    <nav aria-label="Learn"><b>Learn</b><a href="#how">Getting started</a><a href="#why">Why Apogee</a><a href="#security">Security</a><a href="#faq">FAQ</a></nav>
   </div>
   <div class="wrap foot-legal">
     <p>Prices, volumes and leaderboard figures on this page are illustrative. Nothing here is financial advice. Trading tokens and leveraged products carries a high risk of loss, and you can lose all the money you put in.</p>
-    <p>© 2026 Orbita. Code released under the MIT License.</p>
+    <p>© 2026 Apogee. Code released under the MIT License.</p>
   </div>
 </footer>
 
@@ -1070,7 +1152,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="w-title">
     <button class="x" type="button" data-wclose aria-label="Close">×</button>
     <h2 id="w-title">Connect a wallet</h2>
-    <p class="sub">Orbita only reads your public address and SOL balance. It never asks for your seed phrase and never moves funds without your approval in the wallet.</p>
+    <p class="sub">Apogee only reads your public address and SOL balance. It never asks for your seed phrase and never moves funds without your approval in the wallet.</p>
     <label class="wsearch"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="w-q" type="search" placeholder="Search wallets" aria-label="Search wallets" autocomplete="off"></label>
     <div class="wlist" id="wlist"></div>
     <p class="err" id="w-err" role="alert"></p>
@@ -1102,6 +1184,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
 <script>
 (() => {
   "use strict";
+  const setInterval = (fn, ms) => window.setInterval(() => { if (!document.hidden) fn(); }, ms);
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -1437,6 +1520,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
       toast(`Sold ${v}% of ${t.sym}`);
     }
     renderDetail(); renderBoard();
+    const dt = $("#detail"); dt.classList.remove("filled"); void dt.offsetWidth; dt.classList.add("filled");
   }
 
   /* ---------- tabs ---------- */
@@ -1545,9 +1629,9 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
 
   /* ---------- auth (local profile) ---------- */
   const modal = $("#modal");
-  try { [["kestrel-user", "orbita-user"], ["kestrel-wallet", "orbita-wallet"]].forEach(([o, n]) => { const v = localStorage.getItem(o); if (v != null && localStorage.getItem(n) == null) localStorage.setItem(n, v); localStorage.removeItem(o); }); } catch (e) {}
+  try { [["kestrel-user", "apogee-user"], ["orbita-user", "apogee-user"], ["kestrel-wallet", "apogee-wallet"], ["orbita-wallet", "apogee-wallet"]].forEach(([o, n]) => { const v = localStorage.getItem(o); if (v != null && localStorage.getItem(n) == null) localStorage.setItem(n, v); localStorage.removeItem(o); }); } catch (e) {}
   let mode = "signup", lastFocus = null, user = null;
-  try { user = localStorage.getItem("orbita-user"); } catch (e) {}
+  try { user = localStorage.getItem("apogee-user"); } catch (e) {}
   function paintAuth() { $("#auth-out").hidden = !!user; $("#auth-in").hidden = !user; if (user) $("#who").textContent = "@" + user; }
   function openAuth(m) {
     mode = m; lastFocus = document.activeElement;
@@ -1569,10 +1653,10 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     e.preventDefault();
     const n = $("#auth-name").value.trim();
     if (!/^[a-zA-Z0-9_]{3,20}$/.test(n)) { $("#auth-err").textContent = "Use 3 to 20 letters, numbers or underscores."; $("#auth-name").focus(); return; }
-    user = n; try { localStorage.setItem("orbita-user", n); } catch (e2) {}
-    paintAuth(); closeAuth(); toast(mode === "signup" ? `Welcome to Orbita, @${n}` : `Logged in as @${n}`);
+    user = n; try { localStorage.setItem("apogee-user", n); } catch (e2) {}
+    paintAuth(); closeAuth(); toast(mode === "signup" ? `Welcome to Apogee, @${n}` : `Logged in as @${n}`);
   });
-  $("#logout").addEventListener("click", () => { user = null; try { localStorage.removeItem("orbita-user"); } catch (e) {} paintAuth(); toast("Logged out"); });
+  $("#logout").addEventListener("click", () => { user = null; try { localStorage.removeItem("apogee-user"); } catch (e) {} paintAuth(); toast("Logged out"); });
   paintAuth();
 
   /* ---------- carousel: hover pause, swipe, arrows ---------- */
@@ -1624,7 +1708,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   if (window.IntersectionObserver) {
     const links = $$("a", nl), map = new Map(links.map(a => [a.getAttribute("href").slice(1), a]));
     const so = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { links.forEach(a => a.classList.remove("on")); const a = map.get(e.target.id); if (a) a.classList.add("on"); } }), { rootMargin: "-45% 0px -50% 0px" });
-    map.forEach((a, id) => { const el = document.getElementById(id); if (el) so.observe(el); });
+    $$("main > section, #terminal").forEach(el => so.observe(el));
   }
 
   /* ---------- spot card order book ---------- */
@@ -1789,7 +1873,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     const held = tokens.filter(x => acct.pos[x.id] && acct.pos[x.id].qty > 0);
     if (!held.length) return;
     const lines = held.slice(0, 3).map(x => { const q = acct.pos[x.id], pl = (q.qty * x.price / SOL_USD - q.cost) / q.cost * 100; return `$${x.sym} ${pl >= 0 ? "+" : ""}${pl.toFixed(1)}%`; });
-    $("#share-x").href = "https://x.com/intent/post?text=" + encodeURIComponent(`My positions on Orbita:\n${lines.join("\n")}`);
+    $("#share-x").href = "https://x.com/intent/post?text=" + encodeURIComponent(`My positions on Apogee:\n${lines.join("\n")}`);
   }
   setInterval(updateShare, 1500);
 
@@ -1869,7 +1953,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     wbtn.classList.add("connected"); $("#wallet-label").textContent = short(address); wbtn.setAttribute("aria-label", `Wallet ${short(address)}`);
     $("#wm-name").textContent = w.name; $("#wm-addr").textContent = short(address); $("#wm-explorer").href = "https://solscan.io/account/" + address;
     $("#wm-bal").textContent = "Loading…";
-    try { localStorage.setItem("orbita-wallet", w.id); } catch (e) {}
+    try { localStorage.setItem("apogee-wallet", w.id); } catch (e) {}
     try { provider.on && provider.on("disconnect", () => clearConn(false)); provider.on && provider.on("accountChanged", pk => { if (pk) setConnected(w, provider, pk.toString()); else clearConn(false); }); } catch (e) {}
     const bal = await fetchBalance(address);
     $("#wm-bal").textContent = bal == null ? "Unavailable" : bal.toFixed(4) + " SOL";
@@ -1877,7 +1961,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   function clearConn(callProvider) {
     if (callProvider && conn && conn.provider.disconnect) { try { conn.provider.disconnect(); } catch (e) {} }
     conn = null; wbtn.classList.remove("connected"); $("#wallet-label").textContent = "Connect wallet"; wbtn.removeAttribute("aria-label"); wmenu.hidden = true;
-    try { localStorage.removeItem("orbita-wallet"); } catch (e) {}
+    try { localStorage.removeItem("apogee-wallet"); } catch (e) {}
   }
   $("#wlist").addEventListener("click", async e => {
     const b = e.target.closest("[data-wid]"); if (!b) return;
@@ -1909,11 +1993,114 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   });
   // reconnect silently if the user already trusted this site
   (async () => {
-    let id = null; try { id = localStorage.getItem("orbita-wallet"); } catch (e) {}
+    let id = null; try { id = localStorage.getItem("apogee-wallet"); } catch (e) {}
     const w = WALLETS.find(x => x.id === id), provider = w && providerOf(w);
     if (!provider) return;
     try { const res = await provider.connect({ onlyIfTrusted: true }); const pk = (res && res.publicKey) || provider.publicKey; if (pk) setConnected(w, provider, pk.toString()); } catch (e) {}
   })();
+
+  /* ---------- hero HUD: interactive planet ---------- */
+  const hud = $("#hud"), hbtn = $("#hud-btn"), hsvg = $(".hud-svg", hud);
+  let solPx = 182.4; const solHist = Array.from({ length: 30 }, () => solPx = solPx * (1 + rand(-.004, .004)));
+  let hudOpen = false, hudT = null, moverId = null;
+  function hudData() {
+    $("#hud-pairs").textContent = tokens.filter(t => t.stage === 0).length + " live";
+    $("#hud-block").textContent = "#" + slot.toLocaleString("en-US");
+    const m = tokens.reduce((a, t) => (t.price / t.open > a.price / a.open ? t : a), tokens[0]);
+    if (m) { moverId = m.id; const c = (m.price / m.open - 1) * 100; $("#hud-mover").innerHTML = `<i>${m.art || (m.art = critter(m.id * 7919, m.hue))}</i>${esc(m.sym)} <span class="up">${fmtPct(c)}</span>`; }
+    $("#hud-sol").textContent = "$" + solPx.toFixed(2);
+    const lo = Math.min(...solHist), hi = Math.max(...solHist) + 1e-9;
+    $("#hud-spark").setAttribute("d", solHist.map((v, i) => `${i ? "L" : "M"}${(i / (solHist.length - 1) * 78 + 1).toFixed(1)} ${(20 - (v - lo) / (hi - lo) * 18).toFixed(1)}`).join(" "));
+    $("#hud-spark").style.stroke = solHist[solHist.length - 1] >= solHist[0] ? "var(--up)" : "var(--down)";
+  }
+  setInterval(() => { solPx *= 1 + rand(-.0035, .0037); solHist.push(solPx); solHist.shift(); if (hudOpen) hudData(); }, 1000);
+  function setHud(o) {
+    clearTimeout(hudT);
+    if (o === hudOpen) return;
+    hudOpen = o; hud.classList.toggle("open", o); hbtn.setAttribute("aria-expanded", String(o));
+    if (o) { hud.classList.add("seen"); hudData(); } else { hsvg.style.setProperty("--rx", "0deg"); hsvg.style.setProperty("--ry", "0deg"); }
+  }
+  const finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
+  if (finePointer) {
+    hud.addEventListener("mouseenter", () => setHud(true));
+    hud.addEventListener("mouseleave", () => { hudT = setTimeout(() => setHud(false), 220); });
+    hud.addEventListener("pointermove", e => {
+      if (reduce) return; const r = hbtn.getBoundingClientRect();
+      const dx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / 160)), dy = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / 120));
+      hsvg.style.setProperty("--ry", (dx * 28).toFixed(1) + "deg"); hsvg.style.setProperty("--rx", (-dy * 22).toFixed(1) + "deg");
+    });
+  }
+  let hudPtr = false;   // a tap focuses the button too; let the click decide instead of focusin
+  hud.addEventListener("pointerdown", () => { hudPtr = true; setTimeout(() => { hudPtr = false; }, 500); });
+  hud.addEventListener("focusin", () => { if (!hudPtr) setHud(true); });
+  hud.addEventListener("focusout", e => { if (!hud.contains(e.relatedTarget)) setHud(false); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && hudOpen) { setHud(false); hbtn.blur(); } });
+  document.addEventListener("pointerdown", e => { if (hudOpen && !hud.contains(e.target)) setHud(false); });
+  const FACTS = ["Apogee: the highest point of an orbit.", "Solana produces a new block about every 400 ms.", "A token graduates when its bonding curve fills.", "Hotkeys: B buy, S sell, 1 to 4 for size."];
+  let factI = 0;
+  hbtn.addEventListener("click", e => {
+    hudPtr = false;
+    if (!finePointer) setHud(!hudOpen); else setHud(true);
+    burst(); toast(FACTS[factI++ % FACTS.length]);
+  });
+  $("#hud-chips").addEventListener("click", e => {
+    const c = e.target.closest(".hud-chip"); if (!c) return;
+    const k = c.dataset.k;
+    if (k === "mover" && moverId != null) { select(moverId); $("#terminal").scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); }
+    else if (k === "pairs") { $("#terminal").scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); $('[data-sort="new"]').click(); }
+    else if (k === "sol") { $("#perps").scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); }
+    else toast(`Block #${slot.toLocaleString("en-US")} confirmed`);
+  });
+  const bc = $("#hud-burst"), bg = bc.getContext("2d"); let parts = [], bRaf = 0;
+  function burst() {
+    if (reduce) return;
+    const d = Math.min(2, devicePixelRatio || 1); bc.width = 320 * d; bc.height = 320 * d; bg.setTransform(d, 0, 0, d, 0, 0);
+    for (let i = 0; i < 46; i++) { const a = rand(0, Math.PI * 2), v = rand(1.5, 4.5); parts.push({ x: 160, y: 160, vx: Math.cos(a) * v, vy: Math.sin(a) * v * .6, life: 1, r: rand(1, 2.6), c: pick(["#FFFFFF", "#C9CEFF", "#5B6CFF", "#9AA6FF"]) }); }
+    if (!bRaf) bRaf = requestAnimationFrame(stepBurst);
+  }
+  function stepBurst() {
+    bg.clearRect(0, 0, 320, 320);
+    parts.forEach(p => { p.x += p.vx; p.y += p.vy; p.vx *= .97; p.vy *= .97; p.life -= .022; bg.globalAlpha = Math.max(0, p.life); bg.fillStyle = p.c; bg.beginPath(); bg.arc(p.x, p.y, p.r, 0, 7); bg.fill(); });
+    bg.globalAlpha = 1; parts = parts.filter(p => p.life > 0);
+    bRaf = parts.length ? requestAnimationFrame(stepBurst) : 0;
+  }
+
+  /* ---------- hero starfield ---------- */
+  const sc = $("#stars-bg"), sg = sc.getContext("2d"); let stars = [], sW = 0, sH = 0, mx = 0, my = 0, sVisible = true, shoot = null;
+  function sizeStars() {
+    const r = sc.getBoundingClientRect(); if (!r.width) return; const d = Math.min(2, devicePixelRatio || 1);
+    sW = r.width; sH = r.height; sc.width = sW * d; sc.height = sH * d; sg.setTransform(d, 0, 0, d, 0, 0);
+    const n = Math.round(Math.min(220, sW * sH / 6000));
+    stars = Array.from({ length: n }, () => ({ x: rand(0, sW), y: rand(0, sH), z: pick([.2, .5, 1]), tw: rand(0, 6.28), r: rand(.4, 1.4) }));
+    drawStars(0);
+  }
+  function drawStars(t) {
+    sg.clearRect(0, 0, sW, sH);
+    stars.forEach(s2 => {
+      const x = (s2.x + mx * s2.z * 14 + t * .004 * s2.z) % sW, y = s2.y + my * s2.z * 10;
+      sg.globalAlpha = .35 + .45 * Math.abs(Math.sin(s2.tw + t * .0012 * (1 + s2.z)));
+      sg.fillStyle = s2.z === 1 ? "#E9ECFF" : "#9AA6FF"; sg.beginPath(); sg.arc(x < 0 ? x + sW : x, y, s2.r * (.6 + s2.z * .6), 0, 7); sg.fill();
+    });
+    if (shoot) { const k = (t - shoot.t0) / 900; if (k > 1) shoot = null; else { sg.globalAlpha = 1 - k; const x = shoot.x + k * 260, y = shoot.y + k * 110, gr = sg.createLinearGradient(x - 70, y - 30, x, y); gr.addColorStop(0, "rgba(201,206,255,0)"); gr.addColorStop(1, "rgba(201,206,255,.9)"); sg.strokeStyle = gr; sg.lineWidth = 1.5; sg.beginPath(); sg.moveTo(x - 70, y - 30); sg.lineTo(x, y); sg.stroke(); } }
+    sg.globalAlpha = 1;
+  }
+  function loopStars(t) { if (sVisible && !document.hidden) { if (!shoot && Math.random() < .004) shoot = { x: rand(0, sW * .7), y: rand(0, sH * .4), t0: t }; drawStars(t); } requestAnimationFrame(loopStars); }
+  sizeStars(); addEventListener("resize", sizeStars);
+  if (!reduce) {
+    requestAnimationFrame(loopStars);
+    $(".hero").addEventListener("pointermove", e => { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; });
+    if (window.IntersectionObserver) new IntersectionObserver(es => { sVisible = es[0].isIntersecting; }).observe($(".hero"));
+  }
+
+  /* ---------- polish: card glow, ripples, ticker refresh ---------- */
+  $$(".panel, .secgrid > div, .steps li, .tier, .pillars div").forEach(c => { c.classList.add("glow-card"); c.addEventListener("pointermove", e => { const r = c.getBoundingClientRect(); c.style.setProperty("--mx", e.clientX - r.left + "px"); c.style.setProperty("--my", e.clientY - r.top + "px"); }); });
+  document.addEventListener("pointerdown", e => {
+    const b = e.target.closest(".btn-primary, .go"); if (!b || reduce || b.disabled) return;
+    const r = b.getBoundingClientRect(), sz = Math.max(r.width, r.height), sp = document.createElement("span");
+    sp.className = "rip"; sp.style.cssText = `width:${sz}px;height:${sz}px;left:${e.clientX - r.left - sz / 2}px;top:${e.clientY - r.top - sz / 2}px`;
+    b.appendChild(sp); setTimeout(() => sp.remove(), 650);
+  });
+  setInterval(renderTicker, 6000);
   /* ---------- boot ---------- */
   renderTicker(); bumpSlot(); renderPresets(); renderBoard(); renderDetail(); countUp();
   sizeCanvas();

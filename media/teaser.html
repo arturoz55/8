@@ -190,7 +190,7 @@ function render(t) {
     const word = "APOGEE", n = Math.floor(clamp(seg(t, 3.6, 5)) * word.length + .001);
     if (t > 3.5) {
       text(word.slice(0, n), W / 2, H / 2 + 200, 150, FG, { weight: 800, spacing: 24, alpha: 1 - ease(seg(t, 6, 6.5)) });
-      text("The Solana trading terminal", W / 2, H / 2 + 310, 34, DIM, { weight: 500, alpha: ease(seg(t, 5, 5.6)) * (1 - ease(seg(t, 6, 6.5))) });
+      text("The multichain trading terminal", W / 2, H / 2 + 310, 34, DIM, { weight: 500, alpha: ease(seg(t, 5, 5.6)) * (1 - ease(seg(t, 6, 6.5))) });
     }
   }
 
@@ -214,7 +214,17 @@ function render(t) {
     const gr = g.createLinearGradient(-500, -120, 500, 120); gr.addColorStop(0, "#FFFFFF"); gr.addColorStop(.5, PALE); gr.addColorStop(1, BLUE);
     g.shadowColor = "rgba(91,108,255,.7)"; g.shadowBlur = 60; g.fillStyle = gr; g.fillText("$APGE", 0, 0); g.restore();
     text("COMING SOON", W / 2, H / 2 + 190, 48, FG, { mono: true, spacing: 18, alpha: ease(seg(t, 16.2, 16.9)) * (1 - ease(seg(t, 18.9, 19.35))) });
-    text("Only on Solana", W / 2, H / 2 + 270, 30, DIM, { weight: 500, alpha: ease(seg(t, 16.8, 17.4)) * (1 - ease(seg(t, 18.9, 19.35))) });
+    // nine chain badges pop in one by one
+    const CH9 = [["S", "#14F195", "#9945FF"], ["E", "#627EEA"], ["B", "#0052FF"], ["B", "#F3BA2F", null, "#111"], ["A", "#28A0F0"], ["P", "#8247E5"], ["A", "#E84142"], ["O", "#FF0420"], ["R", "#CCFF00", null, "#111"]];
+    const fadeOut = 1 - ease(seg(t, 18.9, 19.35));
+    CH9.forEach(([l, c1, c2, fg], i) => {
+      const k = ease(seg(t, 16.7 + i * .08, 17.1 + i * .08)), x = W / 2 + (i - 4) * 74, y = H / 2 + 285;
+      g.save(); g.globalAlpha = k * fadeOut; g.translate(x, y); g.scale(.6 + .4 * k, .6 + .4 * k);
+      let fill = c1; if (c2) { fill = g.createLinearGradient(-26, -26, 26, 26); fill.addColorStop(0, c2); fill.addColorStop(1, c1); }
+      g.fillStyle = fill; g.beginPath(); g.arc(0, 0, 26, 0, 7); g.fill();
+      g.restore(); text(l, x, y + 1, 24, fg || "#fff", { weight: 800, alpha: k * fadeOut });
+    });
+    text("Solana · Ethereum · Base · BNB Chain · Arbitrum · Polygon · Avalanche · Optimism · Robinhood Chain", W / 2, H / 2 + 355, 24, DIM, { weight: 500, alpha: ease(seg(t, 17.6, 18.1)) * fadeOut });
   }
 
   // Scene E: end card (19.2-22 s)

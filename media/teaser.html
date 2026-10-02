@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Apogee teaser</title>
+<style>
+@font-face{font-family:"Inter";font-weight:500;src:url(fonts/inter-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"Inter";font-weight:700;src:url(fonts/inter-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Inter";font-weight:800;src:url(fonts/inter-latin-800-normal.woff2) format("woff2")}
+@font-face{font-family:"JetBrains Mono";font-weight:500;src:url(fonts/jetbrains-mono-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"JetBrains Mono";font-weight:700;src:url(fonts/jetbrains-mono-latin-700-normal.woff2) format("woff2")}
+html,body{margin:0;background:#000;overflow:hidden}
+canvas{display:block}
+</style>
+</head>
+<body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script>
+/* Apogee teaser, 22 s. Everything is a pure function of t (seconds) so each frame renders identically. */
+const W = 1920, H = 1080, DUR = 22;
+const cv = document.getElementById("c"), g = cv.getContext("2d");
+const BLUE = "#5B6CFF", PALE = "#C9CEFF", FG = "#F2F3F7", DIM = "#8C90A1", UP = "#3DD68C", DOWN = "#F0596B";
+const SANS = "Inter, 'Liberation Sans', sans-serif", MONO = "'JetBrains Mono', 'DejaVu Sans Mono', monospace";
+
+/* --- helpers --- */
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, k) => a + (b - a) * k;
+const ease = k => (k = clamp(k), 1 - Math.pow(1 - k, 3));
+const easeIO = k => (k = clamp(k), k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+function rng(seed) { let a = seed >>> 0; return () => { a = a + 0x6D2B79F5 | 0; let x = Math.imul(a ^ a >>> 15, 1 | a); x = x + Math.imul(x ^ x >>> 7, 61 | x) ^ x; return ((x ^ x >>> 14) >>> 0) / 4294967296; }; }
+function rrect(x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+function text(s, x, y, size, color, opts = {}) {
+  g.save(); g.font = `${opts.weight || 700} ${size}px ${opts.mono ? MONO : SANS}`; g.fillStyle = color; g.textAlign = opts.align || "center"; g.textBaseline = "middle";
+  if (opts.spacing) g.letterSpacing = opts.spacing + "px";
+  g.globalAlpha *= opts.alpha == null ? 1 : opts.alpha; g.fillText(s, x, y); g.restore();
+}
+
+/* --- logo (same ringed planet as the site), as a vector image --- */
+const RING = "M3 50a47 12 0 1 0 94 0a47 12 0 1 0-94 0ZM9 48.5a41 6.5 0 1 0 82 0a41 6.5 0 1 0-82 0Z";
+const logoSvg = c => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><mask id="m" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="#fff"/><g transform="rotate(-18 50 50)"><path d="${RING}" fill="#000" stroke="#000" stroke-width="7" fill-rule="evenodd"/><rect width="100" height="47" fill="#fff"/></g></mask></defs><g transform="rotate(-18 50 50)"><path d="${RING}" fill="${c}" fill-rule="evenodd"/></g><circle cx="50" cy="50" r="25" fill="${c}" mask="url(#m)"/></svg>`;
+function loadImg(src) { return new Promise(r => { const i = new Image(); i.onload = () => r(i); i.src = src; }); }
+let LOGO, LOGO_BLUE;
+function planet(x, y, size, alpha = 1, rot = 0, img = LOGO, glow = 0) {
+  g.save(); g.globalAlpha *= alpha; g.translate(x, y); g.rotate(rot);
+  if (glow) { g.shadowColor = "rgba(91,108,255,.9)"; g.shadowBlur = glow; }
+  g.drawImage(img, -size / 2, -size / 2, size, size); g.restore();
+}
+
+/* --- starfield --- */
+const R0 = rng(7); const STARS = Array.from({ length: 420 }, () => ({ x: R0() * W, y: R0() * H, z: [.25, .5, 1][Math.floor(R0() * 3)], tw: R0() * 6.28, r: .5 + R0() * 1.4 }));
+function stars(t, push = 0) {
+  STARS.forEach(s => {
+    const cx = W / 2, cy = H / 2, k = 1 + push * s.z * .5;
+    let x = cx + (s.x - cx) * k - t * 6 * s.z, y = cy + (s.y - cy) * k;
+    x = ((x % W) + W) % W;
+    g.globalAlpha = .3 + .5 * Math.abs(Math.sin(s.tw + t * 1.3 * (1 + s.z)));
+    g.fillStyle = s.z === 1 ? "#E9ECFF" : "#9AA6FF"; g.beginPath(); g.arc(x, y, s.r * (.6 + s.z * .7), 0, 7); g.fill();
+  });
+  g.globalAlpha = 1;
+}
+function nebula(alpha) {
+  const gr = g.createRadialGradient(W * .72, H * .3, 0, W * .72, H * .3, 900); gr.addColorStop(0, `rgba(64,82,220,${.28 * alpha})`); gr.addColorStop(1, "rgba(0,0,0,0)");
+  g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  const g2 = g.createRadialGradient(W * .2, H * .85, 0, W * .2, H * .85, 700); g2.addColorStop(0, `rgba(91,108,255,${.14 * alpha})`); g2.addColorStop(1, "rgba(0,0,0,0)");
+  g.fillStyle = g2; g.fillRect(0, 0, W, H);
+}
+function orbitDots(cx, cy, rx, ry, t, n, speed, alpha, size = 4) {
+  g.save(); g.globalAlpha = alpha; g.strokeStyle = "rgba(91,108,255,.45)"; g.setLineDash([4, 10]); g.lineDashOffset = -t * 40; g.lineWidth = 2;
+  g.beginPath(); g.ellipse(cx, cy, rx, ry, -.31, 0, 7); g.stroke(); g.setLineDash([]);
+  for (let i = 0; i < n; i++) { const a = t * speed + i * 6.283 / n, x = Math.cos(a) * rx, y = Math.sin(a) * ry, c = Math.cos(-.31), s2 = Math.sin(-.31);
+    g.fillStyle = i % 2 ? PALE : BLUE; g.shadowColor = BLUE; g.shadowBlur = 16; g.beginPath(); g.arc(cx + x * c - y * s2, cy + x * s2 + y * c, size, 0, 7); g.fill(); }
+  g.restore();
+}
+
+/* --- critter avatar (the site's original procedural characters, simplified) --- */
+function critter(x, y, s, hue, seed) {
+  const r = rng(seed); g.save(); g.translate(x, y); g.scale(s / 64, s / 64);
+  rrect(0, 0, 64, 64, 14); g.fillStyle = `hsl(${(hue + 200) % 360} 35% 16%)`; g.fill(); g.clip();
+  const ear = Math.floor(r() * 3);
+  g.fillStyle = `hsl(${hue} 60% 46%)`;
+  if (ear === 0) { g.beginPath(); g.moveTo(16, 26); g.lineTo(14, 6); g.lineTo(28, 18); g.moveTo(48, 26); g.lineTo(50, 6); g.lineTo(36, 18); g.fill(); }
+  if (ear === 1) { g.beginPath(); g.arc(17, 18, 8, 0, 7); g.arc(47, 18, 8, 0, 7); g.fill(); }
+  if (ear === 2) { g.beginPath(); g.ellipse(23, 10, 5, 13, 0, 0, 7); g.ellipse(41, 10, 5, 13, 0, 0, 7); g.fill(); }
+  g.fillStyle = `hsl(${hue} 72% 62%)`; g.beginPath(); g.ellipse(32, 38, 22, 21, 0, 0, 7); g.fill();
+  g.fillStyle = `hsl(${hue} 85% 84%)`; g.beginPath(); g.ellipse(32, 46, 13, 10, 0, 0, 7); g.fill();
+  g.fillStyle = "#fff"; g.beginPath(); g.arc(22, 33, 5.5, 0, 7); g.arc(42, 33, 5.5, 0, 7); g.fill();
+  g.fillStyle = "#0A0D1A"; g.beginPath(); g.arc(23, 34, 3, 0, 7); g.arc(43, 34, 3, 0, 7); g.fill();
+  g.strokeStyle = "#0A0D1A"; g.lineWidth = 2; g.lineCap = "round"; g.beginPath(); g.moveTo(28, 43); g.quadraticCurveTo(32, 47, 36, 43); g.stroke();
+  g.restore();
+}
+
+/* --- feature cards --- */
+const CARDS = [
+  { title: "Pulse", sub: "Spot new launches the second they go live.", kind: "pulse" },
+  { title: "Wallet Tracker", sub: "Follow the wallets that move first.", kind: "feed" },
+  { title: "Perps up to 50x", sub: "Long or short from the same balance.", kind: "perps" },
+  { title: "Cashback", sub: "Every trade pays you back.", kind: "cash" }
+];
+const SYMS = ["GLOTOAD", "MOSSKOI", "VOLTYAK", "LUNAMOTH", "ECHOFOX", "PIXELOWL", "DRIFTCRAB", "EMBERYAK"];
+function cardVisual(kind, x, y, w, h, lt) {
+  g.save(); rrect(x, y, w, h, 18); g.fillStyle = "#07080C"; g.fill(); g.strokeStyle = "#1E2231"; g.lineWidth = 2; g.stroke(); g.clip();
+  if (kind === "pulse") {
+    for (let col = 0; col < 3; col++) {
+      const cx = x + 22 + col * (w - 44) / 3;
+      text(["Fresh", "Bonding", "Graduated"][col], cx + 4, y + 34, 22, DIM, { align: "left", weight: 500 });
+      for (let i = 0; i < 6; i++) {
+        const k = ease(seg(lt, .05 + i * .07 + col * .04, .35 + i * .07 + col * .04)), ry = y + 70 + i * 68 + (1 - k) * -30;
+        g.globalAlpha = k; critter(cx, ry, 46, [24, 160, 210, 270, 320, 42][(i + col) % 6], i * 31 + col * 7 + 3);
+        g.fillStyle = "#2A3047"; g.fillRect(cx + 58, ry + 10, 90 + ((i * 37 + col * 13) % 60), 9);
+        g.fillStyle = BLUE; g.fillRect(cx + 58, ry + 30, (60 + ((i * 53 + col * 29) % 90)) * clamp(lt * 1.6), 6);
+        const pct = (12 + (i * 17 + col * 23) % 70) * ((i + col) % 3 === 2 ? -.4 : 1);
+        g.fillStyle = "#07080C"; g.fillRect(cx + (w - 44) / 3 - 84, ry + 8, 70, 28);
+        text((pct >= 0 ? "+" : "") + pct.toFixed(0) + "%", cx + (w - 44) / 3 - 18, ry + 22, 20, pct >= 0 ? UP : DOWN, { align: "right", mono: true, weight: 700 });
+        g.globalAlpha = 1;
+      }
+    }
+  }
+  if (kind === "feed") {
+    for (let i = 0; i < 5; i++) {
+      const k = ease(seg(lt, .05 + i * .12, .3 + i * .12)), ry = y + 30 + i * 96;
+      g.globalAlpha = k; rrect(x + 24, ry + (1 - k) * 24, w - 48, 80, 14); g.fillStyle = "#0E1018"; g.fill(); g.strokeStyle = i === 0 ? BLUE : "#1E2231"; g.stroke();
+      critter(x + 40, ry + 12 + (1 - k) * 24, 56, [210, 24, 160, 320, 42][i], 900 + i * 131);
+      const buy = i % 3 !== 1; rrect(x + 112, ry + 26 + (1 - k) * 24, 76, 30, 6); g.fillStyle = buy ? "rgba(61,214,140,.16)" : "rgba(240,89,107,.16)"; g.fill();
+      text(buy ? "BUY" : "SELL", x + 150, ry + 41 + (1 - k) * 24, 18, buy ? UP : DOWN, { mono: true });
+      text(["Night Owl", "Quiet Whale", "Early Bird", "Sniper Fox", "Lucky Seven"][i] + (buy ? " bought " : " sold ") + (1.2 + i * 2.3).toFixed(1) + " SOL of " + SYMS[i], x + 206, ry + 41 + (1 - k) * 24, 24, FG, { align: "left", weight: 500 });
+      g.globalAlpha = 1;
+    }
+  }
+  if (kind === "perps") {
+    const R = rng(42), pts = []; let v = .5; for (let i = 0; i < 90; i++) { v = clamp(v + (R() - .44) * .07, .08, .92); pts.push(v); }
+    const n = Math.max(2, Math.floor(pts.length * ease(seg(lt, .02, .7)))), px = i => x + 30 + i / 89 * (w - 160), py = v2 => y + h - 40 - v2 * (h - 90);
+    const gr = g.createLinearGradient(0, y, 0, y + h); gr.addColorStop(0, "rgba(91,108,255,.35)"); gr.addColorStop(1, "rgba(91,108,255,0)");
+    g.beginPath(); for (let i = 0; i < n; i++) i ? g.lineTo(px(i), py(pts[i])) : g.moveTo(px(i), py(pts[i])); g.lineTo(px(n - 1), y + h); g.lineTo(px(0), y + h); g.closePath(); g.fillStyle = gr; g.fill();
+    g.beginPath(); for (let i = 0; i < n; i++) i ? g.lineTo(px(i), py(pts[i])) : g.moveTo(px(i), py(pts[i])); g.strokeStyle = "#7D8BFF"; g.lineWidth = 4; g.stroke();
+    const ey = py(pts[30]), ly = py(pts[30] - .3);
+    g.setLineDash([10, 10]); g.lineWidth = 2; g.strokeStyle = UP; g.beginPath(); g.moveTo(x + 30, ey); g.lineTo(x + w - 130, ey); g.stroke();
+    g.strokeStyle = DOWN; g.beginPath(); g.moveTo(x + 30, ly); g.lineTo(x + w - 130, ly); g.stroke(); g.setLineDash([]);
+    text("LONG 25x entry", x + w - 140, ey + 26, 20, UP, { align: "right", mono: true }); text("liquidation", x + w - 140, ly + 26, 20, DOWN, { align: "right", mono: true });
+    const last = py(pts[n - 1]); g.fillStyle = "#fff"; g.beginPath(); g.arc(px(n - 1), last, 8, 0, 7); g.fill();
+    rrect(x + w - 122, last - 20, 104, 40, 8); g.fillStyle = BLUE; g.fill(); text("TP", x + w - 70, last, 22, "#05061A", { mono: true });
+  }
+  if (kind === "cash") {
+    const pops = [.08, .32, .56];
+    pops.forEach((p, i) => {
+      const k = ease(seg(lt, p, p + .14)), ry = y + 50 + i * 120;
+      g.globalAlpha = k; rrect(x + w / 2 - 260, ry + (1 - k) * -30, 520, 96, 16); g.fillStyle = "#12141D"; g.fill(); g.strokeStyle = "#2A3047"; g.lineWidth = 2; g.stroke();
+      text(["0.12", "0.05", "0.31"][i] + " SOL received", x + w / 2 - 230, ry + 32 + (1 - k) * -30, 26, FG, { align: "left", weight: 700 });
+      text("Cashback for your last trade", x + w / 2 - 230, ry + 66 + (1 - k) * -30, 20, DIM, { align: "left", weight: 500 });
+      text("now", x + w / 2 + 230, ry + 32 + (1 - k) * -30, 18, DIM, { align: "right", mono: true });
+      g.globalAlpha = 1;
+    });
+    const tot = (.12 * ease(seg(lt, .08, .22)) + .05 * ease(seg(lt, .32, .46)) + .31 * ease(seg(lt, .56, .7))).toFixed(2);
+    text("+" + tot + " SOL", x + w / 2, y + h - 50, 44, UP, { mono: true });
+  }
+  g.restore();
+}
+function card(i, lt, enterK, exitK) {
+  const c = CARDS[i], cw = 1500, ch = 640, x0 = (W - cw) / 2, y0 = 250;
+  const dx = (1 - ease(enterK)) * 420 - easeIO(exitK) * 420, a = ease(enterK) * (1 - easeIO(exitK));
+  g.save(); g.globalAlpha = a; g.translate(dx, 0);
+  rrect(x0, y0, cw, ch, 28); g.fillStyle = "rgba(11,12,17,.92)"; g.fill();
+  const bg2 = g.createLinearGradient(x0, y0, x0 + cw, y0 + ch); bg2.addColorStop(0, "rgba(91,108,255,.9)"); bg2.addColorStop(.5, "rgba(30,34,49,1)"); bg2.addColorStop(1, "rgba(91,108,255,.4)");
+  g.strokeStyle = bg2; g.lineWidth = 3; g.stroke();
+  text("0" + (i + 1) + " / 04", x0 + 70, y0 + 80, 24, BLUE, { align: "left", mono: true, spacing: 2 });
+  text(c.title, x0 + 70, y0 + 170, c.title.length > 12 ? 60 : 72, FG, { align: "left", weight: 800 });
+  g.save(); g.font = `500 32px ${SANS}`; g.fillStyle = DIM; g.textBaseline = "middle";
+  const words = c.sub.split(" "); let line = "", ly = y0 + 260; words.forEach(wd => { const tst = line ? line + " " + wd : wd; if (g.measureText(tst).width > 480) { g.fillText(line, x0 + 70, ly); line = wd; ly += 46; } else line = tst; }); g.fillText(line, x0 + 70, ly); g.restore();
+  cardVisual(c.kind, x0 + 640, y0 + 40, cw - 700, ch - 80, lt);
+  g.restore();
+}
+
+/* --- main render --- */
+function render(t) {
+  g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.fillStyle = "#000"; g.fillRect(0, 0, W, H);
+  const push = easeIO(seg(t, 3, 6)) * .6 + easeIO(seg(t, 15, 18)) * .5;
+  nebula(clamp(t / 2.5)); stars(t, push);
+
+  // Scene A + B: planet reveal and wordmark (0-6.4 s)
+  if (t < 6.6) {
+    const a = ease(seg(t, .2, 2.2)) * (1 - ease(seg(t, 6, 6.5)));
+    const size = lerp(300, 360, easeIO(seg(t, 3, 5.6))) * lerp(.85, 1, ease(seg(t, .2, 2.6)));
+    const py = lerp(H / 2 - 20, H / 2 - 120, easeIO(seg(t, 3, 4.6)));
+    orbitDots(W / 2, py, 330, 92, t, 3, 1.1, a * ease(seg(t, 1.2, 2.6)), 6);
+    planet(W / 2, py, size, a, Math.sin(t * .9) * .05, LOGO, 40 * a);
+    // glint travelling along the ring
+    const gk = seg(t, 1.4, 2.6); if (gk > 0 && gk < 1) { const gx = W / 2 - 160 + gk * 320, gy = py + 40 - gk * 100; const fl = g.createRadialGradient(gx, gy, 0, gx, gy, 90); fl.addColorStop(0, "rgba(255,255,255,.9)"); fl.addColorStop(.2, "rgba(201,206,255,.4)"); fl.addColorStop(1, "rgba(201,206,255,0)"); g.fillStyle = fl; g.fillRect(gx - 90, gy - 90, 180, 180); }
+    text("Something is entering orbit.", W / 2, H / 2 + 230, 44, FG, { weight: 500, alpha: ease(seg(t, 1, 2)) * (1 - ease(seg(t, 2.9, 3.4))) });
+    // wordmark types in
+    const word = "APOGEE", n = Math.floor(clamp(seg(t, 3.6, 5)) * word.length + .001);
+    if (t > 3.5) {
+      text(word.slice(0, n), W / 2, H / 2 + 200, 150, FG, { weight: 800, spacing: 24, alpha: 1 - ease(seg(t, 6, 6.5)) });
+      text("The Solana trading terminal", W / 2, H / 2 + 310, 34, DIM, { weight: 500, alpha: ease(seg(t, 5, 5.6)) * (1 - ease(seg(t, 6, 6.5))) });
+    }
+  }
+
+  // Scene C: feature cards (6.2-15.2 s), 2.25 s each
+  if (t > 6.2 && t < 15.4) {
+    planet(150, 110, 90, ease(seg(t, 6.2, 6.8)) * (1 - ease(seg(t, 14.9, 15.3))));
+    text("APOGEE", 210, 112, 34, FG, { align: "left", weight: 800, spacing: 6, alpha: ease(seg(t, 6.2, 6.8)) * (1 - ease(seg(t, 14.9, 15.3))) });
+    for (let i = 0; i < 4; i++) {
+      const s0 = 6.3 + i * 2.25, s1 = s0 + 2.25;
+      if (t >= s0 - .1 && t <= s1 + .45) card(i, seg(t, s0, s1), seg(t, s0, s0 + .45), i === 3 ? seg(t, 14.8, 15.3) : seg(t, s1 - .3, s1 + .15));
+    }
+  }
+
+  // Scene D: $APGE (15.2-19.2 s)
+  if (t > 15.1 && t < 19.4) {
+    const a = ease(seg(t, 15.2, 15.9)) * (1 - ease(seg(t, 18.9, 19.35)));
+    orbitDots(W / 2, H / 2 - 30, 620, 170, t, 8, .9, a, 7);
+    const sc = lerp(.7, 1, ease(seg(t, 15.2, 16.4)));
+    g.save(); g.globalAlpha = a; g.translate(W / 2, H / 2 - 40); g.scale(sc, sc);
+    g.font = `800 260px ${SANS}`; g.textAlign = "center"; g.textBaseline = "middle";
+    const gr = g.createLinearGradient(-500, -120, 500, 120); gr.addColorStop(0, "#FFFFFF"); gr.addColorStop(.5, PALE); gr.addColorStop(1, BLUE);
+    g.shadowColor = "rgba(91,108,255,.7)"; g.shadowBlur = 60; g.fillStyle = gr; g.fillText("$APGE", 0, 0); g.restore();
+    text("COMING SOON", W / 2, H / 2 + 190, 48, FG, { mono: true, spacing: 18, alpha: ease(seg(t, 16.2, 16.9)) * (1 - ease(seg(t, 18.9, 19.35))) });
+    text("Only on Solana", W / 2, H / 2 + 270, 30, DIM, { weight: 500, alpha: ease(seg(t, 16.8, 17.4)) * (1 - ease(seg(t, 18.9, 19.35))) });
+  }
+
+  // Scene E: end card (19.2-22 s)
+  if (t > 19.2) {
+    const a = ease(seg(t, 19.3, 20));
+    planet(W / 2, H / 2 - 150, 240, a, Math.sin(t * .9) * .04, LOGO, 50);
+    text("APOGEE", W / 2, H / 2 + 50, 110, FG, { weight: 800, spacing: 18, alpha: a });
+    text("@UseApogee", W / 2, H / 2 + 170, 52, BLUE, { mono: true, alpha: ease(seg(t, 19.8, 20.4)) });
+    text("Follow for the launch", W / 2, H / 2 + 240, 34, DIM, { weight: 500, alpha: ease(seg(t, 20.1, 20.7)) });
+    text("Not financial advice. The only official contract will be posted by @UseApogee.", W / 2, H - 50, 20, "#5A5F70", { weight: 500, alpha: ease(seg(t, 20.2, 20.8)) });
+  }
+
+  // fade from / to black
+  const fade = Math.max(1 - seg(t, 0, .5), seg(t, DUR - .6, DUR));
+  if (fade > 0) { g.globalAlpha = fade; g.fillStyle = "#000"; g.fillRect(0, 0, W, H); g.globalAlpha = 1; }
+}
+
+window.ready = (async () => {
+  await document.fonts.load(`800 40px Inter`); await document.fonts.load(`500 40px Inter`); await document.fonts.load(`700 40px Inter`);
+  await document.fonts.load(`500 40px "JetBrains Mono"`); await document.fonts.load(`700 40px "JetBrains Mono"`);
+  LOGO = await loadImg("data:image/svg+xml;charset=utf-8," + encodeURIComponent(logoSvg("#F2F3F7")));
+  render(0); return true;
+})();
+window.render = render; window.DUR = DUR;
+// preview in a normal browser: play in real time
+if (!navigator.webdriver) { const t0 = performance.now(); (async () => { await window.ready; (function loop(now) { render(((now - t0) / 1000) % DUR); requestAnimationFrame(loop); })(t0); })(); }
+</script>
+</body>
+</html>

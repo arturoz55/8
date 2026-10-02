@@ -285,6 +285,152 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
 .go.busy::after{content:"";position:absolute;left:50%;top:50%;width:16px;height:16px;margin:-8px;border-radius:50%;border:2px solid rgba(0,0,0,.35);border-top-color:#05061A;animation:spin .6s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media (max-width:820px){.search input{width:90px}.term-bar .sim{display:none}}
+
+/* ---- v5: nav, drawings, new sections ---- */
+.nav-links a{position:relative;padding:6px 0}
+.nav-links a.on{color:var(--fg)}
+.nav-links a.on::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;border-radius:2px;background:var(--rufous)}
+.burger{display:none;background:#1A1C24;border:0;border-radius:999px;width:38px;height:38px;padding:0;flex-direction:column;justify-content:center;align-items:center;gap:4px}
+.burger span{display:block;width:16px;height:2px;background:var(--fg);border-radius:2px;transition:transform .2s,opacity .2s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+@media (max-width:1180px){
+  .burger{display:flex}
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;margin:0;padding:8px var(--gutter) 16px;background:rgba(0,0,0,.95);border-bottom:1px solid var(--line)}
+  .nav-links.open{display:flex}
+  .nav-links a{padding:12px 0;font-size:16px;border-bottom:1px solid var(--line)}
+  .nav-links a.on::after{display:none}
+}
+@media (max-width:480px){#auth-out .btn-dark{display:none}}
+.av{background:none;overflow:hidden}
+.av svg,.mock .r i svg{width:100%;height:100%;display:block}
+.mock .r i{background:none;overflow:hidden}
+.book{display:grid;align-content:center;gap:3px;font:500 10px var(--f-mono);padding-left:8px}
+.book div{display:flex;justify-content:space-between;position:relative;padding:1px 4px}
+.book div i{position:absolute;right:0;top:0;bottom:0;border-radius:2px;opacity:.18}
+.book .mid{color:var(--fg);font-size:12px;justify-content:center;padding:4px}
+.plant{width:min(150px,90%);height:auto}
+.plant .leaf{transform-box:fill-box;animation:sway 3s ease-in-out infinite alternate}
+.plant .l1{transform-origin:100% 100%}.plant .l2{transform-origin:0 100%;animation-delay:-1.5s}
+.plant .coin{animation:bob 2.4s ease-in-out infinite}
+@keyframes sway{to{transform:rotate(-8deg)}}
+@keyframes bob{50%{transform:translateY(-6px)}}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.panel-h{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.panel-h small{color:var(--dim);font-size:12px}
+.split2{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+@media (min-width:900px){.split2{grid-template-columns:minmax(0,1fr) minmax(0,1.4fr)}}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--ink);border-radius:999px;padding:5px 12px;font-size:12.5px;color:var(--dim)}
+.chip[aria-pressed="true"]{border-color:var(--rufous);color:var(--fg);background:var(--rufous-soft)}
+.wallets{display:grid;gap:8px}
+.wal{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px;border-radius:8px;border:1px solid transparent;transition:background .2s,border-color .2s}
+.wal:hover{background:var(--raise)}
+.wal .pic{width:40px;height:40px;border-radius:10px;overflow:hidden}
+.wal .pic svg{width:100%;height:100%;display:block}
+.wal b{font-size:14px;display:block}
+.wal small{font:400 11px var(--f-mono);color:var(--dim)}
+.wal .follow{border:1px solid var(--line);background:none;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;min-width:84px}
+.wal .follow[aria-pressed="true"]{background:var(--rufous);border-color:var(--rufous);color:#05061A}
+.feed{display:grid;gap:6px;height:360px;overflow:hidden;align-content:start}
+.fi{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 8px;border-radius:8px;background:var(--ink);border:1px solid var(--line);width:100%;text-align:left;font-size:12.5px;animation:enter .45s ease-out}
+.fi:hover{border-color:var(--rufous)}
+.fi .pic{width:30px;height:30px;border-radius:8px;overflow:hidden}
+.fi .pic svg{width:100%;height:100%;display:block}
+.fi span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fi time{font:400 11px var(--f-mono);color:var(--dim)}
+.tag{font:700 10px var(--f-mono);padding:2px 6px;border-radius:4px;margin-right:6px}
+.tag.b{background:var(--up-soft);color:var(--up)}.tag.s{background:var(--down-soft);color:var(--down)}
+.hint{color:var(--dim);font-size:12px;margin:10px 0 0}
+.empty-feed{color:var(--dim);font-size:13px;padding:20px 4px}
+
+.perp{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+@media (min-width:960px){.perp{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}}
+.perp-chart{display:flex;flex-direction:column}
+.perp-chart canvas{width:100%;flex:1 1 auto;min-height:300px;height:300px;display:block;border-radius:8px;background:linear-gradient(var(--ink),var(--panel))}
+.big{font-size:20px;font-weight:700}
+.perp-form{display:grid;gap:10px;align-content:start}
+.lbl{font-size:12.5px;color:var(--dim);display:flex;justify-content:space-between}
+.lbl b{color:var(--fg);font-family:var(--f-mono)}
+.range{width:100%;accent-color:var(--rufous)}
+.ticks{display:flex;justify-content:space-between;font:400 10.5px var(--f-mono);color:var(--dim);margin-top:-6px}
+.kv2{margin:0;display:grid;gap:6px;border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--ink)}
+.kv2 div{display:flex;justify-content:space-between;font-size:12.5px}
+.kv2 dt{color:var(--dim)}.kv2 dd{margin:0;font:600 12.5px var(--f-mono)}
+.whatif{font:600 13px var(--f-mono);padding:10px;border-radius:8px;background:var(--ink);border:1px solid var(--line);text-align:center}
+.whatif.liq{border-color:var(--down);color:var(--down)}
+.ppos{display:grid;gap:6px;margin-top:10px}
+.pp{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:10px;align-items:center;font:500 12px var(--f-mono);padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--ink)}
+.pp button{border:1px solid var(--line);background:none;border-radius:6px;padding:3px 10px;font-size:11.5px}
+.pp button:hover{border-color:var(--down);color:var(--down)}
+
+.yield{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+@media (min-width:900px){.yield{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.ycalc{display:grid;gap:10px;align-content:start}
+.ybig{display:grid;gap:2px;padding:12px 0}
+.ybig span{color:var(--dim);font-size:12.5px}
+.ybig strong{font:700 34px var(--f-mono);font-variant-numeric:tabular-nums}
+.ybig small{font:600 13px var(--f-mono)}
+#ychart{width:100%;height:150px;display:block}
+.ygarden{display:grid;place-items:center;background:radial-gradient(80% 70% at 50% 100%,rgba(91,108,255,.16),transparent),var(--panel)}
+#garden{width:100%;max-width:420px;height:auto}
+#garden .sun{animation:bob 4s ease-in-out infinite}
+#tree path,#tree circle{transition:all .5s cubic-bezier(.2,.7,.2,1)}
+
+.tbl-wrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
+.tbl th{text-align:left;font-weight:500;color:var(--dim);padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl th button{background:none;border:0;color:inherit;padding:0;font:inherit;display:inline-flex;gap:4px;align-items:center}
+.tbl th button[aria-sort]{color:var(--fg)}
+.tbl th button[aria-sort="descending"]::after{content:"↓"}
+.tbl td{padding:10px;border-bottom:1px solid rgba(30,34,49,.7);font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tbl tbody tr{transition:background .15s}
+.tbl tbody tr:hover{background:var(--raise)}
+.tbl .who2{display:flex;align-items:center;gap:10px;font-family:var(--f-body);font-weight:600}
+.tbl .who2 i{width:30px;height:30px;border-radius:8px;overflow:hidden;flex:none}
+.tbl .who2 i svg{width:100%;height:100%;display:block}
+.medal{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:700;color:#05061A}
+
+.appsplit{display:grid;grid-template-columns:minmax(0,1fr);gap:48px;align-items:center}
+@media (min-width:880px){.appsplit{grid-template-columns:minmax(0,.8fr) minmax(0,1fr)}}
+.appcopy h2{font-size:clamp(28px,3.6vw,44px);font-weight:600;letter-spacing:-.02em;margin-top:14px}
+.phone{justify-self:center;width:min(270px,80vw);aspect-ratio:9/18.5;max-width:100%;border-radius:38px;padding:10px;background:linear-gradient(145deg,#2A2E3C,#0D0F15);box-shadow:0 0 0 2px #333849,0 40px 90px -30px rgba(91,108,255,.55);position:relative;transform:rotate(-4deg);transition:transform .5s}
+.phone:hover{transform:rotate(0) translateY(-6px)}
+.notch{position:absolute;top:18px;left:50%;width:80px;height:20px;margin-left:-40px;border-radius:12px;background:#000;z-index:2}
+.screen{height:100%;border-radius:30px;background:#06070B;overflow:hidden;padding:44px 12px 12px;display:flex;flex-direction:column;gap:8px}
+.ph-top{display:flex;justify-content:space-between;font-size:13px}
+.ph-chart{height:110px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.ph-chart canvas{width:100%;height:100%;display:block}
+#ph-rows{display:grid;gap:6px;flex:1;overflow:hidden;align-content:start}
+.ph-row{display:grid;grid-template-columns:26px 1fr auto;gap:8px;align-items:center;font-size:11px}
+.ph-row i{width:26px;height:26px;border-radius:7px;overflow:hidden}
+.ph-row i svg{width:100%;height:100%;display:block}
+.ph-btns{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ph-btns span{text-align:center;padding:8px;border-radius:10px;font-weight:700;font-size:12px}
+.ph-btns .b{background:var(--up);color:#06140D}.ph-btns .s{background:var(--down);color:#1A0509}
+.wait{margin-top:26px;display:grid;gap:8px;max-width:440px}
+.wait-row{display:flex;gap:8px;flex-wrap:wrap}
+.wait-row input{flex:1;min-width:180px;background:var(--ink);border:1px solid var(--line);border-radius:999px;padding:10px 16px;color:var(--fg);font:500 14px var(--f-body);outline:none}
+.wait-row input:focus{border-color:var(--rufous)}
+
+.cta2{display:grid;grid-template-columns:minmax(0,1fr);gap:24px;align-items:center;border:1px solid var(--line);border-radius:18px;padding:clamp(24px,5vw,56px);background:radial-gradient(500px 260px at 20% 30%,rgba(91,108,255,.22),transparent 70%),var(--panel)}
+@media (min-width:800px){.cta2{grid-template-columns:260px minmax(0,1fr)}}
+.cta2 h2{font-size:clamp(28px,3.6vw,44px);font-weight:600;letter-spacing:-.02em}
+.cta2 p{color:var(--dim);margin:12px 0 22px;max-width:52ch}
+.mascot{width:100%;max-width:260px;height:auto;justify-self:center}
+.mascot .hover{animation:hov 3s ease-in-out infinite}
+.mascot .wing{transform-box:fill-box}
+.mascot .wl{transform-origin:100% 60%;animation:flapL .5s ease-in-out infinite alternate}
+.mascot .wr{transform-origin:0 60%;animation:flapR .5s ease-in-out infinite alternate}
+.mascot .eyes{transform-box:fill-box;transform-origin:center;animation:blink 4s infinite}
+.mascot .shadow{animation:shad 3s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes hov{50%{transform:translateY(-10px)}}
+@keyframes flapL{to{transform:rotate(14deg) scaleY(.8)}}
+@keyframes flapR{to{transform:rotate(-14deg) scaleY(.8)}}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes shad{50%{transform:scaleX(.8);opacity:.15}}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
@@ -389,10 +535,14 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
       <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 L29 16 L16 29 L3 16 Z M16 10 L10 16 L16 22 L22 16 Z" fill="#F2F3F7" fill-rule="evenodd"/></svg>
       Kestrel <small>Pro</small>
     </a>
+    <nav class="nav-links" id="nav-links" aria-label="Sections">
+      <a href="#terminal">Terminal</a><a href="#tracker">Tracker</a><a href="#perps">Perps</a><a href="#yield">Yield</a><a href="#leaders">Leaderboard</a><a href="#rewards">Rewards</a><a href="#app">App</a><a href="#faq">FAQ</a>
+    </nav>
     <div class="nav-cta">
       <span class="status"><span class="dot"></span><span id="slot" class="mono">slot —</span></span>
       <span id="auth-out" class="nav-auth"><button class="btn btn-dark" type="button" data-auth="login">Login</button><button class="btn btn-primary" type="button" data-auth="signup">Sign up</button></span>
       <span id="auth-in" class="nav-auth" hidden><span class="who" id="who"></span><button class="btn btn-dark" type="button" id="logout">Log out</button></span>
+      <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links"><span></span><span></span><span></span></button>
     </div>
   </div>
 </header>
@@ -483,7 +633,7 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
       </div>
       <div class="carousel" id="carousel">
         <article class="pcard" data-i="0"><div class="glow"></div>
-          <div class="mock" style="grid-template-columns:1fr 1fr;align-content:start"><div style="display:grid;gap:6px"><div class="bar" style="width:60%;background:#2E355A"></div><div class="bar"></div><div class="bar" style="width:80%"></div><div class="bar" style="width:50%"></div></div><canvas data-mini="spot"></canvas></div>
+          <div class="mock" style="grid-template-columns:1.3fr 1fr;align-content:stretch"><canvas data-mini="spot"></canvas><div class="book" id="book"></div></div>
           <div class="cap"><span>Fills in one block</span><small>Limit orders · Migration sniper · Auto-sell rules</small></div></article>
         <article class="pcard" data-i="1"><div class="glow"></div>
           <div class="mock" style="grid-template-columns:repeat(3,1fr);align-content:start" id="mock-pulse"></div>
@@ -492,8 +642,107 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
           <div class="mock"><canvas data-mini="perp"></canvas></div>
           <div class="cap"><span>Up to 50x leverage</span><small>Take-profit and stop-loss on entry</small></div></article>
         <article class="pcard" data-i="3"><div class="glow"></div>
-          <div class="mock" style="place-items:center"><div style="display:grid;gap:8px;justify-items:center;font-family:var(--f-mono)"><span style="font-size:11px;color:var(--dim)">Idle balance earning</span><strong style="font-size:30px" id="apy">6.80%</strong><span style="font-size:11px;color:var(--up)" id="earned">+0.000000 SOL</span></div></div>
+          <div class="mock" style="grid-template-columns:1fr 1fr;place-items:center"><svg class="plant" viewBox="0 0 120 140" aria-hidden="true">
+              <ellipse cx="60" cy="128" rx="40" ry="6" fill="#0E1222"/>
+              <path d="M38 104h44l-6 26H44z" fill="#2A3366"/><rect x="34" y="98" width="52" height="9" rx="2" fill="#3A4690"/>
+              <path class="stem" d="M60 99 C60 80 58 62 62 40" stroke="#3DD68C" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <path class="leaf l1" d="M60 80 C44 78 36 66 38 58 C50 58 60 66 60 80Z" fill="#3DD68C"/>
+              <path class="leaf l2" d="M61 64 C76 62 84 50 82 42 C70 42 61 50 61 64Z" fill="#5BE3A2"/>
+              <g class="coin"><circle cx="62" cy="30" r="13" fill="#F2C94C"/><circle cx="62" cy="30" r="9" fill="none" stroke="#C9A227" stroke-width="2"/><text x="62" y="34.5" text-anchor="middle" font-size="12" font-weight="700" fill="#8A6A10" font-family="Inter,sans-serif">◎</text></g>
+            </svg><div style="display:grid;gap:8px;justify-items:center;font-family:var(--f-mono)"><span style="font-size:11px;color:var(--dim)">Idle balance earning</span><strong style="font-size:28px" id="apy">6.80%</strong><span style="font-size:11px;color:var(--up)" id="earned">+0.000000 SOL</span></div></div>
           <div class="cap"><span>Earn on idle SOL</span><small>No lockup · Withdraw to trading in one step</small></div></article>
+      </div>
+    </div>
+  </section>
+
+
+  <section id="tracker">
+    <div class="wrap">
+      <div class="chead"><h2>Wallet Tracker</h2><p>Follow the wallets that move first. Every buy and sell shows up the moment it lands.</p></div>
+      <div class="split2">
+        <div class="panel">
+          <div class="panel-h"><b>Tracked wallets</b><small id="follow-count">0 following</small></div>
+          <div id="wallets" class="wallets"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><b>Live feed</b>
+            <div class="chips" role="group" aria-label="Filter feed"><button type="button" class="chip" aria-pressed="true" data-f="all">All</button><button type="button" class="chip" aria-pressed="false" data-f="buy">Buys</button><button type="button" class="chip" aria-pressed="false" data-f="sell">Sells</button></div>
+          </div>
+          <div id="feed" class="feed" aria-live="off"></div>
+          <p class="hint">Click a trade to open that token in the terminal.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="perps">
+    <div class="wrap">
+      <div class="chead"><h2>Perps</h2><p>Go long or short with up to 50x. See your liquidation price before you open.</p></div>
+      <div class="perp">
+        <div class="panel perp-chart">
+          <div class="panel-h"><div class="chips" role="group" aria-label="Market" id="mkts"></div><span class="mono big" id="mkt-px">—</span></div>
+          <canvas id="pchart" aria-label="Perp market chart" role="img"></canvas>
+          <div id="ppos" class="ppos"></div>
+        </div>
+        <div class="panel perp-form">
+          <div class="seg" role="group" aria-label="Direction"><button type="button" class="buy" aria-pressed="true" id="p-long">Long</button><button type="button" class="sell" aria-pressed="false" id="p-short">Short</button></div>
+          <label class="lbl" for="p-margin">Margin (USD)</label>
+          <div class="field"><input id="p-margin" inputmode="decimal" value="100"><label for="p-margin">USD</label></div>
+          <label class="lbl" for="p-lev">Leverage <b id="p-lev-v">10x</b></label>
+          <input type="range" id="p-lev" min="1" max="50" value="10" class="range">
+          <div class="ticks"><span>1x</span><span>10x</span><span>25x</span><span>50x</span></div>
+          <dl class="kv2">
+            <div><dt>Position size</dt><dd id="p-size">—</dd></div>
+            <div><dt>Entry price</dt><dd id="p-entry">—</dd></div>
+            <div><dt>Liquidation price</dt><dd id="p-liq" class="down">—</dd></div>
+          </dl>
+          <label class="lbl" for="p-move">If price moves <b id="p-move-v">+5%</b></label>
+          <input type="range" id="p-move" min="-30" max="30" value="5" class="range">
+          <div class="whatif" id="p-whatif">—</div>
+          <button class="go" id="p-open" type="button">Open long</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="yield">
+    <div class="wrap">
+      <div class="chead"><h2>Yield</h2><p>SOL you are not trading keeps earning. Drag the sliders to see what it could grow into.</p></div>
+      <div class="yield">
+        <div class="panel ycalc">
+          <label class="lbl" for="y-amt">Idle balance <b id="y-amt-v">50 SOL</b></label>
+          <input type="range" id="y-amt" min="1" max="1000" value="50" class="range">
+          <label class="lbl" for="y-mo">Time <b id="y-mo-v">12 months</b></label>
+          <input type="range" id="y-mo" min="1" max="36" value="12" class="range">
+          <div class="ybig"><span>You would have</span><strong id="y-total">—</strong><small id="y-gain" class="up">—</small></div>
+          <canvas id="ychart" aria-label="Projected balance over time" role="img"></canvas>
+          <p class="hint">Estimated at 6.8% APY, compounded monthly. Rates change.</p>
+        </div>
+        <div class="panel ygarden" aria-hidden="true">
+          <svg viewBox="0 0 320 300" id="garden">
+            <defs></defs>
+            <rect x="0" y="250" width="320" height="50" fill="#0B0F22"/>
+            <g id="stacks"></g>
+            <g id="tree" transform="translate(160 250)">
+              <path id="trunk" d="M0 0 C-2 -30 2 -60 0 -90" stroke="#3DD68C" stroke-width="6" fill="none" stroke-linecap="round"/>
+              <g id="leaves"></g>
+            </g>
+            <g class="sun"><circle cx="270" cy="50" r="22" fill="#5B6CFF" opacity=".25"/><circle cx="270" cy="50" r="12" fill="#9AA6FF"/></g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="leaders">
+    <div class="wrap">
+      <div class="chead"><h2>Leaderboard</h2><p>Top traders by profit. Click a column to sort.</p></div>
+      <div class="panel">
+        <div class="panel-h"><div class="chips" role="group" aria-label="Period" id="periods"><button type="button" class="chip" aria-pressed="true" data-per="1">24h</button><button type="button" class="chip" aria-pressed="false" data-per="7">7d</button><button type="button" class="chip" aria-pressed="false" data-per="30">30d</button></div><small class="hint" style="margin:0">Sample data</small></div>
+        <div class="tbl-wrap"><table class="tbl" id="lb">
+          <thead><tr><th>#</th><th>Trader</th><th><button type="button" data-sort-k="pnl" aria-sort="descending">PnL</button></th><th><button type="button" data-sort-k="vol">Volume</button></th><th><button type="button" data-sort-k="win">Win rate</button></th><th><button type="button" data-sort-k="trades">Trades</button></th></tr></thead>
+          <tbody></tbody>
+        </table></div>
       </div>
     </div>
   </section>
@@ -551,6 +800,35 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
     </div>
   </section>
 
+
+  <section id="app">
+    <div class="wrap appsplit">
+      <div class="phone" aria-hidden="true">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="ph-top"><b>Kestrel</b><span class="mono" id="ph-bal">10.00 SOL</span></div>
+          <div class="ph-chart"><canvas id="phchart"></canvas></div>
+          <div id="ph-rows"></div>
+          <div class="ph-btns"><span class="b">Buy</span><span class="s">Sell</span></div>
+        </div>
+      </div>
+      <div class="appcopy">
+        <p class="eyebrow">Mobile</p>
+        <h2>The whole terminal, in your pocket.</h2>
+        <ul class="checks">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg><span><b>Push alerts</b> when a tracked wallet trades.</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg><span><b>One-tap presets</b> that match your desktop hotkeys.</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg><span><b>Face unlock</b> before every withdrawal.</span></li>
+        </ul>
+        <form class="wait" id="wait" novalidate>
+          <label for="wait-email" class="lbl">Join the waitlist</label>
+          <div class="wait-row"><input id="wait-email" type="email" placeholder="you@example.com" autocomplete="email"><button class="btn btn-primary" type="submit">Notify me</button></div>
+          <p class="hint" id="wait-msg">Demo form. Nothing is sent.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
   <section id="architecture">
     <div class="wrap">
       <div class="chead"><h2>Architecture</h2></div>
@@ -598,6 +876,34 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
       </div>
     </div>
   </section>
+
+  <section class="mascot-sec">
+    <div class="wrap">
+      <div class="cta2">
+        <svg class="mascot" viewBox="0 0 240 200" role="img" aria-label="Kestrel mascot hovering">
+          <g class="hover">
+            <g class="wing wl"><path d="M110 96 C80 60 40 52 8 62 C34 72 52 84 66 100 C80 106 98 106 110 100Z" fill="#3A4AD0"/><path d="M30 64 C46 72 58 80 68 94 M48 60 C62 70 72 80 80 94 M66 58 C78 68 86 80 92 96" stroke="#7D8BFF" stroke-width="2" fill="none"/></g>
+            <g class="wing wr"><path d="M130 96 C160 60 200 52 232 62 C206 72 188 84 174 100 C160 106 142 106 130 100Z" fill="#3A4AD0"/><path d="M210 64 C194 72 182 80 172 94 M192 60 C178 70 168 80 160 94 M174 58 C162 68 154 80 148 96" stroke="#7D8BFF" stroke-width="2" fill="none"/></g>
+            <path d="M120 150 L106 176 L120 168 L134 176Z" fill="#2B37A8"/>
+            <ellipse cx="120" cy="110" rx="26" ry="38" fill="#5B6CFF"/>
+            <ellipse cx="120" cy="122" rx="16" ry="24" fill="#E9ECFF"/>
+            <g fill="#9AA6FF"><circle cx="114" cy="116" r="2"/><circle cx="126" cy="122" r="2"/><circle cx="116" cy="132" r="2"/><circle cx="125" cy="138" r="2"/></g>
+            <circle cx="120" cy="70" r="22" fill="#5B6CFF"/>
+            <path d="M104 74 C106 86 112 90 112 90" stroke="#1E2266" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M136 74 C134 86 128 90 128 90" stroke="#1E2266" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <g class="eyes"><circle cx="111" cy="68" r="6" fill="#fff"/><circle cx="129" cy="68" r="6" fill="#fff"/><circle cx="112" cy="69" r="3" fill="#0A0D2A"/><circle cx="130" cy="69" r="3" fill="#0A0D2A"/></g>
+            <path d="M116 76 L124 76 L120 84Z" fill="#F2C94C"/>
+          </g>
+          <ellipse class="shadow" cx="120" cy="194" rx="34" ry="4" fill="#5B6CFF" opacity=".25"/>
+        </svg>
+        <div>
+          <h2>Ready when the next launch is.</h2>
+          <p>Open the terminal, follow a few wallets and make your first paper trade in under a minute.</p>
+          <div class="hero-actions" style="justify-content:flex-start"><a class="btn btn-primary" href="#terminal">Start Trading</a><button class="btn" type="button" data-auth="signup">Create demo account</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer>
@@ -608,7 +914,7 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
       <p style="margin:0">© 2026 Kestrel. Code released under the MIT License.</p>
     </div>
     <nav aria-label="Footer">
-      <a href="#tools">Products</a><a href="#rewards">Rewards</a><a href="#architecture">Architecture</a><a href="#faq">FAQ</a>
+      <a href="#terminal">Terminal</a><a href="#tracker">Tracker</a><a href="#perps">Perps</a><a href="#yield">Yield</a><a href="#leaders">Leaderboard</a><a href="#rewards">Rewards</a><a href="#app">App</a><a href="#faq">FAQ</a>
     </nav>
   </div>
 </footer>
@@ -642,6 +948,34 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
   const fmtPct = n => (n >= 0 ? "+" : "") + n.toFixed(1) + "%";
   const ago = t => { const s = Math.max(0, Math.floor((Date.now() - t) / 1000)); return s < 60 ? s + "s" : s < 3600 ? Math.floor(s / 60) + "m" : Math.floor(s / 3600) + "h"; };
 
+
+  /* ---------- critter avatars: original procedural drawings ---------- */
+  function rng(seed) { let a = seed >>> 0 || 1; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function critter(seed, hue) {
+    const r = rng(seed), ri = n => Math.floor(r() * n);
+    const body = `hsl(${hue} 72% 62%)`, shade = `hsl(${hue} 60% 46%)`, belly = `hsl(${hue} 85% 84%)`, bg = `hsl(${(hue + 200) % 360} 35% 16%)`;
+    const ear = ri(5), eye = ri(3), mouth = ri(3), extra = ri(5);
+    let g = `<rect width="64" height="64" fill="${bg}"/>`;
+    if (ear === 0) g += `<path d="M16 26 L14 6 L28 18Z M48 26 L50 6 L36 18Z" fill="${shade}"/>`;
+    if (ear === 1) g += `<circle cx="17" cy="18" r="8" fill="${shade}"/><circle cx="47" cy="18" r="8" fill="${shade}"/><circle cx="17" cy="18" r="4" fill="${belly}"/><circle cx="47" cy="18" r="4" fill="${belly}"/>`;
+    if (ear === 2) g += `<ellipse cx="23" cy="10" rx="5" ry="13" fill="${shade}"/><ellipse cx="41" cy="10" rx="5" ry="13" fill="${shade}"/><ellipse cx="23" cy="11" rx="2.2" ry="9" fill="${belly}"/><ellipse cx="41" cy="11" rx="2.2" ry="9" fill="${belly}"/>`;
+    if (ear === 3) g += `<path d="M24 16 L20 4 M40 16 L44 4" stroke="${shade}" stroke-width="2.5" stroke-linecap="round"/><circle cx="20" cy="4" r="3.5" fill="#F2C94C"/><circle cx="44" cy="4" r="3.5" fill="#F2C94C"/>`;
+    if (ear === 4) g += `<path d="M18 22 C10 14 12 6 18 6 C18 12 22 16 24 18Z M46 22 C54 14 52 6 46 6 C46 12 42 16 40 18Z" fill="#E9ECFF"/>`;
+    g += `<ellipse cx="32" cy="38" rx="22" ry="21" fill="${body}"/><ellipse cx="32" cy="46" rx="13" ry="10" fill="${belly}"/>`;
+    const ey = 33, ex = 9 + ri(3);
+    if (eye === 0) g += `<circle cx="${32 - ex}" cy="${ey}" r="5.5" fill="#fff"/><circle cx="${32 + ex}" cy="${ey}" r="5.5" fill="#fff"/><circle cx="${33 - ex}" cy="${ey + 1}" r="3" fill="#0A0D1A"/><circle cx="${33 + ex}" cy="${ey + 1}" r="3" fill="#0A0D1A"/><circle cx="${34 - ex}" cy="${ey - .5}" r="1" fill="#fff"/><circle cx="${34 + ex}" cy="${ey - .5}" r="1" fill="#fff"/>`;
+    if (eye === 1) g += `<path d="M${27 - ex} ${ey} q5 -5 10 0 M${22 + ex} ${ey} q5 -5 10 0" stroke="#0A0D1A" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+    if (eye === 2) g += `<circle cx="32" cy="${ey - 1}" r="8" fill="#fff"/><circle cx="33" cy="${ey}" r="4.2" fill="#0A0D1A"/><circle cx="34.5" cy="${ey - 1.5}" r="1.4" fill="#fff"/>`;
+    g += `<circle cx="${32 - ex - 4}" cy="42" r="3" fill="#FF8FA3" opacity=".55"/><circle cx="${32 + ex + 4}" cy="42" r="3" fill="#FF8FA3" opacity=".55"/>`;
+    if (mouth === 0) g += `<path d="M28 43 q4 4 8 0" stroke="#0A0D1A" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+    if (mouth === 1) g += `<path d="M28 42 q4 7 8 0Z" fill="#0A0D1A"/><path d="M30 44.5 q2 2 4 0" fill="#FF8FA3"/>`;
+    if (mouth === 2) g += `<path d="M29 42 L35 42 L32 46Z" fill="#F2C94C"/>`;
+    if (extra === 1) g += `<path d="M24 18 L32 2 L40 18Z" fill="#5B6CFF"/><circle cx="32" cy="2.5" r="2.5" fill="#F2C94C"/>`;
+    if (extra === 2) g += `<g fill="none" stroke="#0A0D1A" stroke-width="2"><circle cx="${32 - ex}" cy="${ey}" r="6.5"/><circle cx="${32 + ex}" cy="${ey}" r="6.5"/><path d="M${38.5 - ex} ${ey} H${25.5 + ex}"/></g>`;
+    if (extra === 3) g += `<path d="M22 19 L25 11 L29 17 L32 9 L35 17 L39 11 L42 19Z" fill="#F2C94C"/>`;
+    if (extra === 4) g += `<path d="M32 17 C32 12 34 8 38 7 C38 12 35 15 32 17Z" fill="#3DD68C"/>`;
+    return `<svg viewBox="0 0 64 64" aria-hidden="true">${g}</svg>`;
+  }
   /* ---------- simulated market ---------- */
   const A = ["Glow","Moss","Rust","Volt","Pixel","Lunar","Crisp","Echo","Drift","Fable","Nimbus","Quill","Tidal","Orbit","Ember","Frost","Sable","Cobalt","Velvet","Pebble"];
   const B = ["Toad","Hound","Finch","Otter","Koi","Moth","Lynx","Crab","Yak","Ferret","Heron","Gecko","Wasp","Badger","Squid","Mole"];
@@ -683,7 +1017,7 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
 
   function rowHTML(t) {
     const chg = (t.price / t.open - 1) * 100;
-    return `<div class="av" style="background:hsl(${t.hue} 75% 62%)">${t.sym[0]}</div>
+    return `<div class="av">${t.art || (t.art = critter(t.id * 7919, t.hue))}</div>
       <div style="min-width:0"><div class="tk-name">${t.name} <span style="color:var(--dim);font-weight:400">${t.sym}</span></div>
       <div class="tk-sub"><span>${ago(t.born)}</span><span>${t.holders} holders</span><span>V ${fmtUsd(t.vol)}</span></div>
       ${t.stage < 2 ? `<div class="bond" title="Bonding curve ${t.bond.toFixed(0)}%"><i style="width:${t.bond.toFixed(1)}%"></i></div>` : ""}</div>
@@ -823,8 +1157,7 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
   cv.addEventListener("pointerleave", () => { hoverX = null; $("#ctip").hidden = true; drawChart(); });
   function renderDetail() {
     const t = selected;
-    $("#d-av").textContent = t.sym[0];
-    $("#d-av").style.background = `hsl(${t.hue} 75% 62%)`;
+    if ($("#d-av").dataset.id !== String(t.id)) { $("#d-av").innerHTML = t.art || (t.art = critter(t.id * 7919, t.hue)); $("#d-av").dataset.id = t.id; }
     $("#d-name").textContent = t.name;
     $("#d-sub").innerHTML = `<span>${t.sym}</span><span>${["Fresh", "Bonding", "Graduated"][t.stage]}</span><span>${t.holders} holders</span>`;
     const pEl = $("#d-price");
@@ -1000,7 +1333,7 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
   const mp = $("#mock-pulse");
   const colors = ["#5B6CFF", "#3DD68C", "#F0596B", "#E8B04A", "#B47CFF", "#4CC9F0"];
   function renderMockPulse() {
-    mp.innerHTML = [0, 1, 2].map(() => `<div style="display:grid;gap:7px;align-content:start">` + Array.from({ length: 12 }, () => `<div class="r"><i style="--c:${pick(colors)}"></i><b style="width:${rand(40, 100).toFixed(0)}%"></b><em style="width:${rand(50, 100).toFixed(0)}%"></em></div>`).join("") + `</div>`).join("");
+    mp.innerHTML = [0, 1, 2].map(() => `<div style="display:grid;gap:7px;align-content:start">` + Array.from({ length: 12 }, () => `<div class="r"><i>${critter(Math.floor(rand(1, 1e6)), pick(HUES))}</i><b style="width:${rand(40, 100).toFixed(0)}%"></b><em style="width:${rand(50, 100).toFixed(0)}%"></em></div>`).join("") + `</div>`).join("");
   }
   renderMockPulse(); setInterval(renderMockPulse, 1600);
 
@@ -1114,10 +1447,175 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
 
   /* ---------- scroll reveal (content stays visible at rest) ---------- */
   if (!reduce && window.IntersectionObserver) {
-    const els = $$(".chead, .carousel, .bento > div, .arch > div, .faq-split, .stats");
+    const els = $$(".chead, .carousel, .bento > div, .arch > div, .faq-split, .stats, .panel, .phone, .cta2");
     const ro = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.remove("pre"); ro.unobserve(e.target); } }), { threshold: .15 });
     els.forEach(el => { const r = el.getBoundingClientRect(); if (r.top > innerHeight) { el.classList.add("reveal", "pre"); ro.observe(el); } });
   }
+
+  /* ---------- nav: burger + active section ---------- */
+  const burger = $("#burger"), nl = $("#nav-links");
+  burger.addEventListener("click", () => { const o = !nl.classList.contains("open"); nl.classList.toggle("open", o); burger.setAttribute("aria-expanded", String(o)); burger.setAttribute("aria-label", o ? "Close menu" : "Open menu"); });
+  nl.addEventListener("click", e => { if (e.target.closest("a")) { nl.classList.remove("open"); burger.setAttribute("aria-expanded", "false"); burger.setAttribute("aria-label", "Open menu"); } });
+  if (window.IntersectionObserver) {
+    const links = $$("a", nl), map = new Map(links.map(a => [a.getAttribute("href").slice(1), a]));
+    const so = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { links.forEach(a => a.classList.remove("on")); const a = map.get(e.target.id); if (a) a.classList.add("on"); } }), { rootMargin: "-45% 0px -50% 0px" });
+    map.forEach((a, id) => { const el = document.getElementById(id); if (el) so.observe(el); });
+  }
+
+  /* ---------- spot card order book ---------- */
+  function renderBook() {
+    const mid = 182.4 + rand(-.3, .3), rows = [];
+    for (let i = 4; i >= 1; i--) { const sz = rand(5, 100); rows.push(`<div><span class="down">${(mid + i * .05).toFixed(2)}</span><span>${sz.toFixed(1)}</span><i style="width:${sz}%;background:var(--down)"></i></div>`); }
+    rows.push(`<div class="mid">${mid.toFixed(2)}</div>`);
+    for (let i = 1; i <= 4; i++) { const sz = rand(5, 100); rows.push(`<div><span class="up">${(mid - i * .05).toFixed(2)}</span><span>${sz.toFixed(1)}</span><i style="width:${sz}%;background:var(--up)"></i></div>`); }
+    $("#book").innerHTML = rows.join("");
+  }
+  renderBook(); setInterval(renderBook, 1200);
+
+  /* ---------- wallet tracker ---------- */
+  const WNAMES = ["Night Owl", "Quiet Whale", "Early Bird", "Paper Hands", "Diamond Mole", "Lucky Seven", "Slow Turtle", "Sniper Fox"];
+  const wallets = WNAMES.map((n, i) => ({ id: i, name: n, addr: Array.from({ length: 4 }, () => "abcdefghjkmnpqrstuvwxyz23456789"[Math.floor(Math.random() * 31)]).join("") + "…" + Array.from({ length: 4 }, () => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.floor(Math.random() * 32)]).join(""), art: critter(9000 + i * 131, HUES[i % HUES.length]), win: rand(48, 81), on: i < 4 }));
+  const feed = []; let ffilter = "all";
+  function renderWallets() {
+    $("#wallets").innerHTML = wallets.map(w => `<div class="wal"><div class="pic">${w.art}</div><div style="min-width:0"><b>${w.name}</b><small>${w.addr} · ${w.win.toFixed(0)}% win</small></div><button type="button" class="follow" data-w="${w.id}" aria-pressed="${w.on}">${w.on ? "Following" : "Follow"}</button></div>`).join("");
+    $("#follow-count").textContent = wallets.filter(w => w.on).length + " following";
+  }
+  $("#wallets").addEventListener("click", e => { const b = e.target.closest("[data-w]"); if (!b) return; const w = wallets[+b.dataset.w]; w.on = !w.on; renderWallets(); renderFeed(); toast(w.on ? `Following ${w.name}` : `Unfollowed ${w.name}`); });
+  function renderFeed() {
+    const items = feed.filter(f => wallets[f.w].on && (ffilter === "all" || f.side === ffilter)).slice(0, 9);
+    $("#feed").innerHTML = items.length ? items.map(f => { const w = wallets[f.w]; return `<button type="button" class="fi" data-t="${f.t}"><div class="pic">${w.art}</div><span><span class="tag ${f.side === "buy" ? "b" : "s"}">${f.side === "buy" ? "BUY" : "SELL"}</span><b>${w.name}</b> ${f.side === "buy" ? "bought" : "sold"} ${f.amt.toFixed(2)} SOL of ${f.sym} at ${f.mc}</span><time>${ago(f.at)}</time></button>`; }).join("") : `<p class="empty-feed">Follow a wallet to see its trades here.</p>`;
+  }
+  function addFeed() {
+    const w = Math.floor(Math.random() * wallets.length), t = pick(tokens);
+    feed.unshift({ w, t: t.id, sym: t.sym, side: Math.random() < .62 ? "buy" : "sell", amt: rand(.1, 12), mc: fmtUsd(t.price * SUPPLY), at: Date.now() });
+    feed.length = Math.min(feed.length, 60); renderFeed();
+  }
+  $("#feed").addEventListener("click", e => { const b = e.target.closest(".fi"); if (!b) return; const t = tokens.find(x => x.id === +b.dataset.t); if (!t) { toast("That token dropped off the board"); return; } select(t.id); $("#terminal").scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); });
+  $$("[data-f]").forEach(b => b.addEventListener("click", () => { ffilter = b.dataset.f; $$("[data-f]").forEach(x => x.setAttribute("aria-pressed", String(x === b))); renderFeed(); }));
+  renderWallets(); for (let i = 0; i < 6; i++) addFeed(); setInterval(addFeed, 1700);
+
+  /* ---------- perps ---------- */
+  const MK = { SOL: { px: 182.4, h: [] }, BTC: { px: 104210, h: [] }, ETH: { px: 3890, h: [] } };
+  Object.values(MK).forEach(m => { let p = m.px; for (let i = 0; i < 120; i++) { p *= 1 + rand(-.004, .004); m.h.push(p); } m.px = p; });
+  let mkt = "SOL", pdir = "long"; const perpPos = [];
+  const fmtPx = v => "$" + (v >= 1000 ? v.toLocaleString("en-US", { maximumFractionDigits: 0 }) : v.toFixed(2));
+  $("#mkts").innerHTML = Object.keys(MK).map(k => `<button type="button" class="chip" data-mk="${k}" aria-pressed="${k === mkt}">${k}-PERP</button>`).join("");
+  $("#mkts").addEventListener("click", e => { const b = e.target.closest("[data-mk]"); if (!b) return; mkt = b.dataset.mk; $$("[data-mk]").forEach(x => x.setAttribute("aria-pressed", String(x === b))); $("#mkt-px").textContent = fmtPx(MK[mkt].px); perpCalc(); drawPerp(); });
+  function setDir(d) { pdir = d; $("#p-long").setAttribute("aria-pressed", String(d === "long")); $("#p-short").setAttribute("aria-pressed", String(d === "short")); $("#p-open").classList.toggle("sell", d === "short"); perpCalc(); drawPerp(); }
+  $("#p-long").addEventListener("click", () => setDir("long")); $("#p-short").addEventListener("click", () => setDir("short"));
+  const liqOf = (entry, lev, dir) => dir === "long" ? entry * (1 - .9 / lev) : entry * (1 + .9 / lev);
+  function perpCalc() {
+    const m = MK[mkt], margin = parseFloat($("#p-margin").value) || 0, lev = +$("#p-lev").value, mv = +$("#p-move").value;
+    $("#p-lev-v").textContent = lev + "x"; $("#p-move-v").textContent = (mv > 0 ? "+" : "") + mv + "%";
+    const size = margin * lev, liq = liqOf(m.px, lev, pdir);
+    $("#p-size").textContent = "$" + size.toLocaleString("en-US", { maximumFractionDigits: 0 });
+    $("#p-entry").textContent = fmtPx(m.px); $("#p-liq").textContent = fmtPx(liq);
+    const signed = (pdir === "long" ? 1 : -1) * mv / 100, pnl = size * signed, w = $("#p-whatif");
+    const liquidated = signed * lev <= -.9;
+    w.classList.toggle("liq", liquidated);
+    w.innerHTML = liquidated ? `Liquidated. You lose your $${margin.toFixed(0)} margin.` : `PnL <span class="${pnl >= 0 ? "up" : "down"}">${pnl >= 0 ? "+" : ""}$${pnl.toFixed(2)}</span> · ROE ${(signed * lev * 100).toFixed(0)}%`;
+    const ok = margin > 0; $("#p-open").disabled = !ok; $("#p-open").textContent = ok ? `Open ${pdir} ${lev}x` : "Enter a margin";
+  }
+  ["#p-margin", "#p-lev", "#p-move"].forEach(id => $(id).addEventListener("input", () => { perpCalc(); drawPerp(); }));
+  $("#p-open").addEventListener("click", () => {
+    const m = MK[mkt], margin = parseFloat($("#p-margin").value) || 0, lev = +$("#p-lev").value; if (!(margin > 0)) return;
+    perpPos.push({ id: Date.now(), mkt, dir: pdir, lev, margin, entry: m.px, liq: liqOf(m.px, lev, pdir) });
+    toast(`Opened ${pdir} ${mkt} ${lev}x (paper)`); renderPerpPos(); drawPerp();
+  });
+  $("#ppos").addEventListener("click", e => { const b = e.target.closest("[data-close-p]"); if (!b) return; const i = perpPos.findIndex(p => p.id === +b.dataset.closeP); if (i < 0) return; const p = perpPos[i]; const pnl = perpPnl(p); perpPos.splice(i, 1); toast(`Closed ${p.mkt} ${p.dir} · ${pnl >= 0 ? "+" : ""}$${pnl.toFixed(2)}`); renderPerpPos(); drawPerp(); });
+  const perpPnl = p => p.margin * p.lev * (MK[p.mkt].px / p.entry - 1) * (p.dir === "long" ? 1 : -1);
+  function renderPerpPos() {
+    $("#ppos").innerHTML = perpPos.map(p => { const pnl = perpPnl(p); return `<div class="pp"><span class="tag ${p.dir === "long" ? "b" : "s"}">${p.dir.toUpperCase()} ${p.lev}x</span><span>${p.mkt} · in ${fmtPx(p.entry)} · liq ${fmtPx(p.liq)}</span><span class="${pnl >= 0 ? "up" : "down"}">${pnl >= 0 ? "+" : ""}$${pnl.toFixed(2)}</span><button type="button" data-close-p="${p.id}">Close</button></div>`; }).join("");
+  }
+  const pc = $("#pchart"), pg = pc.getContext("2d");
+  function drawPerp() {
+    const r = pc.getBoundingClientRect(); if (!r.width) return; const d = Math.min(2, devicePixelRatio || 1);
+    if (pc.width !== Math.round(r.width * d)) { pc.width = Math.round(r.width * d); pc.height = Math.round(r.height * d); }
+    pg.setTransform(d, 0, 0, d, 0, 0); const W = r.width, H = r.height, m = MK[mkt], h = m.h, padR = 70;
+    const lev = +$("#p-lev").value, liq = liqOf(m.px, lev, pdir);
+    let lo = Math.min(...h), hi = Math.max(...h); const lines = perpPos.filter(p => p.mkt === mkt);
+    [liq, ...lines.map(p => p.liq), ...lines.map(p => p.entry)].forEach(v => { lo = Math.min(lo, v); hi = Math.max(hi, v); });
+    const pad = (hi - lo) * .08; lo -= pad; hi += pad;
+    const y = v => 10 + (1 - (v - lo) / (hi - lo)) * (H - 20), x = i => i / (h.length - 1) * (W - padR);
+    pg.clearRect(0, 0, W, H); pg.font = "10px 'JetBrains Mono', monospace";
+    pg.strokeStyle = "rgba(138,147,166,.1)"; for (let i = 0; i <= 4; i++) { const yy = 10 + i * (H - 20) / 4; pg.beginPath(); pg.moveTo(0, yy); pg.lineTo(W - padR, yy); pg.stroke(); pg.fillStyle = "#8C90A1"; pg.fillText(fmtPx(hi - (hi - lo) * i / 4), W - padR + 6, yy + 3); }
+    const grad = pg.createLinearGradient(0, 0, 0, H); grad.addColorStop(0, "rgba(91,108,255,.35)"); grad.addColorStop(1, "rgba(91,108,255,0)");
+    pg.beginPath(); h.forEach((v, i) => i ? pg.lineTo(x(i), y(v)) : pg.moveTo(x(i), y(v))); pg.lineTo(W - padR, H); pg.lineTo(0, H); pg.closePath(); pg.fillStyle = grad; pg.fill();
+    pg.beginPath(); h.forEach((v, i) => i ? pg.lineTo(x(i), y(v)) : pg.moveTo(x(i), y(v))); pg.strokeStyle = "#7D8BFF"; pg.lineWidth = 2; pg.stroke(); pg.lineWidth = 1;
+    const hl = (v, c, label, dash) => { const yy = Math.round(y(v)) + .5; pg.setLineDash(dash ? [4, 4] : []); pg.strokeStyle = c; pg.beginPath(); pg.moveTo(0, yy); pg.lineTo(W - padR, yy); pg.stroke(); pg.setLineDash([]); pg.fillStyle = c; pg.fillText(label, 6, yy - 4); };
+    hl(liq, "#F0596B", "liq " + fmtPx(liq) + " (preview)", true);
+    lines.forEach(p => { hl(p.entry, p.dir === "long" ? "#3DD68C" : "#F0596B", `${p.dir} ${p.lev}x entry`, false); hl(p.liq, "rgba(240,89,107,.6)", "liq", true); });
+    const ly = y(m.px); pg.fillStyle = "#5B6CFF"; pg.fillRect(W - padR + 2, ly - 8, padR - 2, 16); pg.fillStyle = "#05061A"; pg.fillText(fmtPx(m.px), W - padR + 5, ly + 3);
+    pg.beginPath(); pg.arc(x(h.length - 1), ly, 3.5, 0, 7); pg.fillStyle = "#fff"; pg.fill();
+  }
+  function perpTick() {
+    Object.values(MK).forEach(m => { m.px *= 1 + rand(-.0035, .0036); m.h.push(m.px); if (m.h.length > 120) m.h.shift(); });
+    $("#mkt-px").textContent = fmtPx(MK[mkt].px);
+    for (let i = perpPos.length - 1; i >= 0; i--) { const p = perpPos[i], px = MK[p.mkt].px; if ((p.dir === "long" && px <= p.liq) || (p.dir === "short" && px >= p.liq)) { perpPos.splice(i, 1); toast(`${p.mkt} ${p.dir} ${p.lev}x was liquidated`); } }
+    renderPerpPos(); perpCalc(); drawPerp();
+  }
+  perpCalc(); $("#mkt-px").textContent = fmtPx(MK[mkt].px); setInterval(perpTick, 1000);
+  if (window.ResizeObserver) new ResizeObserver(drawPerp).observe(pc); else addEventListener("resize", drawPerp);
+
+  /* ---------- yield ---------- */
+  const yc = $("#ychart"), yg = yc.getContext("2d");
+  function yieldCalc() {
+    const amt = +$("#y-amt").value, mo = +$("#y-mo").value, r = .068 / 12;
+    $("#y-amt-v").textContent = amt + " SOL"; $("#y-mo-v").textContent = mo + (mo === 1 ? " month" : " months");
+    const series = Array.from({ length: mo + 1 }, (_, i) => amt * Math.pow(1 + r, i)), tot = series[mo];
+    $("#y-total").textContent = tot.toFixed(3) + " SOL"; $("#y-gain").textContent = `+${(tot - amt).toFixed(3)} SOL earned`;
+    const rr = yc.getBoundingClientRect();
+    if (rr.width) {
+      const d = Math.min(2, devicePixelRatio || 1); yc.width = rr.width * d; yc.height = rr.height * d; yg.setTransform(d, 0, 0, d, 0, 0);
+      const W = rr.width, H = rr.height, lo = amt * .98, hi = tot * 1.01 + 1e-9, x = i => i / mo * (W - 10) + 5, y = v => H - 18 - (v - lo) / (hi - lo) * (H - 28);
+      yg.clearRect(0, 0, W, H);
+      series.forEach((v, i) => { const bw = Math.max(2, (W - 10) / (mo + 1) * .6); yg.fillStyle = i === mo ? "#5B6CFF" : "rgba(91,108,255,.35)"; yg.fillRect(x(i) - bw / 2, y(v), bw, H - 18 - y(v)); });
+      yg.fillStyle = "#8C90A1"; yg.font = "10px 'JetBrains Mono', monospace"; yg.fillText("now", 4, H - 4); yg.textAlign = "right"; yg.fillText(mo + " mo", W - 4, H - 4); yg.textAlign = "left";
+    }
+    drawGarden(amt, tot - amt, mo);
+  }
+  function drawGarden(amt, gain, mo) {
+    const g = Math.min(1, Math.log10(1 + gain) / 2.2), hgt = 60 + g * 120;
+    $("#trunk").setAttribute("d", `M0 0 C-4 ${-hgt * .35} 4 ${-hgt * .7} 0 ${-hgt}`);
+    const n = 3 + Math.round(g * 12); let lv = "";
+    for (let i = 0; i < n; i++) { const t = (i + 1) / (n + 1), yy = -hgt * (.35 + t * .65), side = i % 2 ? 1 : -1, len = 18 + 26 * (1 - t) * (.6 + g); lv += `<path d="M0 ${yy} C${side * len * .4} ${yy - 14} ${side * len} ${yy - 10} ${side * len} ${yy - 2} C${side * len * .6} ${yy + 4} ${side * len * .3} ${yy + 2} 0 ${yy}Z" fill="${i % 3 ? "#3DD68C" : "#5BE3A2"}"/>`; }
+    const fruits = Math.min(9, Math.floor(mo / 4)); for (let i = 0; i < fruits; i++) { const a = i / Math.max(1, fruits) * Math.PI - Math.PI, rr = 26 + g * 30; lv += `<circle cx="${Math.cos(a) * rr}" cy="${-hgt + 10 + Math.sin(a) * rr * .5}" r="5" fill="#F2C94C" stroke="#C9A227"/>`; }
+    $("#leaves").innerHTML = lv;
+    const coins = Math.min(5, Math.ceil(amt / 200)); let st = "";
+    for (let c = 0; c < coins; c++) { const cx = 40 + c * 22 + (c > 2 ? 160 : 0), h2 = 3 + Math.min(8, Math.round(amt / 120)); for (let k = 0; k < h2; k++) st += `<ellipse cx="${cx}" cy="${246 - k * 5}" rx="10" ry="3.5" fill="${k % 2 ? "#C9A227" : "#F2C94C"}"/>`; }
+    $("#stacks").innerHTML = st;
+  }
+  ["#y-amt", "#y-mo"].forEach(id => $(id).addEventListener("input", yieldCalc));
+  yieldCalc(); if (window.ResizeObserver) new ResizeObserver(yieldCalc).observe(yc);
+
+  /* ---------- leaderboard ---------- */
+  const TNAMES = ["moonfrog", "satsuki", "degen_dan", "quietkoi", "bagholder", "lunchmoney", "sol_sister", "rugproof", "pixelpaws", "ape_lincoln", "tinywhale", "candlewick"];
+  let per = 1, lbKey = "pnl";
+  function lbData() { const r = rng(per * 977); return TNAMES.map((n, i) => ({ n, art: critter(4000 + i * 37, HUES[i % HUES.length]), pnl: (r() * 900 - 120) * per ** .8, vol: (r() * 4000 + 200) * per ** .9, win: 40 + r() * 45, trades: Math.floor((r() * 300 + 20) * per ** .7) })); }
+  function renderLb() {
+    const rows = lbData().sort((a, b) => b[lbKey] - a[lbKey]);
+    const medals = ["#F2C94C", "#C9CED8", "#D99A5B"];
+    $("#lb tbody").innerHTML = rows.map((r, i) => `<tr><td>${i < 3 ? `<span class="medal" style="background:${medals[i]}">${i + 1}</span>` : i + 1}</td><td><span class="who2"><i>${r.art}</i>@${r.n}</span></td><td class="${r.pnl >= 0 ? "up" : "down"}">${r.pnl >= 0 ? "+" : ""}${r.pnl.toFixed(1)} SOL</td><td>${r.vol.toLocaleString("en-US", { maximumFractionDigits: 0 })} SOL</td><td>${r.win.toFixed(1)}%</td><td>${r.trades}</td></tr>`).join("");
+    $$("[data-sort-k]").forEach(b => { if (b.dataset.sortK === lbKey) b.setAttribute("aria-sort", "descending"); else b.removeAttribute("aria-sort"); });
+  }
+  $$("[data-sort-k]").forEach(b => b.addEventListener("click", () => { lbKey = b.dataset.sortK; renderLb(); }));
+  $$("[data-per]").forEach(b => b.addEventListener("click", () => { per = +b.dataset.per; $$("[data-per]").forEach(x => x.setAttribute("aria-pressed", String(x === b))); renderLb(); }));
+  renderLb();
+
+  /* ---------- phone mock ---------- */
+  const phc = $("#phchart"), phg = phc.getContext("2d"); let php = [];
+  for (let i = 0; i < 40; i++) php.push(50 + Math.sin(i / 4) * 12 + rand(-6, 6));
+  function drawPhone() {
+    const r = phc.getBoundingClientRect(); if (!r.width) return; const d = Math.min(2, devicePixelRatio || 1); phc.width = r.width * d; phc.height = r.height * d; phg.setTransform(d, 0, 0, d, 0, 0);
+    const W = r.width, H = r.height, lo = Math.min(...php) - 5, hi = Math.max(...php) + 5, x = i => i / (php.length - 1) * W, y = v => H - (v - lo) / (hi - lo) * H;
+    const gr = phg.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, "rgba(61,214,140,.35)"); gr.addColorStop(1, "rgba(61,214,140,0)");
+    phg.clearRect(0, 0, W, H); phg.beginPath(); php.forEach((v, i) => i ? phg.lineTo(x(i), y(v)) : phg.moveTo(0, y(v))); phg.lineTo(W, H); phg.lineTo(0, H); phg.fillStyle = gr; phg.fill();
+    phg.beginPath(); php.forEach((v, i) => i ? phg.lineTo(x(i), y(v)) : phg.moveTo(0, y(v))); phg.strokeStyle = "#3DD68C"; phg.lineWidth = 2; phg.stroke();
+  }
+  function renderPhoneRows() { $("#ph-rows").innerHTML = tokens.slice(0, 6).map(t => { const c = (t.price / t.open - 1) * 100; return `<div class="ph-row"><i>${t.art || (t.art = critter(t.id * 7919, t.hue))}</i><span>${t.sym}<br><small style="color:var(--dim)">${fmtUsd(t.price * SUPPLY)}</small></span><span class="${c >= 0 ? "up" : "down"}">${fmtPct(c)}</span></div>`; }).join(""); $("#ph-bal").textContent = acct.sol.toFixed(2) + " SOL"; }
+  setInterval(() => { php.push(php[php.length - 1] + rand(-5, 5.5)); php.shift(); drawPhone(); renderPhoneRows(); }, 1200);
+  drawPhone(); renderPhoneRows(); if (window.ResizeObserver) new ResizeObserver(drawPhone).observe(phc);
+  $("#wait").addEventListener("submit", e => { e.preventDefault(); const v = $("#wait-email").value.trim(), ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); $("#wait-msg").textContent = ok ? "You're on the list. (Demo: nothing was sent.)" : "Enter a valid email, like you@example.com."; $("#wait-msg").className = "hint " + (ok ? "up" : "down"); if (ok) $("#wait-email").value = ""; });
   /* ---------- boot ---------- */
   renderTicker(); bumpSlot(); renderPresets(); renderBoard(); renderDetail(); countUp();
   sizeCanvas();

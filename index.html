@@ -575,6 +575,18 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
 .btn,.go{position:relative;overflow:hidden}
 .detail.filled{animation:filled .7s ease-out}
 @keyframes filled{0%{box-shadow:inset 0 0 0 2px var(--up)}100%{box-shadow:inset 0 0 0 2px transparent}}
+
+/* ---- v11: multichain ---- */
+.chainpick{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.cbtn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(13,14,20,.7);border-radius:999px;padding:7px 14px;font:500 15px var(--f-body);color:var(--dim);transition:border-color .2s,color .2s,background .2s,transform .2s}
+.cbtn:hover{color:var(--fg);transform:translateY(-2px)}
+.cbtn[aria-pressed="true"]{border-color:var(--rufous);color:var(--fg);background:var(--rufous-soft)}
+.cdot{width:14px;height:14px;border-radius:50%;background:conic-gradient(#CCFF00,#3DD68C,#CCFF00);box-shadow:0 0 8px rgba(204,255,0,.5)}
+.chaintabs .tab[aria-pressed="true"]{background:var(--rufous-soft);color:var(--fg);box-shadow:inset 0 0 0 1px var(--rufous)}
+.wtabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;width:100%;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:4px}
+.wtabs button{border:0;background:none;border-radius:7px;padding:8px;font:600 13px var(--f-body);color:var(--dim)}
+.wtabs button[aria-pressed="true"]{background:var(--rufous-soft);color:var(--fg)}
+.wm-net{font:500 11px var(--f-mono);color:var(--dim)}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
@@ -721,17 +733,22 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
         </button>
         <div class="hud-chips" id="hud-chips" aria-live="polite">
           <button type="button" class="hud-chip c1" data-k="pairs"><span class="k">New pairs</span><b id="hud-pairs">—</b><small>on the Pulse board</small></button>
-          <button type="button" class="hud-chip c2" data-k="block"><span class="k">Block</span><b id="hud-block">—</b><small>~400 ms per block</small></button>
+          <button type="button" class="hud-chip c2" data-k="block"><span class="k">Block</span><b id="hud-block">—</b><small id="hud-block-s">~400 ms per block</small></button>
           <button type="button" class="hud-chip c3" data-k="mover"><span class="k">Top mover</span><b id="hud-mover">—</b><small id="hud-mover-s">tap to open</small></button>
-          <button type="button" class="hud-chip c4" data-k="sol"><span class="k">SOL</span><b id="hud-sol">—</b><svg class="spark" viewBox="0 0 80 22" aria-hidden="true"><path id="hud-spark" d=""/></svg></button>
+          <button type="button" class="hud-chip c4" data-k="sol"><span class="k" id="hud-base-k">SOL</span><b id="hud-sol">—</b><svg class="spark" viewBox="0 0 80 22" aria-hidden="true"><path id="hud-spark" d=""/></svg></button>
         </div>
         <canvas class="hud-burst" id="hud-burst" aria-hidden="true"></canvas>
         <span class="hud-tip" id="hud-tip">Hover the planet</span>
       </div>
       <h1 class="rise">Trade What Moves, First</h1>
-      <p class="lede rise">Apogee puts every launch, wallet and market on a single screen, so you reach the top of the move before everyone else.</p>
+      <p class="lede rise">Every launch, wallet and market across Solana, Ethereum and Robinhood Chain, on one screen. Reach the top of the move first.</p>
       <div class="hero-actions rise"><a class="btn btn-primary" href="#terminal">Start Trading</a></div>
-      <div class="built rise">Built on<span><svg width="22" height="18" viewBox="0 0 22 18" aria-hidden="true"><path d="M4 0h18l-4 4H0zM0 7h18l4 4H4zM4 14h18l-4 4H0z" fill="#9AA6FF"/></svg>Solana</span></div>
+      <div class="built rise">Built for
+        <div class="chainpick" role="group" aria-label="Choose a chain">
+          <button type="button" class="cbtn" data-chain="sol" aria-pressed="true"><svg width="20" height="16" viewBox="0 0 22 18" aria-hidden="true"><path d="M4 0h18l-4 4H0zM0 7h18l4 4H4zM4 14h18l-4 4H0z" fill="#9AA6FF"/></svg>Solana</button>
+          <button type="button" class="cbtn" data-chain="eth" aria-pressed="false"><svg width="14" height="20" viewBox="0 0 14 22" aria-hidden="true"><path d="M7 0l7 11-7 4-7-4z" fill="#C9CEFF"/><path d="M7 16.5l7-4.3L7 22 0 12.2z" fill="#8C96E8"/></svg>Ethereum</button>
+          <button type="button" class="cbtn" data-chain="rh" aria-pressed="false"><span class="cdot" aria-hidden="true"></span>Robinhood Chain</button>
+        </div></div>
     </div>
     <div class="wrap">
       <div class="frame">
@@ -748,7 +765,8 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
             <button class="tab" role="tab" aria-selected="false" data-col="2">Graduated</button>
           </div>
           <label class="search"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" type="search" placeholder="Search token" aria-label="Search tokens" autocomplete="off"></label>
-          <span class="sim">Live · Solana mainnet view</span>
+          <div class="tabs chaintabs" role="group" aria-label="Chain"><button type="button" class="tab" data-chain="sol" aria-pressed="true">Solana</button><button type="button" class="tab" data-chain="eth" aria-pressed="false">Ethereum</button><button type="button" class="tab" data-chain="rh" aria-pressed="false">Robinhood</button></div>
+          <span class="sim" id="sim-label">Live · Solana</span>
         </div>
         <div class="term-body">
           <div class="board" id="board">
@@ -818,7 +836,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
               <path class="leaf l2" d="M61 64 C76 62 84 50 82 42 C70 42 61 50 61 64Z" fill="#5BE3A2"/>
               <g class="coin"><circle cx="62" cy="30" r="13" fill="#F2C94C"/><circle cx="62" cy="30" r="9" fill="none" stroke="#C9A227" stroke-width="2"/><text x="62" y="34.5" text-anchor="middle" font-size="12" font-weight="700" fill="#8A6A10" font-family="Inter,sans-serif">◎</text></g>
             </svg><div style="display:grid;gap:8px;justify-items:center;font-family:var(--f-mono)"><span style="font-size:11px;color:var(--dim)">Idle balance earning</span><strong style="font-size:28px" id="apy">6.80%</strong><span style="font-size:11px;color:var(--up)" id="earned">+0.000000 SOL</span></div></div>
-          <div class="cap"><span>Earn on idle SOL</span><small>No lockup · Withdraw to trading in one step</small></div></article>
+          <div class="cap"><span>Earn on idle SOL and ETH</span><small>No lockup · Withdraw to trading in one step</small></div></article>
       </div>
     </div>
   </section>
@@ -829,7 +847,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
       <div class="chead"><h2>Start in three steps</h2><p>From sign-up to your first trade takes about a minute.</p></div>
       <ol class="steps">
         <li><span class="n">1</span><h3>Create your account</h3><p>Sign up with email or a passkey. Apogee creates a self-custody wallet for you on the spot. You can also connect a wallet you already use.</p></li>
-        <li><span class="n">2</span><h3>Fund it</h3><p>Send SOL from any exchange or wallet, or buy with a card. Funds show up after one confirmation, usually in under a second.</p></li>
+        <li><span class="n">2</span><h3>Fund it</h3><p>Send SOL or ETH from any exchange or wallet, or buy with a card. Funds show up after one confirmation, usually in under a second.</p></li>
         <li><span class="n">3</span><h3>Set your presets and trade</h3><p>Choose your buy sizes, slippage and priority fee once. After that every buy is one click or one key press.</p></li>
       </ol>
     </div>
@@ -844,7 +862,8 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
           <tr><td>New launches, bonding curves and DEX pairs on one screen</td><td class="us">Yes</td><td>No</td><td>Partly</td></tr>
           <tr><td>Wallet tracking with one-click copy</td><td class="us">Yes</td><td>Paid add-on</td><td>No</td></tr>
           <tr><td>Perps from the same balance</td><td class="us">Yes</td><td>No</td><td>Separate app</td></tr>
-          <tr><td>Yield on idle SOL</td><td class="us">Yes</td><td>No</td><td>No</td></tr>
+          <tr><td>Solana, Ethereum and Robinhood Chain in one app</td><td class="us">Yes</td><td>One chain</td><td>One chain</td></tr>
+          <tr><td>Yield on idle SOL and ETH</td><td class="us">Yes</td><td>No</td><td>No</td></tr>
           <tr><td>Keyboard hotkeys and presets</td><td class="us">Yes</td><td>Commands</td><td>No</td></tr>
           <tr><td>Self-custody with key export</td><td class="us">Yes</td><td>Varies</td><td>Yes</td></tr>
           <tr><td>Cashback on every trade</td><td class="us">Up to 50% of fees</td><td>Rarely</td><td>No</td></tr>
@@ -881,7 +900,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     <div class="wrap">
       <div class="chead"><h2>Perps</h2><p>Go long or short with up to 50x. See your liquidation price before you open.</p></div>
       <div class="pillars">
-        <div><b>Same wallet, same screen</b><p>Trade perps with the SOL already in your account. No bridging and no second login.</p></div>
+        <div><b>Same wallet, same screen</b><p>Trade perps with the funds already in your account. No bridging and no second login.</p></div>
         <div><b>Risk you can see</b><p>The chart draws your entry and liquidation lines live, so you always know how much room you have.</p></div>
         <div><b>Exits set up front</b><p>Attach take-profit and stop-loss orders when you open, and move them by dragging the lines.</p></div>
       </div>
@@ -914,10 +933,10 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
 
   <section id="yield">
     <div class="wrap">
-      <div class="chead"><h2>Yield</h2><p>SOL you are not trading keeps earning. Drag the sliders to see what it could grow into.</p></div>
+      <div class="chead"><h2>Yield</h2><p>SOL and ETH you are not trading keep earning. Drag the sliders to see what it could grow into.</p></div>
       <div class="pillars">
-        <div><b>Always liquid</b><p>There is no lockup. When a trade needs SOL, Apogee pulls it from your yield balance automatically.</p></div>
-        <div><b>Native staking</b><p>Idle SOL is delegated to a set of high-uptime validators. Rewards are added every epoch, about every two days.</p></div>
+        <div><b>Always liquid</b><p>There is no lockup. When a trade needs funds, Apogee pulls them from your yield balance automatically.</p></div>
+        <div><b>Native staking</b><p>Idle SOL and ETH are staked with high-uptime validators. Rewards are added automatically, and you can leave at any time.</p></div>
         <div><b>One balance</b><p>Your trading and earning balances show as a single number, so you never have to move funds by hand.</p></div>
       </div>
       <div class="yield">
@@ -928,7 +947,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
           <input type="range" id="y-mo" min="1" max="36" value="12" class="range">
           <div class="ybig"><span>You would have</span><strong id="y-total">—</strong><small id="y-gain" class="up">—</small></div>
           <canvas id="ychart" aria-label="Projected balance over time" role="img"></canvas>
-          <p class="hint">Estimated at 6.8% APY, compounded monthly. Rates change.</p>
+          <p class="hint" id="y-apy">Estimated at 6.8% APY, compounded monthly. Rates change.</p>
         </div>
         <div class="panel ygarden" aria-hidden="true">
           <svg viewBox="0 0 320 300" id="garden">
@@ -965,10 +984,10 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     <div class="band" aria-hidden="true"></div>
     <div class="bento">
       <div class="b-cash">
-        <h3>Cashback</h3><p class="sub">Get SOL back on every trade you make.</p>
+        <h3>Cashback</h3><p class="sub">Get SOL or ETH back on every trade you make.</p>
         <div class="stage"><div style="display:grid;justify-items:center">
           <div class="notif" id="notif" role="status" aria-live="polite"><div class="t"><span id="notif-t">0.12 SOL received</span><small>now</small></div><p>Cashback for your last trade. Keep trading to earn more.</p></div>
-          <button class="fakebuy" id="fakebuy" type="button">Buy APGE · 1 SOL</button>
+          <button class="fakebuy" id="fakebuy" type="button">Buy APGE</button>
         </div></div>
       </div>
       <div class="b-tier">
@@ -992,9 +1011,9 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
             <text x="70" y="62" text-anchor="middle" fill="#3DD68C" id="ref-earn">+0.00 SOL</text>
           </svg>
           <div class="calc">
-            <label for="ref-vol">Your friends trade <b id="ref-vol-v">500</b> SOL a month</label>
+            <label for="ref-vol">Your friends trade <b id="ref-vol-v">500</b> <span class="base">SOL</span> a month</label>
             <input type="range" id="ref-vol" min="50" max="5000" step="50" value="500">
-            <span>You earn about <b id="ref-out">1.13</b> SOL a month</span>
+            <span>You earn about <b id="ref-out">1.13</b> <span class="base">SOL</span> a month</span>
           </div>
         </div>
       </div>
@@ -1006,7 +1025,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
           <div class="quests" id="quests">
             <div role="button" tabindex="0"><b>Refer 3 friends</b><small>+1,000 pts</small></div>
             <div role="button" tabindex="0"><b>Share a PnL card</b><small>+500 pts</small></div>
-            <div role="button" tabindex="0"><b>Trade 1 SOL in volume</b><small>+100 pts</small></div>
+            <div role="button" tabindex="0"><b>Trade 1 <span class="base">SOL</span> in volume</b><small>+100 pts</small></div>
           </div>
         </div></div>
       </div>
@@ -1085,7 +1104,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
         <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><h3>Your keys, always</h3><p>Wallet keys are created and stored in a secure enclave tied to your login. Export them whenever you like and take them to any other wallet.</p></div>
         <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg><h3>MEV protection</h3><p>Swaps go out through private relays by default, which keeps sandwich bots from front-running your orders.</p></div>
         <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><h3>Withdrawal delay you control</h3><p>Turn on a 24-hour delay for new withdrawal addresses. If someone gets into your account, you have a day to stop them.</p></div>
-        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg><h3>Token risk checks</h3><p>Every token shows mint and freeze authority, top-10 holder share and dev wallet activity before you buy.</p></div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg><h3>Token risk checks</h3><p>Every token shows mint and freeze authority (or contract ownership on Ethereum), top-10 holder share and dev wallet activity before you buy.</p></div>
         <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM3 21c0-4 3-6 8-6M17 14l2 2 4-4"/></svg><h3>Passkeys and 2FA</h3><p>Log in with a passkey or an authenticator app. SMS codes are never used.</p></div>
         <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 12h6M12 9v6"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg><h3>Open about incidents</h3><p>If something goes wrong, we publish a full write-up within 72 hours, including what we changed.</p></div>
       </div>
@@ -1096,16 +1115,16 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     <div class="wrap faq-split">
       <h2>FAQ</h2>
       <div class="faq">
-        <details open><summary>What is Apogee?</summary><p>Apogee is a trading terminal for Solana. It puts new token launches, bonding curves, DEX pairs, wallet tracking, perps and yield on a single screen, with hotkeys so you can act in one press.</p></details>
+        <details open><summary>What is Apogee?</summary><p>Apogee is a trading terminal for Solana, Ethereum and Robinhood Chain. It puts new token launches, bonding curves, DEX pairs, wallet tracking, perps and yield on a single screen, with hotkeys so you can act in one press.</p></details>
         <details><summary>Who holds my funds?</summary><p>You do. Apogee creates a self-custody wallet for you and never takes control of your keys. You can export the private key at any time and use it in any Solana wallet.</p></details>
         <details><summary>What does "graduated" mean?</summary><p>Many new tokens start on a bonding curve. When the curve fills, its liquidity moves to a regular DEX pool and the token "graduates". Pulse shows each token's progress so you can see it coming.</p></details>
         <details><summary>How much does it cost?</summary><p>There is no subscription. Each swap pays a flat fee of 0.75%, and part of that comes back to you as cashback. Higher tiers return more, up to half of your fees.</p></details>
         <details><summary>How do referrals pay?</summary><p>You earn 30% of the fees paid by traders you invite directly, 3% from the people they invite, and 2% from the level after that. Earnings are paid in SOL.</p></details>
-        <details><summary>How fast are orders?</summary><p>Orders are sent through several relays at once with your chosen priority fee. Most land in the next block, which on Solana is about 400 milliseconds.</p></details>
+        <details><summary>How fast are orders?</summary><p>Orders are sent through several relays at once with your chosen priority fee. Most land in the next block: about 400 milliseconds on Solana and about 12 seconds on Ethereum mainnet.</p></details>
         <details><summary>Can I lose more than I put in on perps?</summary><p>No. Your loss on a position is limited to the margin you put in. If the price reaches your liquidation level, the position closes and the rest of your balance is untouched.</p></details>
-        <details><summary>Where does yield come from?</summary><p>Idle SOL is staked with Solana validators. Staking rewards are paid every epoch, roughly every two days. The rate changes with network conditions.</p></details>
+        <details><summary>Where does yield come from?</summary><p>Idle SOL and ETH are staked with validators on their own networks. Rewards are added automatically, and the rate changes with network conditions.</p></details>
         <details><summary>Is there a mobile app?</summary><p>Native iOS and Android apps are on the way. Today the terminal works in any mobile browser and can be added to your home screen.</p></details>
-        <details><summary>Which chains are supported?</summary><p>Solana for spot trading and yield. Perps settle on a Solana-native venue, so you never have to bridge.</p></details>
+        <details><summary>Which chains are supported?</summary><p>Solana, Ethereum and Robinhood Chain, an Ethereum layer 2. Switch chains with one click in the terminal. Each chain keeps its own balance and positions, and you can connect a Solana wallet, an Ethereum wallet or both.</p></details>
       </div>
     </div>
   </section>
@@ -1152,11 +1171,12 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="w-title">
     <button class="x" type="button" data-wclose aria-label="Close">×</button>
     <h2 id="w-title">Connect a wallet</h2>
-    <p class="sub">Apogee only reads your public address and SOL balance. It never asks for your seed phrase and never moves funds without your approval in the wallet.</p>
+    <p class="sub">Apogee only reads your public address and balance. It never asks for your seed phrase and never moves funds without your approval in the wallet.</p>
+    <div class="wtabs" role="group" aria-label="Network"><button type="button" data-wk="sol" aria-pressed="true">Solana</button><button type="button" data-wk="evm" aria-pressed="false">Ethereum · Robinhood Chain</button></div>
     <label class="wsearch"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="w-q" type="search" placeholder="Search wallets" aria-label="Search wallets" autocomplete="off"></label>
     <div class="wlist" id="wlist"></div>
     <p class="err" id="w-err" role="alert"></p>
-    <p class="hint" style="margin:0">New to Solana? Install one of these wallets, create an account, then come back and connect.</p>
+    <p class="hint" style="margin:0">New to crypto? Install one of these wallets, create an account, then come back and connect.</p>
   </div>
 </div>
 <div class="wmenu" id="wmenu" hidden role="menu" aria-label="Wallet">
@@ -1252,8 +1272,16 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   tokens.sort((a, b) => b.born - a.born);
 
   /* ---------- account ---------- */
-  const acct = { sol: 10, pos: {} };   // pos[id] = { qty, cost (SOL) }
-  const SOL_USD = 182.4;
+  // Each chain keeps its own board, balance and positions. acct.sol is the balance in the chain's base asset.
+  const CHAINS = {
+    sol: { id: "sol", name: "Solana", sym: "SOL", usd: 182.4, kind: "sol", presets: ["0.1", "0.5", "1", "2"], def: "1", apy: .068, blockLabel: "slot", block: 312480000 + Math.floor(rand(0, 9999)), every: 1, note: "~400 ms per block" },
+    eth: { id: "eth", name: "Ethereum", sym: "ETH", usd: 3890, kind: "evm", presets: ["0.01", "0.05", "0.1", "0.25"], def: "0.05", apy: .032, blockLabel: "block", block: 23410000 + Math.floor(rand(0, 999)), every: 30, note: "~12 s per block" },
+    rh: { id: "rh", name: "Robinhood Chain", sym: "ETH", usd: 3890, kind: "evm", presets: ["0.01", "0.05", "0.1", "0.25"], def: "0.05", apy: .032, blockLabel: "block", block: 4200000 + Math.floor(rand(0, 9999)), every: 1, note: "Ethereum layer 2" }
+  };
+  const accts = { sol: { sol: 10, pos: {} }, eth: { sol: .5, pos: {} }, rh: { sol: .5, pos: {} } };
+  let CH = CHAINS.sol, acct = accts.sol, SOL_USD = CH.usd, BASE = CH.sym;
+  const boards = {};
+  const fmtB = v => v.toFixed(BASE === "ETH" ? 4 : 3);   // ETH amounts need more decimals
   let selected = tokens.find(t => t.stage === 1) || tokens[0];
   let side = "buy";
   let sortBy = "new";
@@ -1422,16 +1450,16 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
 
   function renderAccount() {
     const p = acct.pos[selected.id];
-    $("#bal").textContent = acct.sol.toFixed(3) + " SOL";
+    $("#bal").textContent = fmtB(acct.sol) + " " + BASE;
     if (p && p.qty > 0) {
       const val = p.qty * selected.price / SOL_USD;
       const pnl = val - p.cost;
-      $("#hold").textContent = val.toFixed(3) + " SOL";
+      $("#hold").textContent = fmtB(val) + " " + BASE;
       const el = $("#pnl"); el.textContent = (pnl >= 0 ? "+" : "") + pnl.toFixed(3); el.className = pnl >= 0 ? "up" : "down";
     } else { $("#hold").textContent = "0"; $("#pnl").textContent = "—"; $("#pnl").className = ""; }
     const held = tokens.filter(x => acct.pos[x.id] && acct.pos[x.id].qty > 0);
     $("#positions").hidden = !held.length;
-    $("#pos-list").innerHTML = held.map(x => { const q = acct.pos[x.id], val = q.qty * x.price / SOL_USD, pl = val - q.cost; return `<button class="pos" type="button" data-id="${x.id}"><span>${x.sym}</span><span>${val.toFixed(3)} SOL</span><span class="${pl >= 0 ? "up" : "down"}">${(pl >= 0 ? "+" : "") + (pl / q.cost * 100).toFixed(1)}%</span></button>`; }).join("");
+    $("#pos-list").innerHTML = held.map(x => { const q = acct.pos[x.id], val = q.qty * x.price / SOL_USD, pl = val - q.cost; return `<button class="pos" type="button" data-id="${x.id}"><span>${x.sym}</span><span>${fmtB(val)} ${BASE}</span><span class="${pl >= 0 ? "up" : "down"}">${(pl >= 0 ? "+" : "") + (pl / q.cost * 100).toFixed(1)}%</span></button>`; }).join("");
     updateGo();
   }
 
@@ -1447,10 +1475,10 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   const presetsBuy = ["0.1", "0.5", "1", "2"];
   const presetsSell = ["25%", "50%", "75%", "100%"];
   function renderPresets() {
-    const list = side === "buy" ? presetsBuy : presetsSell;
+    const list = side === "buy" ? CH.presets : presetsSell;
     $("#presets").innerHTML = list.map(v => `<button type="button" aria-pressed="false" data-v="${v}">${v}</button>`).join("");
-    $("#unit").textContent = side === "buy" ? "SOL" : "%";
-    $("#amount").value = side === "buy" ? "1" : "100";
+    $("#unit").textContent = side === "buy" ? BASE : "%";
+    $("#amount").value = side === "buy" ? CH.def : "100";
   }
   $("#presets").addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b) return;
@@ -1488,7 +1516,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   function updateGo() {
     const v = parseAmt(), g = $("#go"), p = acct.pos[selected.id];
     let ok = v > 0, label;
-    if (side === "buy") { ok = ok && v <= acct.sol + 1e-9; label = ok ? `Buy ${v} SOL of ${selected.sym}` : (v > acct.sol ? "Not enough SOL" : "Enter an amount"); }
+    if (side === "buy") { ok = ok && v <= acct.sol + 1e-9; label = ok ? `Buy ${v} ${BASE} of ${selected.sym}` : (v > acct.sol ? `Not enough ${BASE}` : "Enter an amount"); }
     else { ok = ok && v <= 100 && !!p && p.qty > 0; label = !p || !p.qty ? `No ${selected.sym} to sell` : ok ? `Sell ${v}% of ${selected.sym}` : "Enter 1 to 100"; }
     g.disabled = !ok; g.textContent = label;
   }
@@ -1508,7 +1536,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
       const p = acct.pos[t.id] || (acct.pos[t.id] = { qty: 0, cost: 0 });
       p.qty += qty; p.cost += v; acct.sol = Math.max(0, acct.sol - v);
       $("#msg").textContent = `Filled · ${qty.toLocaleString(undefined, { maximumFractionDigits: 0 })} ${t.sym} in ${Math.floor(rand(24, 52))} ms`;
-      toast(`Bought ${v} SOL of ${t.sym}`);
+      toast(`Bought ${v} ${BASE} of ${t.sym}`);
     } else {
       const p = acct.pos[t.id]; if (!p || !(v > 0) || v > 100) return;
       const q = p.qty * v / 100;
@@ -1516,7 +1544,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
       const out = q * t.price / SOL_USD * (1 - fee);
       p.cost *= 1 - v / 100; p.qty -= q; acct.sol += out;
       if (p.qty <= 1e-9) delete acct.pos[t.id];
-      $("#msg").textContent = `Filled · received ${out.toFixed(3)} SOL`;
+      $("#msg").textContent = `Filled · received ${fmtB(out)} ${BASE}`;
       toast(`Sold ${v}% of ${t.sym}`);
     }
     renderDetail(); renderBoard();
@@ -1544,8 +1572,11 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     const html = majors.map(([s, p]) => { const c = rand(-6, 9); return `<span><b>${s}</b>${p < 1 ? "$" + p.toPrecision(3) : "$" + p.toLocaleString(undefined, { maximumFractionDigits: 2 })} <em class="${c >= 0 ? "up" : "down"}" style="font-style:normal">${fmtPct(c)}</em></span>`; }).join("");
     $("#ticker").innerHTML = html + html;
   }
-  let slot = 312_480_000 + Math.floor(rand(0, 9999));
-  function bumpSlot() { slot += 1; $("#slot").textContent = "slot " + slot.toLocaleString("en-US"); }
+  let slot = CH.block, slotTick = 0;
+  function bumpSlot() {
+    slotTick++; Object.values(CHAINS).forEach(c => { if (slotTick % c.every === 0) c.block += 1; });
+    slot = CH.block; $("#slot").textContent = CH.blockLabel + " " + slot.toLocaleString("en-US");
+  }
 
   /* ---------- count-up ---------- */
   function countUp() {
@@ -1599,13 +1630,13 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   redrawMinis(); addEventListener("resize", redrawMinis); setInterval(redrawMinis, 3000);
 
   let earned = 0;
-  setInterval(() => { earned += 10 * 0.068 / (365 * 24 * 3600); $("#earned").textContent = "+" + earned.toFixed(8) + " SOL"; }, 1000);
+  setInterval(() => { earned += 10 * 0.068 / (365 * 24 * 3600); $("#earned").textContent = "+" + earned.toFixed(8) + " " + BASE; }, 1000);
 
   /* ---------- rewards ---------- */
   const notif = $("#notif");
   function cashback() {
     notif.classList.add("out");
-    setTimeout(() => { $("#notif-t").textContent = rand(0.02, 0.25).toFixed(2) + " SOL received"; notif.classList.remove("out"); }, 450);
+    setTimeout(() => { $("#notif-t").textContent = fmtB(rand(0.02, 0.25) * 182.4 / SOL_USD) + " " + BASE + " received"; notif.classList.remove("out"); }, 450);
   }
   $("#fakebuy").addEventListener("click", cashback);
   if (!reduce) setInterval(cashback, 3500);
@@ -1616,7 +1647,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   const refNodes = [[190, 60, 14], [190, 140, 14], [290, 40, 10], [290, 80, 10], [290, 120, 10], [290, 165, 10], [375, 30, 7], [375, 75, 7], [375, 120, 7], [375, 170, 7]];
   $("#ref-nodes").innerHTML = refNodes.map(([x, y, r]) => `<circle class="node" cx="${x}" cy="${y}" r="${r}"/><circle cx="${x}" cy="${y - r * .25}" r="${r * .28}" fill="none" stroke="#F2F3F7" stroke-width="1.5"/>`).join("");
   let refSol = 0;
-  setInterval(() => { refSol += rand(0.005, 0.03); $("#ref-earn").textContent = "+" + refSol.toFixed(2) + " SOL"; }, 1400);
+  setInterval(() => { refSol += rand(0.005, 0.03); $("#ref-earn").textContent = "+" + fmtB(refSol * 182.4 / SOL_USD) + " " + BASE; }, 1400);
 
   const qs = $$("#quests div"); let qi = 0;
   let questLocked = false;
@@ -1732,7 +1763,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   $("#wallets").addEventListener("click", e => { const b = e.target.closest("[data-w]"); if (!b) return; const w = wallets[+b.dataset.w]; w.on = !w.on; renderWallets(); renderFeed(); toast(w.on ? `Following ${w.name}` : `Unfollowed ${w.name}`); });
   function renderFeed() {
     const items = feed.filter(f => wallets[f.w].on && (ffilter === "all" || f.side === ffilter)).slice(0, 9);
-    $("#feed").innerHTML = items.length ? items.map(f => { const w = wallets[f.w]; return `<button type="button" class="fi" data-t="${f.t}"><div class="pic">${w.art}</div><span><span class="tag ${f.side === "buy" ? "b" : "s"}">${f.side === "buy" ? "BUY" : "SELL"}</span><b>${w.name}</b> ${f.side === "buy" ? "bought" : "sold"} ${f.amt.toFixed(2)} SOL of ${f.sym} at ${f.mc}</span><time>${ago(f.at)}</time></button>`; }).join("") : `<p class="empty-feed">Follow a wallet to see its trades here.</p>`;
+    $("#feed").innerHTML = items.length ? items.map(f => { const w = wallets[f.w]; return `<button type="button" class="fi" data-t="${f.t}"><div class="pic">${w.art}</div><span><span class="tag ${f.side === "buy" ? "b" : "s"}">${f.side === "buy" ? "BUY" : "SELL"}</span><b>${w.name}</b> ${f.side === "buy" ? "bought" : "sold"} ${fmtB(f.amt * 182.4 / SOL_USD)} ${BASE} of ${f.sym} at ${f.mc}</span><time>${ago(f.at)}</time></button>`; }).join("") : `<p class="empty-feed">Follow a wallet to see its trades here.</p>`;
   }
   function addFeed() {
     const w = Math.floor(Math.random() * wallets.length), t = pick(tokens);
@@ -1809,10 +1840,10 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   /* ---------- yield ---------- */
   const yc = $("#ychart"), yg = yc.getContext("2d");
   function yieldCalc() {
-    const amt = +$("#y-amt").value, mo = +$("#y-mo").value, r = .068 / 12;
-    $("#y-amt-v").textContent = amt + " SOL"; $("#y-mo-v").textContent = mo + (mo === 1 ? " month" : " months");
+    const amt = +$("#y-amt").value, mo = +$("#y-mo").value, r = CH.apy / 12;
+    $("#y-amt-v").textContent = amt + " " + BASE; $("#y-apy").textContent = `Estimated at ${(CH.apy * 100).toFixed(1)}% APY on ${CH.name}, compounded monthly. Rates change.`; $("#y-mo-v").textContent = mo + (mo === 1 ? " month" : " months");
     const series = Array.from({ length: mo + 1 }, (_, i) => amt * Math.pow(1 + r, i)), tot = series[mo];
-    $("#y-total").textContent = tot.toFixed(3) + " SOL"; $("#y-gain").textContent = `+${(tot - amt).toFixed(3)} SOL earned`;
+    $("#y-total").textContent = tot.toFixed(3) + " " + BASE; $("#y-gain").textContent = `+${(tot - amt).toFixed(3)} ${BASE} earned`;
     const rr = yc.getBoundingClientRect();
     if (rr.width) {
       const d = Math.min(2, devicePixelRatio || 1); yc.width = rr.width * d; yc.height = rr.height * d; yg.setTransform(d, 0, 0, d, 0, 0);
@@ -1844,7 +1875,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   function renderLb() {
     const rows = lbData().sort((a, b) => b[lbKey] - a[lbKey]);
     const medals = ["#F2C94C", "#C9CED8", "#D99A5B"];
-    $("#lb tbody").innerHTML = rows.map((r, i) => `<tr><td>${i < 3 ? `<span class="medal" style="background:${medals[i]}">${i + 1}</span>` : i + 1}</td><td><span class="who2"><i>${r.art}</i>@${r.n}</span></td><td class="${r.pnl >= 0 ? "up" : "down"}">${r.pnl >= 0 ? "+" : ""}${r.pnl.toFixed(1)} SOL</td><td>${r.vol.toLocaleString("en-US", { maximumFractionDigits: 0 })} SOL</td><td>${r.win.toFixed(1)}%</td><td>${r.trades}</td></tr>`).join("");
+    $("#lb tbody").innerHTML = rows.map((r, i) => `<tr><td>${i < 3 ? `<span class="medal" style="background:${medals[i]}">${i + 1}</span>` : i + 1}</td><td><span class="who2"><i>${r.art}</i>@${r.n}</span></td><td class="${r.pnl >= 0 ? "up" : "down"}">${r.pnl >= 0 ? "+" : ""}${(r.pnl * 182.4 / SOL_USD).toFixed(BASE === "ETH" ? 2 : 1)} ${BASE}</td><td>${(r.vol * 182.4 / SOL_USD).toLocaleString("en-US", { maximumFractionDigits: BASE === "ETH" ? 1 : 0 })} ${BASE}</td><td>${r.win.toFixed(1)}%</td><td>${r.trades}</td></tr>`).join("");
     $$("[data-sort-k]").forEach(b => { if (b.dataset.sortK === lbKey) b.setAttribute("aria-sort", "descending"); else b.removeAttribute("aria-sort"); });
   }
   $$("[data-sort-k]").forEach(b => b.addEventListener("click", () => { lbKey = b.dataset.sortK; renderLb(); }));
@@ -1861,7 +1892,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     phg.clearRect(0, 0, W, H); phg.beginPath(); php.forEach((v, i) => i ? phg.lineTo(x(i), y(v)) : phg.moveTo(0, y(v))); phg.lineTo(W, H); phg.lineTo(0, H); phg.fillStyle = gr; phg.fill();
     phg.beginPath(); php.forEach((v, i) => i ? phg.lineTo(x(i), y(v)) : phg.moveTo(0, y(v))); phg.strokeStyle = "#3DD68C"; phg.lineWidth = 2; phg.stroke();
   }
-  function renderPhoneRows() { $("#ph-rows").innerHTML = tokens.slice(0, 6).map(t => { const c = (t.price / t.open - 1) * 100; return `<div class="ph-row"><i>${t.art || (t.art = critter(t.id * 7919, t.hue))}</i><span>${t.sym}<br><small style="color:var(--dim)">${fmtUsd(t.price * SUPPLY)}</small></span><span class="${c >= 0 ? "up" : "down"}">${fmtPct(c)}</span></div>`; }).join(""); $("#ph-bal").textContent = acct.sol.toFixed(2) + " SOL"; }
+  function renderPhoneRows() { $("#ph-rows").innerHTML = tokens.slice(0, 6).map(t => { const c = (t.price / t.open - 1) * 100; return `<div class="ph-row"><i>${t.art || (t.art = critter(t.id * 7919, t.hue))}</i><span>${t.sym}<br><small style="color:var(--dim)">${fmtUsd(t.price * SUPPLY)}</small></span><span class="${c >= 0 ? "up" : "down"}">${fmtPct(c)}</span></div>`; }).join(""); $("#ph-bal").textContent = fmtB(acct.sol) + " " + BASE; }
   setInterval(() => { php.push(php[php.length - 1] + rand(-5, 5.5)); php.shift(); drawPhone(); renderPhoneRows(); }, 1200);
   drawPhone(); renderPhoneRows(); if (window.ResizeObserver) new ResizeObserver(drawPhone).observe(phc);
 
@@ -1920,25 +1951,62 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   }
   window.addEventListener("wallet-standard:register-wallet", e => { try { e.detail({ register: registerStd }); } catch (err) {} });
   try { window.dispatchEvent(new CustomEvent("wallet-standard:app-ready", { detail: { register: registerStd } })); } catch (e) {}
-  const providerOf = w => w.std ? stdProvider(w.std) : w.get();
+  /* Ethereum and Robinhood Chain wallets: EIP-6963 discovery, where each wallet announces its own name and icon */
+  const EVM_WALLETS = [
+    { id: "metamask", name: "MetaMask", color: "#F6851B", rdns: "io.metamask", url: "https://metamask.io/download/", get: () => window.ethereum && window.ethereum.isMetaMask && !window.ethereum.isRabby && !window.ethereum.isPhantom ? window.ethereum : null },
+    { id: "coinbase", name: "Coinbase Wallet", color: "#0052FF", rdns: "com.coinbase.wallet", url: "https://www.coinbase.com/wallet/downloads", get: () => inj("coinbaseWalletExtension") },
+    { id: "rabby", name: "Rabby", color: "#7084FF", rdns: "io.rabby", url: "https://rabby.io/", get: () => window.ethereum && window.ethereum.isRabby ? window.ethereum : null },
+    { id: "phantom", name: "Phantom", color: "#7B61FF", rdns: "app.phantom", url: "https://phantom.com/download", get: () => inj("phantom", "ethereum") },
+    { id: "okxwallet", name: "OKX Wallet", color: "#111111", rdns: "com.okex.wallet", url: "https://www.okx.com/web3", get: () => inj("okxwallet") },
+    { id: "trust", name: "Trust Wallet", color: "#0500FF", rdns: "com.trustwallet.app", url: "https://trustwallet.com/download", get: () => inj("trustwallet") },
+    { id: "robinhood", name: "Robinhood Wallet", color: "#CCFF00", rdns: "com.robinhood", url: "https://robinhood.com/us/en/web3-wallet/", get: () => null }
+  ].map(w => ({ ...w, kind: "evm" }));
+  WALLETS.forEach(w => { w.kind = "sol"; });
+  window.addEventListener("eip6963:announceProvider", e => {
+    const d = e.detail; if (!d || !d.info || !d.provider) return;
+    const name = String(d.info.name || "Wallet"), rdns = String(d.info.rdns || "");
+    const known = EVM_WALLETS.find(w => (rdns && w.rdns && rdns.startsWith(w.rdns)) || name.toLowerCase().startsWith(w.name.split(" ")[0].toLowerCase()));
+    if (known) { known.eip = d.provider; known.icon = d.info.icon; }
+    else if (!EVM_WALLETS.some(w => w.name === name)) EVM_WALLETS.push({ id: "eip-" + (rdns || name).toLowerCase().replace(/[^a-z0-9]+/g, "-"), name, icon: d.info.icon, eip: d.provider, color: "#333", url: "#", kind: "evm", get: () => null });
+    if (!document.getElementById("wmodal").hidden && document.getElementById("wlist").childElementCount) renderWalletList();
+  });
+  try { window.dispatchEvent(new Event("eip6963:requestProvider")); } catch (e) {}
+  function evmProvider(raw) {
+    const addrObj = a => a ? { toString: () => a } : null;
+    return {
+      raw, publicKey: null,
+      async connect(opts) {
+        const accs = await raw.request({ method: opts && opts.onlyIfTrusted ? "eth_accounts" : "eth_requestAccounts" });
+        if (!accs || !accs[0]) throw new Error("No account"); this.publicKey = addrObj(accs[0]); return { publicKey: this.publicKey };
+      },
+      async disconnect() { try { await raw.request({ method: "wallet_revokePermissions", params: [{ eth_accounts: {} }] }); } catch (e) {} },
+      on(ev, fn) { if (!raw.on) return; if (ev === "accountChanged") raw.on("accountsChanged", a => fn(addrObj(a && a[0]))); if (ev === "disconnect") raw.on("disconnect", fn); }
+    };
+  }
+  const providerOf = w => w.kind === "evm" ? ((w.eip || w.get()) ? evmProvider(w.eip || w.get()) : null) : (w.std ? stdProvider(w.std) : w.get());
+  let wkind = "sol";
+  const walletPool = () => wkind === "evm" ? EVM_WALLETS : WALLETS;
+  const findWallet = (kind, id) => (kind === "evm" ? EVM_WALLETS : WALLETS).find(x => x.id === id);
 
   const wmodal = $("#wmodal"), wmenu = $("#wmenu"), wbtn = $("#wallet-btn");
   let conn = null, wLastFocus = null;   // { w, provider, address }
-  const short = a => a.slice(0, 4) + "…" + a.slice(-4);
+  const short = a => (a.startsWith("0x") ? a.slice(0, 6) : a.slice(0, 4)) + "…" + a.slice(-4);
   const safeIcon = v => typeof v === "string" && /^data:image\/(svg\+xml|png|webp|jpeg);/.test(v) ? v.replace(/"/g, "%22") : null;
   const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   function renderWalletList() {
     const q = ($("#w-q").value || "").trim().toLowerCase();
-    const list = WALLETS.map(w => ({ w, det: !!providerOf(w) })).filter(x => !q || x.w.name.toLowerCase().includes(q)).sort((a, b) => b.det - a.det);
+    const list = walletPool().map(w => ({ w, det: !!providerOf(w) })).filter(x => !q || x.w.name.toLowerCase().includes(q)).sort((a, b) => b.det - a.det);
     const tile = w => { const src = safeIcon(w.icon) || safeIcon(LOGOS[w.id]); return src ? `<i class="logo"><img src="${src}" alt="" width="36" height="36"></i>` : `<i style="background:${w.color}">${esc(w.name[0])}</i>`; };
     $("#wlist").innerHTML = list.length ? list.map(({ w, det }) => det
       ? `<button type="button" class="wopt" data-wid="${esc(w.id)}">${tile(w)}<b>${esc(w.name)}</b><small class="det">Detected</small></button>`
       : `<a class="wopt" href="${esc(w.url)}" target="_blank" rel="noopener noreferrer">${tile(w)}<b>${esc(w.name)}</b><small>Install</small></a>`).join("")
       : `<p class="hint" style="margin:8px 4px">No wallet matches \u201c${esc(q)}\u201d.</p>`;
   }
-  function openWallets() { wLastFocus = document.activeElement; $("#w-err").textContent = ""; $("#w-q").value = ""; renderWalletList(); wmodal.hidden = false; setTimeout(() => { const f = $(".wopt", wmodal); if (f) f.focus(); }, 30); }
+  function openWallets() { wLastFocus = document.activeElement; $("#w-err").textContent = ""; $("#w-q").value = ""; setWk(CH.kind); renderWalletList(); wmodal.hidden = false; setTimeout(() => { const f = $(".wopt", wmodal); if (f) f.focus(); }, 30); }
   function closeWallets() { wmodal.hidden = true; if (wLastFocus) wLastFocus.focus(); }
   $$("[data-wclose]", wmodal).forEach(b => b.addEventListener("click", closeWallets));
+  function setWk(k) { wkind = k; $$("[data-wk]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.wk === k))); renderWalletList(); }
+  $$("[data-wk]").forEach(b => b.addEventListener("click", () => setWk(b.dataset.wk)));
   $("#w-q").addEventListener("input", renderWalletList);
   $("#w-q").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); const f = $(".wopt", wmodal); if (f) f.click(); } });
   async function fetchBalance(addr) {
@@ -1948,13 +2016,30 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     } catch (e) {}
     return null;
   }
+  async function evmInfo(provider) {
+    const raw = provider.raw; let bal = null, net = "EVM network", cid = null;
+    try { cid = await raw.request({ method: "eth_chainId" }); } catch (e) {}
+    try { const wei = await raw.request({ method: "eth_getBalance", params: [provider.publicKey.toString(), "latest"] }); bal = Number(BigInt(wei)) / 1e18; } catch (e) {}
+    if (cid === "0x1") net = "Ethereum"; else if (cid) net = "Chain " + parseInt(cid, 16);
+    return { bal, net, cid };
+  }
   async function setConnected(w, provider, address) {
     conn = { w, provider, address };
     wbtn.classList.add("connected"); $("#wallet-label").textContent = short(address); wbtn.setAttribute("aria-label", `Wallet ${short(address)}`);
-    $("#wm-name").textContent = w.name; $("#wm-addr").textContent = short(address); $("#wm-explorer").href = "https://solscan.io/account/" + address;
+    $("#wm-name").textContent = w.name; $("#wm-addr").textContent = short(address);
+    $("#wm-explorer").hidden = w.kind === "evm"; $("#wm-explorer").textContent = "View on Solscan"; $("#wm-explorer").href = "https://solscan.io/account/" + address;
     $("#wm-bal").textContent = "Loading…";
-    try { localStorage.setItem("apogee-wallet", w.id); } catch (e) {}
+    try { localStorage.setItem("apogee-wallet", w.kind + ":" + w.id); } catch (e) {}
     try { provider.on && provider.on("disconnect", () => clearConn(false)); provider.on && provider.on("accountChanged", pk => { if (pk) setConnected(w, provider, pk.toString()); else clearConn(false); }); } catch (e) {}
+    if (w.kind === "evm") {
+      const info = await evmInfo(provider);
+      $("#wm-name").textContent = `${w.name} · ${info.net}`;
+      $("#wm-bal").textContent = info.bal == null ? "Unavailable" : info.bal.toFixed(4) + " ETH";
+      if (info.cid === "0x1") { $("#wm-explorer").hidden = false; $("#wm-explorer").textContent = "View on Etherscan"; $("#wm-explorer").href = "https://etherscan.io/address/" + address; }
+      if (CH.kind !== "evm") setChain("eth");
+      return;
+    }
+    if (CH.kind !== "sol") setChain("sol");
     const bal = await fetchBalance(address);
     $("#wm-bal").textContent = bal == null ? "Unavailable" : bal.toFixed(4) + " SOL";
   }
@@ -1965,7 +2050,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   }
   $("#wlist").addEventListener("click", async e => {
     const b = e.target.closest("[data-wid]"); if (!b) return;
-    const w = WALLETS.find(x => x.id === b.dataset.wid), provider = w && providerOf(w); if (!provider) return;
+    const w = walletPool().find(x => x.id === b.dataset.wid), provider = w && providerOf(w); if (!provider) return;
     b.setAttribute("aria-busy", "true"); $("#w-err").textContent = "";
     try {
       const res = await provider.connect();
@@ -1994,26 +2079,32 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   // reconnect silently if the user already trusted this site
   (async () => {
     let id = null; try { id = localStorage.getItem("apogee-wallet"); } catch (e) {}
-    const w = WALLETS.find(x => x.id === id), provider = w && providerOf(w);
+    if (!id) return;
+    const [kind, wid] = id.includes(":") ? id.split(":") : ["sol", id];
+    await new Promise(r => setTimeout(r, 60));   // give EIP-6963 wallets a moment to announce
+    const w = findWallet(kind, wid), provider = w && providerOf(w);
     if (!provider) return;
     try { const res = await provider.connect({ onlyIfTrusted: true }); const pk = (res && res.publicKey) || provider.publicKey; if (pk) setConnected(w, provider, pk.toString()); } catch (e) {}
   })();
 
   /* ---------- hero HUD: interactive planet ---------- */
   const hud = $("#hud"), hbtn = $("#hud-btn"), hsvg = $(".hud-svg", hud);
-  let solPx = 182.4; const solHist = Array.from({ length: 30 }, () => solPx = solPx * (1 + rand(-.004, .004)));
+  const pxs = { SOL: 182.4, ETH: 3890 }, hists = {};
+  Object.keys(pxs).forEach(k => { hists[k] = Array.from({ length: 30 }, () => pxs[k] = pxs[k] * (1 + rand(-.004, .004))); });
   let hudOpen = false, hudT = null, moverId = null;
   function hudData() {
     $("#hud-pairs").textContent = tokens.filter(t => t.stage === 0).length + " live";
     $("#hud-block").textContent = "#" + slot.toLocaleString("en-US");
     const m = tokens.reduce((a, t) => (t.price / t.open > a.price / a.open ? t : a), tokens[0]);
     if (m) { moverId = m.id; const c = (m.price / m.open - 1) * 100; $("#hud-mover").innerHTML = `<i>${m.art || (m.art = critter(m.id * 7919, m.hue))}</i>${esc(m.sym)} <span class="up">${fmtPct(c)}</span>`; }
-    $("#hud-sol").textContent = "$" + solPx.toFixed(2);
+    const solPx = pxs[BASE], solHist = hists[BASE];
+    $("#hud-base-k").textContent = BASE; $("#hud-block-s").textContent = CH.note;
+    $("#hud-sol").textContent = "$" + solPx.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const lo = Math.min(...solHist), hi = Math.max(...solHist) + 1e-9;
     $("#hud-spark").setAttribute("d", solHist.map((v, i) => `${i ? "L" : "M"}${(i / (solHist.length - 1) * 78 + 1).toFixed(1)} ${(20 - (v - lo) / (hi - lo) * 18).toFixed(1)}`).join(" "));
     $("#hud-spark").style.stroke = solHist[solHist.length - 1] >= solHist[0] ? "var(--up)" : "var(--down)";
   }
-  setInterval(() => { solPx *= 1 + rand(-.0035, .0037); solHist.push(solPx); solHist.shift(); if (hudOpen) hudData(); }, 1000);
+  setInterval(() => { Object.keys(pxs).forEach(k => { pxs[k] *= 1 + rand(-.0035, .0037); hists[k].push(pxs[k]); hists[k].shift(); }); if (hudOpen) hudData(); }, 1000);
   function setHud(o) {
     clearTimeout(hudT);
     if (o === hudOpen) return;
@@ -2036,7 +2127,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   hud.addEventListener("focusout", e => { if (!hud.contains(e.relatedTarget)) setHud(false); });
   document.addEventListener("keydown", e => { if (e.key === "Escape" && hudOpen) { setHud(false); hbtn.blur(); } });
   document.addEventListener("pointerdown", e => { if (hudOpen && !hud.contains(e.target)) setHud(false); });
-  const FACTS = ["Apogee: the highest point of an orbit.", "Solana produces a new block about every 400 ms.", "A token graduates when its bonding curve fills.", "Hotkeys: B buy, S sell, 1 to 4 for size."];
+  const FACTS = ["Apogee: the highest point of an orbit.", "Apogee runs on Solana, Ethereum and Robinhood Chain.", "A token graduates when its bonding curve fills.", "Hotkeys: B buy, S sell, 1 to 4 for size."];
   let factI = 0;
   hbtn.addEventListener("click", e => {
     hudPtr = false;
@@ -2048,7 +2139,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     const k = c.dataset.k;
     if (k === "mover" && moverId != null) { select(moverId); $("#terminal").scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); }
     else if (k === "pairs") { $("#terminal").scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); $('[data-sort="new"]').click(); }
-    else if (k === "sol") { $("#perps").scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); }
+    else if (k === "sol") { const b = $(`[data-mk="${BASE}"]`); if (b) b.click(); $("#perps").scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); }
     else toast(`Block #${slot.toLocaleString("en-US")} confirmed`);
   });
   const bc = $("#hud-burst"), bg = bc.getContext("2d"); let parts = [], bRaf = 0;
@@ -2091,6 +2182,33 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     $(".hero").addEventListener("pointermove", e => { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; });
     if (window.IntersectionObserver) new IntersectionObserver(es => { sVisible = es[0].isIntersecting; }).observe($(".hero"));
   }
+
+
+  /* ---------- chain switcher ---------- */
+  function setChain(id, quiet) {
+    const next = CHAINS[id]; if (!next) return;
+    if (next !== CH) {
+      boards[CH.id] = tokens.slice();
+      tokens.length = 0;
+      if (boards[id]) tokens.push(...boards[id]);
+      else { [10, 9, 9].forEach((n, st) => { for (let i = 0; i < n; i++) tokens.push(mkToken(st)); }); tokens.sort((a, b) => b.born - a.born); }
+      CH = next; acct = accts[id]; SOL_USD = CH.usd; BASE = CH.sym;
+      selected = tokens.find(t => t.stage === 1) || tokens[0]; lastPrice = null;
+      if (!quiet) toast(`Switched to ${CH.name}`);
+    }
+    $$("[data-chain]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.chain === id)));
+    $("#sim-label").textContent = "Live · " + CH.name;
+    $$(".base").forEach(e => { e.textContent = BASE; });
+    try { localStorage.setItem("apogee-chain", id); } catch (e) {}
+    renderPresets(); renderBoard(); renderDetail(); bumpSlot(); yieldCalc(); calcRef(); renderLb(); renderFeed(); renderPhoneRows();
+    if (hudOpen) hudData();
+  }
+  document.addEventListener("click", e => {
+    const b = e.target.closest("[data-chain]"); if (!b) return;
+    setChain(b.dataset.chain);
+    if (b.classList.contains("cbtn")) $("#terminal").scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+  });
+  { let saved = null; try { saved = localStorage.getItem("apogee-chain"); } catch (e) {} if (saved && CHAINS[saved] && saved !== "sol") setChain(saved, true); }
 
   /* ---------- polish: card glow, ripples, ticker refresh ---------- */
   $$(".panel, .secgrid > div, .steps li, .tier, .pillars div").forEach(c => { c.classList.add("glow-card"); c.addEventListener("pointermove", e => { const r = c.getBoundingClientRect(); c.style.setProperty("--mx", e.clientX - r.left + "px"); c.style.setProperty("--my", e.clientY - r.top + "px"); }); });

@@ -1,6 +1,6 @@
 # Apogee
 
-Landing page for a concept Solana trading terminal. It is a single static file, `index.html`, with no build step.
+Landing page for a concept multichain trading terminal (Solana, Ethereum and Robinhood Chain). It is a single static file, `index.html`, with no build step.
 
 The terminal in the hero runs entirely in the browser with generated market data:
 
@@ -22,3 +22,7 @@ MIT licensed. See `LICENSE`.
 ## Teaser video
 
 `media/teaser.html` renders a 22-second 1920x1080 teaser on a canvas, where every frame is a pure function of time. `media/apogee-teaser.mp4` is the rendered result and `media/apogee-teaser.jpg` a poster frame. The fonts in `media/fonts` are Inter and JetBrains Mono, both under the SIL Open Font License. Open the HTML in a browser to preview it playing in real time.
+
+## Chains
+
+The terminal switches between Solana, Ethereum and Robinhood Chain from the hero chips or the terminal bar. Each chain keeps its own board, balance and positions, and the choice is remembered. The wallet window has a Solana tab (Wallet Standard) and an Ethereum / Robinhood Chain tab that discovers installed EVM wallets through EIP-6963 and reads the address, network and ETH balance through the wallet itself.

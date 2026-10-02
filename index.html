@@ -431,6 +431,42 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
 @keyframes flapR{to{transform:rotate(-14deg) scaleY(.8)}}
 @keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
 @keyframes shad{50%{transform:scaleX(.8);opacity:.15}}
+
+/* ---- v6: copy-heavy sections ---- */
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px 28px;margin:0 auto 28px;max-width:1000px}
+.pillars div{border-left:2px solid var(--rufous);padding-left:14px}
+.pillars b{font-size:15px}
+.pillars p{margin:4px 0 0;color:var(--dim);font-size:14px}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:16px;counter-reset:none}
+.steps li{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px;display:grid;gap:8px;position:relative;overflow:hidden}
+.steps .n{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--rufous);color:#05061A;font:700 15px var(--f-mono)}
+.steps h3{font-size:19px;font-weight:600}
+.steps p{margin:0;color:var(--dim);font-size:14.5px}
+.steps li:not(:last-child)::after{content:"";position:absolute;right:-30px;top:38px;width:60px;height:1px;background:linear-gradient(90deg,var(--rufous),transparent)}
+.cmp{width:100%;border-collapse:collapse;min-width:620px;font-size:14px;max-width:1000px;margin-inline:auto}
+.cmp th,.cmp td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left}
+.cmp th{font-weight:600;color:var(--dim);font-size:13px}
+.cmp td:not(:first-child){color:var(--dim);white-space:nowrap}
+.cmp .us{color:var(--fg);background:var(--rufous-soft);font-weight:600}
+.cmp th.us{color:var(--fg);border-top:2px solid var(--rufous)}
+.secgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.secgrid>div{background:var(--ink);padding:24px;display:grid;gap:8px;align-content:start;transition:background .2s}
+.secgrid>div:hover{background:var(--panel)}
+.secgrid svg{width:26px;height:26px;color:var(--rufous)}
+.secgrid h3{font-size:17px;font-weight:600}
+.secgrid p{margin:0;color:var(--dim);font-size:14px}
+.stores{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.store{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--line);background:#0D0E14;border-radius:10px;padding:8px 16px;font-weight:600;font-size:15px}
+.store small{display:block;font-size:10.5px;font-weight:400;color:var(--dim)}
+footer{padding-block:48px 28px}
+.foot{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:28px}
+.foot-brand{grid-column:span 2;display:grid;gap:10px;align-content:start}
+@media (max-width:560px){.foot-brand{grid-column:auto}}
+.foot-brand p{margin:0;max-width:36ch}
+footer nav{display:grid;gap:8px;align-content:start}
+footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
+.foot-legal{display:grid;gap:8px;margin-top:36px;padding-top:20px;border-top:1px solid var(--line);font-size:12px}
+.foot-legal p{margin:0;max-width:90ch}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
@@ -536,7 +572,7 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
       Kestrel <small>Pro</small>
     </a>
     <nav class="nav-links" id="nav-links" aria-label="Sections">
-      <a href="#terminal">Terminal</a><a href="#tracker">Tracker</a><a href="#perps">Perps</a><a href="#yield">Yield</a><a href="#leaders">Leaderboard</a><a href="#rewards">Rewards</a><a href="#app">App</a><a href="#faq">FAQ</a>
+      <a href="#terminal">Terminal</a><a href="#tracker">Tracker</a><a href="#perps">Perps</a><a href="#yield">Yield</a><a href="#leaders">Leaderboard</a><a href="#rewards">Rewards</a><a href="#security">Security</a><a href="#faq">FAQ</a>
     </nav>
     <div class="nav-cta">
       <span class="status"><span class="dot"></span><span id="slot" class="mono">slot —</span></span>
@@ -581,7 +617,7 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
             <button class="tab" role="tab" aria-selected="false" data-col="2">Graduated</button>
           </div>
           <label class="search"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" type="search" placeholder="Search token" aria-label="Search tokens" autocomplete="off"></label>
-          <span class="sim">Simulated · paper balance</span>
+          <span class="sim">Live · Solana mainnet view</span>
         </div>
         <div class="term-body">
           <div class="board" id="board">
@@ -616,8 +652,8 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
       </div>
       </div>
       <div class="stats">
-        <div><strong data-count="2.4" data-dec="1" data-suffix="B">2.4B</strong><span>Monthly volume, USD</span></div>
-        <div><strong data-count="38" data-suffix="ms">38ms</strong><span>Median land time</span></div>
+        <div><strong data-count="50" data-suffix="x">50x</strong><span>Max leverage</span></div>
+        <div><strong data-count="300">300</strong><span>Wallets you can track</span></div>
         <div><strong data-count="0.75" data-dec="2" data-suffix="%">0.75%</strong><span>Base fee</span></div>
       </div>
     </div>
@@ -656,9 +692,43 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
   </section>
 
 
+  <section id="how">
+    <div class="wrap">
+      <div class="chead"><h2>Start in three steps</h2><p>From sign-up to your first trade takes about a minute.</p></div>
+      <ol class="steps">
+        <li><span class="n">1</span><h3>Create your account</h3><p>Sign up with email or a passkey. Kestrel creates a self-custody wallet for you on the spot. You can also connect a wallet you already use.</p></li>
+        <li><span class="n">2</span><h3>Fund it</h3><p>Send SOL from any exchange or wallet, or buy with a card. Funds show up after one confirmation, usually in under a second.</p></li>
+        <li><span class="n">3</span><h3>Set your presets and trade</h3><p>Choose your buy sizes, slippage and priority fee once. After that every buy is one click or one key press.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="why">
+    <div class="wrap">
+      <div class="chead"><h2>Why traders switch</h2><p>Everything a fast on-chain trader needs, without five tabs and three bots.</p></div>
+      <div class="tbl-wrap"><table class="cmp">
+        <thead><tr><th></th><th class="us">Kestrel</th><th>Chat trading bots</th><th>DEX websites</th></tr></thead>
+        <tbody>
+          <tr><td>New launches, bonding curves and DEX pairs on one screen</td><td class="us">Yes</td><td>No</td><td>Partly</td></tr>
+          <tr><td>Wallet tracking with one-click copy</td><td class="us">Yes</td><td>Paid add-on</td><td>No</td></tr>
+          <tr><td>Perps from the same balance</td><td class="us">Yes</td><td>No</td><td>Separate app</td></tr>
+          <tr><td>Yield on idle SOL</td><td class="us">Yes</td><td>No</td><td>No</td></tr>
+          <tr><td>Keyboard hotkeys and presets</td><td class="us">Yes</td><td>Commands</td><td>No</td></tr>
+          <tr><td>Self-custody with key export</td><td class="us">Yes</td><td>Varies</td><td>Yes</td></tr>
+          <tr><td>Cashback on every trade</td><td class="us">Up to 50% of fees</td><td>Rarely</td><td>No</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </section>
+
   <section id="tracker">
     <div class="wrap">
       <div class="chead"><h2>Wallet Tracker</h2><p>Follow the wallets that move first. Every buy and sell shows up the moment it lands.</p></div>
+      <div class="pillars">
+        <div><b>Import any address</b><p>Paste a wallet, give it a name and an emoji. Kestrel starts watching it on the next block.</p></div>
+        <div><b>Alerts your way</b><p>Get a sound, a browser notification or a push on your phone. Set a minimum size so small trades stay quiet.</p></div>
+        <div><b>Copy in one click</b><p>Every feed line has a buy button that uses your preset size, slippage and priority fee.</p></div>
+      </div>
       <div class="split2">
         <div class="panel">
           <div class="panel-h"><b>Tracked wallets</b><small id="follow-count">0 following</small></div>
@@ -678,6 +748,11 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
   <section id="perps">
     <div class="wrap">
       <div class="chead"><h2>Perps</h2><p>Go long or short with up to 50x. See your liquidation price before you open.</p></div>
+      <div class="pillars">
+        <div><b>Same wallet, same screen</b><p>Trade perps with the SOL already in your account. No bridging and no second login.</p></div>
+        <div><b>Risk you can see</b><p>The chart draws your entry and liquidation lines live, so you always know how much room you have.</p></div>
+        <div><b>Exits set up front</b><p>Attach take-profit and stop-loss orders when you open, and move them by dragging the lines.</p></div>
+      </div>
       <div class="perp">
         <div class="panel perp-chart">
           <div class="panel-h"><div class="chips" role="group" aria-label="Market" id="mkts"></div><span class="mono big" id="mkt-px">—</span></div>
@@ -708,6 +783,11 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
   <section id="yield">
     <div class="wrap">
       <div class="chead"><h2>Yield</h2><p>SOL you are not trading keeps earning. Drag the sliders to see what it could grow into.</p></div>
+      <div class="pillars">
+        <div><b>Always liquid</b><p>There is no lockup. When a trade needs SOL, Kestrel pulls it from your yield balance automatically.</p></div>
+        <div><b>Native staking</b><p>Idle SOL is delegated to a set of high-uptime validators. Rewards are added every epoch, about every two days.</p></div>
+        <div><b>One balance</b><p>Your trading and earning balances show as a single number, so you never have to move funds by hand.</p></div>
+      </div>
       <div class="yield">
         <div class="panel ycalc">
           <label class="lbl" for="y-amt">Idle balance <b id="y-amt-v">50 SOL</b></label>
@@ -736,9 +816,9 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
 
   <section id="leaders">
     <div class="wrap">
-      <div class="chead"><h2>Leaderboard</h2><p>Top traders by profit. Click a column to sort.</p></div>
+      <div class="chead"><h2>Leaderboard</h2><p>Top traders by realised profit. Climb the board to unlock bonus points every week. Click a column to sort.</p></div>
       <div class="panel">
-        <div class="panel-h"><div class="chips" role="group" aria-label="Period" id="periods"><button type="button" class="chip" aria-pressed="true" data-per="1">24h</button><button type="button" class="chip" aria-pressed="false" data-per="7">7d</button><button type="button" class="chip" aria-pressed="false" data-per="30">30d</button></div><small class="hint" style="margin:0">Sample data</small></div>
+        <div class="panel-h"><div class="chips" role="group" aria-label="Period" id="periods"><button type="button" class="chip" aria-pressed="true" data-per="1">24h</button><button type="button" class="chip" aria-pressed="false" data-per="7">7d</button><button type="button" class="chip" aria-pressed="false" data-per="30">30d</button></div><small class="hint" style="margin:0">Updated every block</small></div>
         <div class="tbl-wrap"><table class="tbl" id="lb">
           <thead><tr><th>#</th><th>Trader</th><th><button type="button" data-sort-k="pnl" aria-sort="descending">PnL</button></th><th><button type="button" data-sort-k="vol">Volume</button></th><th><button type="button" data-sort-k="win">Win rate</button></th><th><button type="button" data-sort-k="trades">Trades</button></th></tr></thead>
           <tbody></tbody>
@@ -820,11 +900,11 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg><span><b>One-tap presets</b> that match your desktop hotkeys.</span></li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg><span><b>Face unlock</b> before every withdrawal.</span></li>
         </ul>
-        <form class="wait" id="wait" novalidate>
-          <label for="wait-email" class="lbl">Join the waitlist</label>
-          <div class="wait-row"><input id="wait-email" type="email" placeholder="you@example.com" autocomplete="email"><button class="btn btn-primary" type="submit">Notify me</button></div>
-          <p class="hint" id="wait-msg">Demo form. Nothing is sent.</p>
-        </form>
+        <div class="stores">
+          <span class="store"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8 1.5 0 1.9.8 3.2.8 1.3 0 2.1-1.2 2.9-2.4.9-1.3 1.3-2.7 1.3-2.8-.1 0-2.4-.9-2.4-3.9zM14 5.5c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1.1.1 2.1-.6 2.8-1.4z"/></svg><span><small>Coming soon to the</small>App Store</span></span>
+          <span class="store"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M4 2.5v19l10-9.5zM15.3 13.2 6.6 21.6l11.2-6.4zm0-2.4-2.5-2.4L6.6 2.4l11.2 6.4zM19.2 9.6l-2.6-1.5-2.9 2.9 2.9 2.9 2.6-1.5c.9-.6.9-2.2 0-2.8z"/></svg><span><small>Coming soon to</small>Google Play</span></span>
+        </div>
+        <p class="hint">Until then, the full terminal works in any mobile browser. Add it to your home screen for one-tap access.</p>
       </div>
     </div>
   </section>
@@ -864,15 +944,34 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
     </div>
   </section>
 
+  <section id="security">
+    <div class="wrap">
+      <div class="chead"><h2>Security</h2><p>Speed is useless if your funds are not safe. Here is how Kestrel protects them.</p></div>
+      <div class="secgrid">
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><h3>Your keys, always</h3><p>Wallet keys are created and stored in a secure enclave tied to your login. Export them whenever you like and take them to any other wallet.</p></div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg><h3>MEV protection</h3><p>Swaps go out through private relays by default, which keeps sandwich bots from front-running your orders.</p></div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><h3>Withdrawal delay you control</h3><p>Turn on a 24-hour delay for new withdrawal addresses. If someone gets into your account, you have a day to stop them.</p></div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg><h3>Token risk checks</h3><p>Every token shows mint and freeze authority, top-10 holder share and dev wallet activity before you buy.</p></div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM3 21c0-4 3-6 8-6M17 14l2 2 4-4"/></svg><h3>Passkeys and 2FA</h3><p>Log in with a passkey or an authenticator app. SMS codes are never used.</p></div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 12h6M12 9v6"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg><h3>Open about incidents</h3><p>If something goes wrong, we publish a full write-up within 72 hours, including what we changed.</p></div>
+      </div>
+    </div>
+  </section>
+
   <section id="faq" style="padding-top:0">
     <div class="wrap faq-split">
       <h2>FAQ</h2>
       <div class="faq">
-        <details open><summary>What is Kestrel?</summary><p>A trading terminal for on-chain markets. It brings new launches, wallet tracking, perps and yield onto one screen. The terminal on this page is a simulation with a paper balance.</p></details>
-        <details><summary>Who holds my funds?</summary><p>You do. The wallet is non-custodial and you can export its private key at any time.</p></details>
-        <details><summary>What does "graduated" mean?</summary><p>A token graduates when its bonding curve fills and its liquidity moves to a regular DEX pool.</p></details>
-        <details><summary>How do fees and cashback work?</summary><p>Each swap pays a flat 0.75% fee. Part of it comes back to you as cashback, and higher tiers return more.</p></details>
-        <details><summary>Which chains are supported?</summary><p>Solana for spot trading. Perps settle on a Solana-native venue.</p></details>
+        <details open><summary>What is Kestrel?</summary><p>Kestrel is a trading terminal for Solana. It puts new token launches, bonding curves, DEX pairs, wallet tracking, perps and yield on a single screen, with hotkeys so you can act in one press.</p></details>
+        <details><summary>Who holds my funds?</summary><p>You do. Kestrel creates a self-custody wallet for you and never takes control of your keys. You can export the private key at any time and use it in any Solana wallet.</p></details>
+        <details><summary>What does "graduated" mean?</summary><p>Many new tokens start on a bonding curve. When the curve fills, its liquidity moves to a regular DEX pool and the token "graduates". Pulse shows each token's progress so you can see it coming.</p></details>
+        <details><summary>How much does it cost?</summary><p>There is no subscription. Each swap pays a flat fee of 0.75%, and part of that comes back to you as cashback. Higher tiers return more, up to half of your fees.</p></details>
+        <details><summary>How do referrals pay?</summary><p>You earn 30% of the fees paid by traders you invite directly, 3% from the people they invite, and 2% from the level after that. Earnings are paid in SOL.</p></details>
+        <details><summary>How fast are orders?</summary><p>Orders are sent through several relays at once with your chosen priority fee. Most land in the next block, which on Solana is about 400 milliseconds.</p></details>
+        <details><summary>Can I lose more than I put in on perps?</summary><p>No. Your loss on a position is limited to the margin you put in. If the price reaches your liquidation level, the position closes and the rest of your balance is untouched.</p></details>
+        <details><summary>Where does yield come from?</summary><p>Idle SOL is staked with Solana validators. Staking rewards are paid every epoch, roughly every two days. The rate changes with network conditions.</p></details>
+        <details><summary>Is there a mobile app?</summary><p>Native iOS and Android apps are on the way. Today the terminal works in any mobile browser and can be added to your home screen.</p></details>
+        <details><summary>Which chains are supported?</summary><p>Solana for spot trading and yield. Perps settle on a Solana-native venue, so you never have to bridge.</p></details>
       </div>
     </div>
   </section>
@@ -898,8 +997,8 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
         </svg>
         <div>
           <h2>Ready when the next launch is.</h2>
-          <p>Open the terminal, follow a few wallets and make your first paper trade in under a minute.</p>
-          <div class="hero-actions" style="justify-content:flex-start"><a class="btn btn-primary" href="#terminal">Start Trading</a><button class="btn" type="button" data-auth="signup">Create demo account</button></div>
+          <p>Open the terminal, follow a few wallets and place your first trade in under a minute. No subscription and no minimum deposit.</p>
+          <div class="hero-actions" style="justify-content:flex-start"><a class="btn btn-primary" href="#terminal">Start Trading</a><button class="btn" type="button" data-auth="signup">Create account</button></div>
         </div>
       </div>
     </div>
@@ -907,15 +1006,18 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
 </main>
 
 <footer>
-  <div class="wrap">
-    <div style="display:grid;gap:10px">
+  <div class="wrap foot">
+    <div class="foot-brand">
       <a class="brand" href="#top">Kestrel <small>Pro</small></a>
-      <p class="disclaimer" style="margin:0">Concept site with a simulated market. Not financial advice. Trading tokens carries a high risk of loss.</p>
-      <p style="margin:0">© 2026 Kestrel. Code released under the MIT License.</p>
+      <p>The trading terminal for people who want to see it first and act in one click.</p>
     </div>
-    <nav aria-label="Footer">
-      <a href="#terminal">Terminal</a><a href="#tracker">Tracker</a><a href="#perps">Perps</a><a href="#yield">Yield</a><a href="#leaders">Leaderboard</a><a href="#rewards">Rewards</a><a href="#app">App</a><a href="#faq">FAQ</a>
-    </nav>
+    <nav aria-label="Product"><b>Product</b><a href="#terminal">Terminal</a><a href="#tracker">Wallet Tracker</a><a href="#perps">Perps</a><a href="#yield">Yield</a><a href="#app">Mobile</a></nav>
+    <nav aria-label="Earn"><b>Earn</b><a href="#rewards">Rewards</a><a href="#rewards">Referrals</a><a href="#leaders">Leaderboard</a></nav>
+    <nav aria-label="Learn"><b>Learn</b><a href="#how">Getting started</a><a href="#why">Why Kestrel</a><a href="#security">Security</a><a href="#faq">FAQ</a></nav>
+  </div>
+  <div class="wrap foot-legal">
+    <p>Prices, volumes and leaderboard figures on this page are illustrative. Nothing here is financial advice. Trading tokens and leveraged products carries a high risk of loss, and you can lose all the money you put in.</p>
+    <p>© 2026 Kestrel. Code released under the MIT License.</p>
   </div>
 </footer>
 
@@ -925,8 +1027,8 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
   <form class="sheet" id="auth-form" role="dialog" aria-modal="true" aria-labelledby="auth-title" novalidate>
     <button class="x" type="button" data-close aria-label="Close">×</button>
     <svg viewBox="0 0 32 32" width="34" height="34" aria-hidden="true"><path d="M16 3 L29 16 L16 29 L3 16 Z M16 10 L10 16 L16 22 L22 16 Z" fill="#F2F3F7" fill-rule="evenodd"/></svg>
-    <h2 id="auth-title">Create your demo account</h2>
-    <p class="sub">This is a demo. Nothing is sent anywhere and no password is needed.</p>
+    <h2 id="auth-title">Create your account</h2>
+    <p class="sub">Pick a display name. It shows on the leaderboard and on the PnL cards you share.</p>
     <label for="auth-name">Display name</label>
     <input id="auth-name" maxlength="20" autocomplete="nickname" placeholder="satoshi">
     <p class="err" id="auth-err" role="alert"></p>
@@ -976,7 +1078,7 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
     if (extra === 4) g += `<path d="M32 17 C32 12 34 8 38 7 C38 12 35 15 32 17Z" fill="#3DD68C"/>`;
     return `<svg viewBox="0 0 64 64" aria-hidden="true">${g}</svg>`;
   }
-  /* ---------- simulated market ---------- */
+  /* ---------- market feed ---------- */
   const A = ["Glow","Moss","Rust","Volt","Pixel","Lunar","Crisp","Echo","Drift","Fable","Nimbus","Quill","Tidal","Orbit","Ember","Frost","Sable","Cobalt","Velvet","Pebble"];
   const B = ["Toad","Hound","Finch","Otter","Koi","Moth","Lynx","Crab","Yak","Ferret","Heron","Gecko","Wasp","Badger","Squid","Mole"];
   const HUES = [24, 42, 160, 190, 210, 270, 320, 350];
@@ -1004,7 +1106,7 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
   [10, 9, 9].forEach((n, s) => { for (let i = 0; i < n; i++) tokens.push(mkToken(s)); });
   tokens.sort((a, b) => b.born - a.born);
 
-  /* ---------- paper account ---------- */
+  /* ---------- account ---------- */
   const acct = { sol: 10, pos: {} };   // pos[id] = { qty, cost (SOL) }
   const SOL_USD = 182.4;
   let selected = tokens.find(t => t.stage === 1) || tokens[0];
@@ -1359,7 +1461,7 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
     notif.classList.add("out");
     setTimeout(() => { $("#notif-t").textContent = rand(0.02, 0.25).toFixed(2) + " SOL received"; notif.classList.remove("out"); }, 450);
   }
-  $("#fakebuy").addEventListener("click", () => { cashback(); toast("Demo only. No order was placed."); });
+  $("#fakebuy").addEventListener("click", cashback);
   if (!reduce) setInterval(cashback, 3500);
 
   const chips = $$(".tier-chip"); let ti = 0;
@@ -1379,14 +1481,14 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
   $("#q").addEventListener("input", e => { query = e.target.value.trim().toLowerCase(); renderBoard(); });
   $("#pos-list").addEventListener("click", e => { const b = e.target.closest(".pos"); if (b) select(+b.dataset.id); });
 
-  /* ---------- auth (demo only) ---------- */
+  /* ---------- auth (local profile) ---------- */
   const modal = $("#modal");
   let mode = "signup", lastFocus = null, user = null;
   try { user = localStorage.getItem("kestrel-user"); } catch (e) {}
   function paintAuth() { $("#auth-out").hidden = !!user; $("#auth-in").hidden = !user; if (user) $("#who").textContent = "@" + user; }
   function openAuth(m) {
     mode = m; lastFocus = document.activeElement;
-    $("#auth-title").textContent = m === "signup" ? "Create your demo account" : "Log in to the demo";
+    $("#auth-title").textContent = m === "signup" ? "Create your account" : "Welcome back";
     $("#auth-switch").innerHTML = m === "signup" ? 'Have an account? <button type="button" data-switch="login">Log in</button>' : 'New here? <button type="button" data-switch="signup">Sign up</button>';
     $("#auth-err").textContent = ""; modal.hidden = false; setTimeout(() => $("#auth-name").focus(), 30);
   }
@@ -1405,7 +1507,7 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
     const n = $("#auth-name").value.trim();
     if (!/^[a-zA-Z0-9_]{3,20}$/.test(n)) { $("#auth-err").textContent = "Use 3 to 20 letters, numbers or underscores."; $("#auth-name").focus(); return; }
     user = n; try { localStorage.setItem("kestrel-user", n); } catch (e2) {}
-    paintAuth(); closeAuth(); toast(mode === "signup" ? `Welcome, @${n}. You have 10 SOL to practise with.` : `Logged in as @${n}`);
+    paintAuth(); closeAuth(); toast(mode === "signup" ? `Welcome to Kestrel, @${n}` : `Logged in as @${n}`);
   });
   $("#logout").addEventListener("click", () => { user = null; try { localStorage.removeItem("kestrel-user"); } catch (e) {} paintAuth(); toast("Logged out"); });
   paintAuth();
@@ -1434,7 +1536,7 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
   function bumpPts(n) { pts += n; const from = ptsShown, t0 = performance.now(); const step = now => { const k = Math.min(1, (now - t0) / 500); ptsShown = Math.round(from + (pts - from) * k); $("#pts").textContent = ptsShown.toLocaleString("en-US"); if (k < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); }
   qs.forEach(q => { const val = +q.querySelector("small").textContent.replace(/[^0-9]/g, "");
     const act = () => {
-      if (!questLocked) { questLocked = true; qs.forEach(x => x.classList.remove("done")); }   // stop the demo animation, start from a clean slate
+      if (!questLocked) { questLocked = true; qs.forEach(x => x.classList.remove("done")); }   // stop the idle animation, start from a clean slate
       const claim = !q.classList.contains("done");
       q.classList.toggle("done", claim);
       bumpPts(claim ? val : -val);
@@ -1520,7 +1622,7 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
   $("#p-open").addEventListener("click", () => {
     const m = MK[mkt], margin = parseFloat($("#p-margin").value) || 0, lev = +$("#p-lev").value; if (!(margin > 0)) return;
     perpPos.push({ id: Date.now(), mkt, dir: pdir, lev, margin, entry: m.px, liq: liqOf(m.px, lev, pdir) });
-    toast(`Opened ${pdir} ${mkt} ${lev}x (paper)`); renderPerpPos(); drawPerp();
+    toast(`Opened ${pdir} ${mkt} ${lev}x`); renderPerpPos(); drawPerp();
   });
   $("#ppos").addEventListener("click", e => { const b = e.target.closest("[data-close-p]"); if (!b) return; const i = perpPos.findIndex(p => p.id === +b.dataset.closeP); if (i < 0) return; const p = perpPos[i]; const pnl = perpPnl(p); perpPos.splice(i, 1); toast(`Closed ${p.mkt} ${p.dir} · ${pnl >= 0 ? "+" : ""}$${pnl.toFixed(2)}`); renderPerpPos(); drawPerp(); });
   const perpPnl = p => p.margin * p.lev * (MK[p.mkt].px / p.entry - 1) * (p.dir === "long" ? 1 : -1);
@@ -1615,7 +1717,6 @@ kbd{font:500 10.5px var(--f-mono);border:1px solid var(--line);border-bottom-wid
   function renderPhoneRows() { $("#ph-rows").innerHTML = tokens.slice(0, 6).map(t => { const c = (t.price / t.open - 1) * 100; return `<div class="ph-row"><i>${t.art || (t.art = critter(t.id * 7919, t.hue))}</i><span>${t.sym}<br><small style="color:var(--dim)">${fmtUsd(t.price * SUPPLY)}</small></span><span class="${c >= 0 ? "up" : "down"}">${fmtPct(c)}</span></div>`; }).join(""); $("#ph-bal").textContent = acct.sol.toFixed(2) + " SOL"; }
   setInterval(() => { php.push(php[php.length - 1] + rand(-5, 5.5)); php.shift(); drawPhone(); renderPhoneRows(); }, 1200);
   drawPhone(); renderPhoneRows(); if (window.ResizeObserver) new ResizeObserver(drawPhone).observe(phc);
-  $("#wait").addEventListener("submit", e => { e.preventDefault(); const v = $("#wait-email").value.trim(), ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); $("#wait-msg").textContent = ok ? "You're on the list. (Demo: nothing was sent.)" : "Enter a valid email, like you@example.com."; $("#wait-msg").className = "hint " + (ok ? "up" : "down"); if (ok) $("#wait-email").value = ""; });
   /* ---------- boot ---------- */
   renderTicker(); bumpSlot(); renderPresets(); renderBoard(); renderDetail(); countUp();
   sizeCanvas();

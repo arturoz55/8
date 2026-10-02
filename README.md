@@ -1,6 +1,6 @@
 # Apogee
 
-Landing page for a concept multichain trading terminal (Solana, Ethereum and Robinhood Chain). It is a single static file, `index.html`, with no build step.
+Landing page for a concept multichain trading terminal (Solana, Ethereum, Base, BNB Chain, Arbitrum, Polygon, Avalanche, Optimism and Robinhood Chain). It is a single static file, `index.html`, with no build step.
 
 The terminal in the hero runs entirely in the browser with generated market data:
 
@@ -25,4 +25,4 @@ MIT licensed. See `LICENSE`.
 
 ## Chains
 
-The terminal switches between Solana, Ethereum and Robinhood Chain from the hero chips or the terminal bar. Each chain keeps its own board, balance and positions, and the choice is remembered. The wallet window has a Solana tab (Wallet Standard) and an Ethereum / Robinhood Chain tab that discovers installed EVM wallets through EIP-6963 and reads the address, network and ETH balance through the wallet itself.
+The terminal switches between 9 chains from the hero chips or the chain menu in the terminal bar. Picking an EVM chain asks a connected wallet to switch network (wallet_switchEthereumChain). Each chain keeps its own board, balance and positions, and the choice is remembered. The wallet window has a Solana tab (Wallet Standard) and an Ethereum / Robinhood Chain tab that discovers installed EVM wallets through EIP-6963 and reads the address, network and ETH balance through the wallet itself.

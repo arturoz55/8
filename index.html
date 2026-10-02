@@ -587,6 +587,21 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
 .wtabs button{border:0;background:none;border-radius:7px;padding:8px;font:600 13px var(--f-body);color:var(--dim)}
 .wtabs button[aria-pressed="true"]{background:var(--rufous-soft);color:var(--fg)}
 .wm-net{font:500 11px var(--f-mono);color:var(--dim)}
+
+/* ---- v12: 9 chains ---- */
+.chainpick{max-width:760px}
+.cbadge{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;font:800 10px/1 var(--f-body);color:#fff;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+.cbtn{font-size:14px;padding:6px 12px 6px 7px}
+.chaindd{position:relative}
+.chaindd-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--ink);border-radius:999px;padding:5px 10px 5px 6px;font:600 13px var(--f-body);color:var(--fg)}
+.chaindd-btn:hover,.chaindd-btn[aria-expanded="true"]{border-color:var(--rufous)}
+#chaindd-cur{display:inline-flex;align-items:center;gap:7px}
+.chaindd-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:30;width:220px;max-height:340px;overflow-y:auto;background:#0D0E14;border:1px solid var(--line);border-radius:12px;padding:6px;display:grid;gap:2px;box-shadow:0 20px 50px -10px rgba(0,0,0,.8);animation:pop .18s}
+.chaindd-menu button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:none;border-radius:8px;padding:8px;font:500 13.5px var(--f-body);color:var(--fg)}
+.chaindd-menu button:hover,.chaindd-menu button:focus-visible{background:var(--raise);outline:none}
+.chaindd-menu button[aria-selected="true"]{background:var(--rufous-soft)}
+.chaindd-menu small{margin-left:auto;font:500 11px var(--f-mono);color:var(--dim)}
+@media (max-width:820px){.chaindd-menu{left:0;right:auto}}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
@@ -741,14 +756,10 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
         <span class="hud-tip" id="hud-tip">Hover the planet</span>
       </div>
       <h1 class="rise">Trade What Moves, First</h1>
-      <p class="lede rise">Every launch, wallet and market across Solana, Ethereum and Robinhood Chain, on one screen. Reach the top of the move first.</p>
+      <p class="lede rise">Every launch, wallet and market across 9 chains, from Solana and Ethereum to Base and BNB Chain, on one screen. Reach the top of the move first.</p>
       <div class="hero-actions rise"><a class="btn btn-primary" href="#terminal">Start Trading</a></div>
       <div class="built rise">Built for
-        <div class="chainpick" role="group" aria-label="Choose a chain">
-          <button type="button" class="cbtn" data-chain="sol" aria-pressed="true"><svg width="20" height="16" viewBox="0 0 22 18" aria-hidden="true"><path d="M4 0h18l-4 4H0zM0 7h18l4 4H4zM4 14h18l-4 4H0z" fill="#9AA6FF"/></svg>Solana</button>
-          <button type="button" class="cbtn" data-chain="eth" aria-pressed="false"><svg width="14" height="20" viewBox="0 0 14 22" aria-hidden="true"><path d="M7 0l7 11-7 4-7-4z" fill="#C9CEFF"/><path d="M7 16.5l7-4.3L7 22 0 12.2z" fill="#8C96E8"/></svg>Ethereum</button>
-          <button type="button" class="cbtn" data-chain="rh" aria-pressed="false"><span class="cdot" aria-hidden="true"></span>Robinhood Chain</button>
-        </div></div>
+        <div class="chainpick" id="chainpick" role="group" aria-label="Choose a chain"></div></div>
     </div>
     <div class="wrap">
       <div class="frame">
@@ -765,7 +776,10 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
             <button class="tab" role="tab" aria-selected="false" data-col="2">Graduated</button>
           </div>
           <label class="search"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" type="search" placeholder="Search token" aria-label="Search tokens" autocomplete="off"></label>
-          <div class="tabs chaintabs" role="group" aria-label="Chain"><button type="button" class="tab" data-chain="sol" aria-pressed="true">Solana</button><button type="button" class="tab" data-chain="eth" aria-pressed="false">Ethereum</button><button type="button" class="tab" data-chain="rh" aria-pressed="false">Robinhood</button></div>
+          <div class="chaindd" id="chaindd">
+            <button type="button" class="chaindd-btn" id="chaindd-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Chain: Solana"><span id="chaindd-cur"></span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="chaindd-menu" id="chaindd-menu" role="listbox" aria-label="Choose a chain" hidden></div>
+          </div>
           <span class="sim" id="sim-label">Live · Solana</span>
         </div>
         <div class="term-body">
@@ -836,7 +850,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
               <path class="leaf l2" d="M61 64 C76 62 84 50 82 42 C70 42 61 50 61 64Z" fill="#5BE3A2"/>
               <g class="coin"><circle cx="62" cy="30" r="13" fill="#F2C94C"/><circle cx="62" cy="30" r="9" fill="none" stroke="#C9A227" stroke-width="2"/><text x="62" y="34.5" text-anchor="middle" font-size="12" font-weight="700" fill="#8A6A10" font-family="Inter,sans-serif">◎</text></g>
             </svg><div style="display:grid;gap:8px;justify-items:center;font-family:var(--f-mono)"><span style="font-size:11px;color:var(--dim)">Idle balance earning</span><strong style="font-size:28px" id="apy">6.80%</strong><span style="font-size:11px;color:var(--up)" id="earned">+0.000000 SOL</span></div></div>
-          <div class="cap"><span>Earn on idle SOL and ETH</span><small>No lockup · Withdraw to trading in one step</small></div></article>
+          <div class="cap"><span>Earn on idle balances</span><small>No lockup · Withdraw to trading in one step</small></div></article>
       </div>
     </div>
   </section>
@@ -847,7 +861,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
       <div class="chead"><h2>Start in three steps</h2><p>From sign-up to your first trade takes about a minute.</p></div>
       <ol class="steps">
         <li><span class="n">1</span><h3>Create your account</h3><p>Sign up with email or a passkey. Apogee creates a self-custody wallet for you on the spot. You can also connect a wallet you already use.</p></li>
-        <li><span class="n">2</span><h3>Fund it</h3><p>Send SOL or ETH from any exchange or wallet, or buy with a card. Funds show up after one confirmation, usually in under a second.</p></li>
+        <li><span class="n">2</span><h3>Fund it</h3><p>Send crypto on any supported chain from an exchange or wallet, or buy with a card. Funds show up after one confirmation, usually in under a second.</p></li>
         <li><span class="n">3</span><h3>Set your presets and trade</h3><p>Choose your buy sizes, slippage and priority fee once. After that every buy is one click or one key press.</p></li>
       </ol>
     </div>
@@ -862,8 +876,8 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
           <tr><td>New launches, bonding curves and DEX pairs on one screen</td><td class="us">Yes</td><td>No</td><td>Partly</td></tr>
           <tr><td>Wallet tracking with one-click copy</td><td class="us">Yes</td><td>Paid add-on</td><td>No</td></tr>
           <tr><td>Perps from the same balance</td><td class="us">Yes</td><td>No</td><td>Separate app</td></tr>
-          <tr><td>Solana, Ethereum and Robinhood Chain in one app</td><td class="us">Yes</td><td>One chain</td><td>One chain</td></tr>
-          <tr><td>Yield on idle SOL and ETH</td><td class="us">Yes</td><td>No</td><td>No</td></tr>
+          <tr><td>9 chains in one app: Solana, Ethereum, Base, BNB Chain and more</td><td class="us">Yes</td><td>One chain</td><td>One chain</td></tr>
+          <tr><td>Yield on idle balances</td><td class="us">Yes</td><td>No</td><td>No</td></tr>
           <tr><td>Keyboard hotkeys and presets</td><td class="us">Yes</td><td>Commands</td><td>No</td></tr>
           <tr><td>Self-custody with key export</td><td class="us">Yes</td><td>Varies</td><td>Yes</td></tr>
           <tr><td>Cashback on every trade</td><td class="us">Up to 50% of fees</td><td>Rarely</td><td>No</td></tr>
@@ -933,10 +947,10 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
 
   <section id="yield">
     <div class="wrap">
-      <div class="chead"><h2>Yield</h2><p>SOL and ETH you are not trading keep earning. Drag the sliders to see what it could grow into.</p></div>
+      <div class="chead"><h2>Yield</h2><p>Balances you are not trading keep earning. Drag the sliders to see what it could grow into.</p></div>
       <div class="pillars">
         <div><b>Always liquid</b><p>There is no lockup. When a trade needs funds, Apogee pulls them from your yield balance automatically.</p></div>
-        <div><b>Native staking</b><p>Idle SOL and ETH are staked with high-uptime validators. Rewards are added automatically, and you can leave at any time.</p></div>
+        <div><b>Native staking</b><p>Idle balances are staked with high-uptime validators on each chain. Rewards are added automatically, and you can leave at any time.</p></div>
         <div><b>One balance</b><p>Your trading and earning balances show as a single number, so you never have to move funds by hand.</p></div>
       </div>
       <div class="yield">
@@ -984,7 +998,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     <div class="band" aria-hidden="true"></div>
     <div class="bento">
       <div class="b-cash">
-        <h3>Cashback</h3><p class="sub">Get SOL or ETH back on every trade you make.</p>
+        <h3>Cashback</h3><p class="sub">Get paid back in the chain's native coin on every trade.</p>
         <div class="stage"><div style="display:grid;justify-items:center">
           <div class="notif" id="notif" role="status" aria-live="polite"><div class="t"><span id="notif-t">0.12 SOL received</span><small>now</small></div><p>Cashback for your last trade. Keep trading to earn more.</p></div>
           <button class="fakebuy" id="fakebuy" type="button">Buy APGE</button>
@@ -1115,16 +1129,16 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     <div class="wrap faq-split">
       <h2>FAQ</h2>
       <div class="faq">
-        <details open><summary>What is Apogee?</summary><p>Apogee is a trading terminal for Solana, Ethereum and Robinhood Chain. It puts new token launches, bonding curves, DEX pairs, wallet tracking, perps and yield on a single screen, with hotkeys so you can act in one press.</p></details>
+        <details open><summary>What is Apogee?</summary><p>Apogee is a trading terminal for 9 chains: Solana, Ethereum, Base, BNB Chain, Arbitrum, Polygon, Avalanche, Optimism and Robinhood Chain. It puts new token launches, DEX pairs, wallet tracking, perps and yield on a single screen, with hotkeys so you can act in one press.</p></details>
         <details><summary>Who holds my funds?</summary><p>You do. Apogee creates a self-custody wallet for you and never takes control of your keys. You can export the private key at any time and use it in any Solana wallet.</p></details>
         <details><summary>What does "graduated" mean?</summary><p>Many new tokens start on a bonding curve. When the curve fills, its liquidity moves to a regular DEX pool and the token "graduates". Pulse shows each token's progress so you can see it coming.</p></details>
         <details><summary>How much does it cost?</summary><p>There is no subscription. Each swap pays a flat fee of 0.75%, and part of that comes back to you as cashback. Higher tiers return more, up to half of your fees.</p></details>
         <details><summary>How do referrals pay?</summary><p>You earn 30% of the fees paid by traders you invite directly, 3% from the people they invite, and 2% from the level after that. Earnings are paid in SOL.</p></details>
         <details><summary>How fast are orders?</summary><p>Orders are sent through several relays at once with your chosen priority fee. Most land in the next block: about 400 milliseconds on Solana and about 12 seconds on Ethereum mainnet.</p></details>
         <details><summary>Can I lose more than I put in on perps?</summary><p>No. Your loss on a position is limited to the margin you put in. If the price reaches your liquidation level, the position closes and the rest of your balance is untouched.</p></details>
-        <details><summary>Where does yield come from?</summary><p>Idle SOL and ETH are staked with validators on their own networks. Rewards are added automatically, and the rate changes with network conditions.</p></details>
+        <details><summary>Where does yield come from?</summary><p>Idle balances are staked with validators on their own networks. Rewards are added automatically, and the rate changes with each chain and with network conditions.</p></details>
         <details><summary>Is there a mobile app?</summary><p>Native iOS and Android apps are on the way. Today the terminal works in any mobile browser and can be added to your home screen.</p></details>
-        <details><summary>Which chains are supported?</summary><p>Solana, Ethereum and Robinhood Chain, an Ethereum layer 2. Switch chains with one click in the terminal. Each chain keeps its own balance and positions, and you can connect a Solana wallet, an Ethereum wallet or both.</p></details>
+        <details><summary>Which chains are supported?</summary><p>Solana, Ethereum, Base, BNB Chain, Arbitrum, Polygon, Avalanche, Optimism and Robinhood Chain. Switch with one click from the hero or the chain menu in the terminal. Each chain keeps its own balance and positions. Connect a Solana wallet, an Ethereum-compatible wallet or both; when you pick a chain, Apogee asks your wallet to switch network.</p></details>
       </div>
     </div>
   </section>
@@ -1172,7 +1186,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     <button class="x" type="button" data-wclose aria-label="Close">×</button>
     <h2 id="w-title">Connect a wallet</h2>
     <p class="sub">Apogee only reads your public address and balance. It never asks for your seed phrase and never moves funds without your approval in the wallet.</p>
-    <div class="wtabs" role="group" aria-label="Network"><button type="button" data-wk="sol" aria-pressed="true">Solana</button><button type="button" data-wk="evm" aria-pressed="false">Ethereum · Robinhood Chain</button></div>
+    <div class="wtabs" role="group" aria-label="Network"><button type="button" data-wk="sol" aria-pressed="true">Solana</button><button type="button" data-wk="evm" aria-pressed="false">Ethereum &amp; EVM chains</button></div>
     <label class="wsearch"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="w-q" type="search" placeholder="Search wallets" aria-label="Search wallets" autocomplete="off"></label>
     <div class="wlist" id="wlist"></div>
     <p class="err" id="w-err" role="alert"></p>
@@ -1273,15 +1287,29 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
 
   /* ---------- account ---------- */
   // Each chain keeps its own board, balance and positions. acct.sol is the balance in the chain's base asset.
-  const CHAINS = {
-    sol: { id: "sol", name: "Solana", sym: "SOL", usd: 182.4, kind: "sol", presets: ["0.1", "0.5", "1", "2"], def: "1", apy: .068, blockLabel: "slot", block: 312480000 + Math.floor(rand(0, 9999)), every: 1, note: "~400 ms per block" },
-    eth: { id: "eth", name: "Ethereum", sym: "ETH", usd: 3890, kind: "evm", presets: ["0.01", "0.05", "0.1", "0.25"], def: "0.05", apy: .032, blockLabel: "block", block: 23410000 + Math.floor(rand(0, 999)), every: 30, note: "~12 s per block" },
-    rh: { id: "rh", name: "Robinhood Chain", sym: "ETH", usd: 3890, kind: "evm", presets: ["0.01", "0.05", "0.1", "0.25"], def: "0.05", apy: .032, blockLabel: "block", block: 4200000 + Math.floor(rand(0, 9999)), every: 1, note: "Ethereum layer 2" }
-  };
-  const accts = { sol: { sol: 10, pos: {} }, eth: { sol: .5, pos: {} }, rh: { sol: .5, pos: {} } };
+  // name, base asset, illustrative USD price, EVM chain id (null when unknown), explorer for addresses, badge colour
+  const CHAIN_LIST = [
+    ["sol", "Solana", "SOL", 182.4, "sol", null, "https://solscan.io/account/", "linear-gradient(135deg,#9945FF,#14F195)", .068, "slot", 312480000, 1, "~400 ms per block"],
+    ["eth", "Ethereum", "ETH", 3890, "evm", "0x1", "https://etherscan.io/address/", "#627EEA", .032, "block", 23410000, 30, "~12 s per block"],
+    ["base", "Base", "ETH", 3890, "evm", "0x2105", "https://basescan.org/address/", "#0052FF", .032, "block", 36100000, 5, "~2 s per block"],
+    ["bnb", "BNB Chain", "BNB", 690, "evm", "0x38", "https://bscscan.com/address/", "#F3BA2F", .025, "block", 63200000, 2, "Fast EVM chain"],
+    ["arb", "Arbitrum", "ETH", 3890, "evm", "0xa4b1", "https://arbiscan.io/address/", "#28A0F0", .032, "block", 381000000, 1, "Ethereum layer 2"],
+    ["pol", "Polygon", "POL", .45, "evm", "0x89", "https://polygonscan.com/address/", "#8247E5", .04, "block", 76500000, 5, "~2 s per block"],
+    ["avax", "Avalanche", "AVAX", 38, "evm", "0xa86a", "https://snowtrace.io/address/", "#E84142", .07, "block", 69800000, 5, "C-Chain"],
+    ["op", "Optimism", "ETH", 3890, "evm", "0xa", "https://optimistic.etherscan.io/address/", "#FF0420", .032, "block", 141500000, 5, "Ethereum layer 2"],
+    ["rh", "Robinhood Chain", "ETH", 3890, "evm", null, null, "#CCFF00", .032, "block", 4200000, 1, "Ethereum layer 2"]
+  ];
+  const niceNum = v => { const p = Math.pow(10, Math.floor(Math.log10(v))), m = v / p; return +(([1, 2, 2.5, 5, 10].reduce((a, b) => Math.abs(b - m) < Math.abs(a - m) ? b : a)) * p).toPrecision(2); };
+  const CHAINS = {}, accts = {};
+  CHAIN_LIST.forEach(([id, name, sym, usd, kind, chainId, explorer, color, apy, blockLabel, block, every, note]) => {
+    const presets = [18, 90, 180, 360].map(d => String(niceNum(d / usd)));
+    CHAINS[id] = { id, name, sym, usd, kind, chainId, explorer, color, apy, blockLabel, block: block + Math.floor(rand(0, 999)), every, note, presets, def: presets[2] };
+    accts[id] = { sol: niceNum(1800 / usd), pos: {} };
+  });
+  const chainBadge = c => `<span class="cbadge" style="background:${c.color};${c.id === "rh" || c.id === "bnb" ? "color:#111" : ""}" aria-hidden="true">${c.name[0]}</span>`;
   let CH = CHAINS.sol, acct = accts.sol, SOL_USD = CH.usd, BASE = CH.sym;
   const boards = {};
-  const fmtB = v => v.toFixed(BASE === "ETH" ? 4 : 3);   // ETH amounts need more decimals
+  const fmtB = v => v.toFixed(SOL_USD >= 1000 ? 4 : SOL_USD >= 50 ? 3 : SOL_USD >= 5 ? 2 : 1);   // pricier coins need more decimals
   let selected = tokens.find(t => t.stage === 1) || tokens[0];
   let side = "buy";
   let sortBy = "new";
@@ -1567,7 +1595,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   function toast(s) { const el = $("#toast"); el.textContent = s; el.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => el.classList.remove("show"), 2200); }
 
   /* ---------- ticker & slot ---------- */
-  const majors = [["SOL", 182.4], ["BTC", 104210], ["ETH", 3890], ["JUP", 1.12], ["BONK", .0000281], ["WIF", 2.31], ["JTO", 3.44], ["PYTH", .41]];
+  const majors = [["SOL", 182.4], ["BTC", 104210], ["ETH", 3890], ["BNB", 690], ["AVAX", 38], ["POL", .45], ["JUP", 1.12], ["BONK", .0000281], ["WIF", 2.31], ["JTO", 3.44], ["PYTH", .41]];
   function renderTicker() {
     const html = majors.map(([s, p]) => { const c = rand(-6, 9); return `<span><b>${s}</b>${p < 1 ? "$" + p.toPrecision(3) : "$" + p.toLocaleString(undefined, { maximumFractionDigits: 2 })} <em class="${c >= 0 ? "up" : "down"}" style="font-style:normal">${fmtPct(c)}</em></span>`; }).join("");
     $("#ticker").innerHTML = html + html;
@@ -1875,7 +1903,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   function renderLb() {
     const rows = lbData().sort((a, b) => b[lbKey] - a[lbKey]);
     const medals = ["#F2C94C", "#C9CED8", "#D99A5B"];
-    $("#lb tbody").innerHTML = rows.map((r, i) => `<tr><td>${i < 3 ? `<span class="medal" style="background:${medals[i]}">${i + 1}</span>` : i + 1}</td><td><span class="who2"><i>${r.art}</i>@${r.n}</span></td><td class="${r.pnl >= 0 ? "up" : "down"}">${r.pnl >= 0 ? "+" : ""}${(r.pnl * 182.4 / SOL_USD).toFixed(BASE === "ETH" ? 2 : 1)} ${BASE}</td><td>${(r.vol * 182.4 / SOL_USD).toLocaleString("en-US", { maximumFractionDigits: BASE === "ETH" ? 1 : 0 })} ${BASE}</td><td>${r.win.toFixed(1)}%</td><td>${r.trades}</td></tr>`).join("");
+    $("#lb tbody").innerHTML = rows.map((r, i) => `<tr><td>${i < 3 ? `<span class="medal" style="background:${medals[i]}">${i + 1}</span>` : i + 1}</td><td><span class="who2"><i>${r.art}</i>@${r.n}</span></td><td class="${r.pnl >= 0 ? "up" : "down"}">${r.pnl >= 0 ? "+" : ""}${fmtB(r.pnl * 182.4 / SOL_USD)} ${BASE}</td><td>${(r.vol * 182.4 / SOL_USD).toLocaleString("en-US", { maximumFractionDigits: SOL_USD >= 1000 ? 1 : 0 })} ${BASE}</td><td>${r.win.toFixed(1)}%</td><td>${r.trades}</td></tr>`).join("");
     $$("[data-sort-k]").forEach(b => { if (b.dataset.sortK === lbKey) b.setAttribute("aria-sort", "descending"); else b.removeAttribute("aria-sort"); });
   }
   $$("[data-sort-k]").forEach(b => b.addEventListener("click", () => { lbKey = b.dataset.sortK; renderLb(); }));
@@ -2020,8 +2048,9 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     const raw = provider.raw; let bal = null, net = "EVM network", cid = null;
     try { cid = await raw.request({ method: "eth_chainId" }); } catch (e) {}
     try { const wei = await raw.request({ method: "eth_getBalance", params: [provider.publicKey.toString(), "latest"] }); bal = Number(BigInt(wei)) / 1e18; } catch (e) {}
-    if (cid === "0x1") net = "Ethereum"; else if (cid) net = "Chain " + parseInt(cid, 16);
-    return { bal, net, cid };
+    const known = Object.values(CHAINS).find(c => c.chainId && c.chainId === String(cid).toLowerCase());
+    if (known) net = known.name; else if (cid) net = "Chain " + parseInt(cid, 16);
+    return { bal, net, cid, known };
   }
   async function setConnected(w, provider, address) {
     conn = { w, provider, address };
@@ -2034,9 +2063,9 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     if (w.kind === "evm") {
       const info = await evmInfo(provider);
       $("#wm-name").textContent = `${w.name} · ${info.net}`;
-      $("#wm-bal").textContent = info.bal == null ? "Unavailable" : info.bal.toFixed(4) + " ETH";
-      if (info.cid === "0x1") { $("#wm-explorer").hidden = false; $("#wm-explorer").textContent = "View on Etherscan"; $("#wm-explorer").href = "https://etherscan.io/address/" + address; }
-      if (CH.kind !== "evm") setChain("eth");
+      $("#wm-bal").textContent = info.bal == null ? "Unavailable" : info.bal.toFixed(4) + " " + (info.known ? info.known.sym : "");
+      if (info.known && info.known.explorer) { $("#wm-explorer").hidden = false; $("#wm-explorer").textContent = "View on " + new URL(info.known.explorer).hostname.replace(/^www\./, ""); $("#wm-explorer").href = info.known.explorer + address; }
+      if (CH.kind !== "evm" || (info.known && info.known !== CH)) setChain(info.known ? info.known.id : "eth", false, true);
       return;
     }
     if (CH.kind !== "sol") setChain("sol");
@@ -2089,7 +2118,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
 
   /* ---------- hero HUD: interactive planet ---------- */
   const hud = $("#hud"), hbtn = $("#hud-btn"), hsvg = $(".hud-svg", hud);
-  const pxs = { SOL: 182.4, ETH: 3890 }, hists = {};
+  const pxs = { SOL: 182.4, ETH: 3890, BNB: 690, POL: .45, AVAX: 38 }, hists = {};
   Object.keys(pxs).forEach(k => { hists[k] = Array.from({ length: 30 }, () => pxs[k] = pxs[k] * (1 + rand(-.004, .004))); });
   let hudOpen = false, hudT = null, moverId = null;
   function hudData() {
@@ -2099,7 +2128,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
     if (m) { moverId = m.id; const c = (m.price / m.open - 1) * 100; $("#hud-mover").innerHTML = `<i>${m.art || (m.art = critter(m.id * 7919, m.hue))}</i>${esc(m.sym)} <span class="up">${fmtPct(c)}</span>`; }
     const solPx = pxs[BASE], solHist = hists[BASE];
     $("#hud-base-k").textContent = BASE; $("#hud-block-s").textContent = CH.note;
-    $("#hud-sol").textContent = "$" + solPx.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    $("#hud-sol").textContent = "$" + solPx.toLocaleString("en-US", { minimumFractionDigits: solPx < 1 ? 4 : 2, maximumFractionDigits: solPx < 1 ? 4 : 2 });
     const lo = Math.min(...solHist), hi = Math.max(...solHist) + 1e-9;
     $("#hud-spark").setAttribute("d", solHist.map((v, i) => `${i ? "L" : "M"}${(i / (solHist.length - 1) * 78 + 1).toFixed(1)} ${(20 - (v - lo) / (hi - lo) * 18).toFixed(1)}`).join(" "));
     $("#hud-spark").style.stroke = solHist[solHist.length - 1] >= solHist[0] ? "var(--up)" : "var(--down)";
@@ -2127,7 +2156,7 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
   hud.addEventListener("focusout", e => { if (!hud.contains(e.relatedTarget)) setHud(false); });
   document.addEventListener("keydown", e => { if (e.key === "Escape" && hudOpen) { setHud(false); hbtn.blur(); } });
   document.addEventListener("pointerdown", e => { if (hudOpen && !hud.contains(e.target)) setHud(false); });
-  const FACTS = ["Apogee: the highest point of an orbit.", "Apogee runs on Solana, Ethereum and Robinhood Chain.", "A token graduates when its bonding curve fills.", "Hotkeys: B buy, S sell, 1 to 4 for size."];
+  const FACTS = ["Apogee: the highest point of an orbit.", "Apogee runs on 9 chains, from Solana to Base and BNB Chain.", "A token graduates when its bonding curve fills.", "Hotkeys: B buy, S sell, 1 to 4 for size."];
   let factI = 0;
   hbtn.addEventListener("click", e => {
     hudPtr = false;
@@ -2185,8 +2214,24 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
 
 
   /* ---------- chain switcher ---------- */
-  function setChain(id, quiet) {
+  function renderChainPickers() {
+    $("#chainpick").innerHTML = Object.values(CHAINS).map(c => `<button type="button" class="cbtn" data-chain="${c.id}" aria-pressed="${c === CH}">${chainBadge(c)}${c.name}</button>`).join("");
+    $("#chaindd-menu").innerHTML = Object.values(CHAINS).map(c => `<button type="button" role="option" data-chain="${c.id}" aria-selected="${c === CH}">${chainBadge(c)}${c.name}<small>${c.sym}</small></button>`).join("");
+    $("#chaindd-cur").innerHTML = chainBadge(CH) + CH.name; $("#chaindd-btn").setAttribute("aria-label", "Chain: " + CH.name);
+  }
+  async function switchWalletNetwork(c) {
+    if (!conn || conn.w.kind !== "evm" || !conn.provider.raw) return;
+    if (!c.chainId) { toast(`Select ${c.name} in your wallet to trade there`); return; }
+    try {
+      await conn.provider.raw.request({ method: "wallet_switchEthereumChain", params: [{ chainId: c.chainId }] });
+      setConnected(conn.w, conn.provider, conn.address);
+    } catch (err) {
+      toast(err && err.code === 4902 ? `Add ${c.name} to your wallet first, then try again` : err && err.code === 4001 ? "Network switch declined in your wallet" : `Could not switch your wallet to ${c.name}`);
+    }
+  }
+  function setChain(id, quiet, fromWallet) {
     const next = CHAINS[id]; if (!next) return;
+    const changed = next !== CH;
     if (next !== CH) {
       boards[CH.id] = tokens.slice();
       tokens.length = 0;
@@ -2196,19 +2241,30 @@ footer nav b{color:var(--fg);font-size:13px;margin-bottom:4px}
       selected = tokens.find(t => t.stage === 1) || tokens[0]; lastPrice = null;
       if (!quiet) toast(`Switched to ${CH.name}`);
     }
-    $$("[data-chain]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.chain === id)));
+    renderChainPickers();
     $("#sim-label").textContent = "Live · " + CH.name;
+    if (changed && !fromWallet && CH.kind === "evm") switchWalletNetwork(CH);
     $$(".base").forEach(e => { e.textContent = BASE; });
     try { localStorage.setItem("apogee-chain", id); } catch (e) {}
     renderPresets(); renderBoard(); renderDetail(); bumpSlot(); yieldCalc(); calcRef(); renderLb(); renderFeed(); renderPhoneRows();
     if (hudOpen) hudData();
   }
+  const dd = $("#chaindd-menu"), ddBtn = $("#chaindd-btn");
+  function setDD(o) { dd.hidden = !o; ddBtn.setAttribute("aria-expanded", String(o)); if (o) { const cur = $('[aria-selected="true"]', dd) || $("button", dd); cur.focus(); } }
+  ddBtn.addEventListener("click", e => { e.stopPropagation(); setDD(dd.hidden); });
+  dd.addEventListener("keydown", e => {
+    const items = $$("button", dd), i = items.indexOf(document.activeElement);
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); items[(i + (e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length].focus(); }
+    else if (e.key === "Escape") { e.preventDefault(); setDD(false); ddBtn.focus(); }
+  });
+  document.addEventListener("pointerdown", e => { if (!dd.hidden && !e.target.closest("#chaindd")) setDD(false); });
   document.addEventListener("click", e => {
     const b = e.target.closest("[data-chain]"); if (!b) return;
+    if (b.closest("#chaindd-menu")) { setDD(false); ddBtn.focus(); }
     setChain(b.dataset.chain);
     if (b.classList.contains("cbtn")) $("#terminal").scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
   });
-  { let saved = null; try { saved = localStorage.getItem("apogee-chain"); } catch (e) {} if (saved && CHAINS[saved] && saved !== "sol") setChain(saved, true); }
+  { let saved = null; try { saved = localStorage.getItem("apogee-chain"); } catch (e) {} if (saved && CHAINS[saved] && saved !== "sol") setChain(saved, true); else renderChainPickers(); }
 
   /* ---------- polish: card glow, ripples, ticker refresh ---------- */
   $$(".panel, .secgrid > div, .steps li, .tier, .pillars div").forEach(c => { c.classList.add("glow-card"); c.addEventListener("pointermove", e => { const r = c.getBoundingClientRect(); c.style.setProperty("--mx", e.clientX - r.left + "px"); c.style.setProperty("--my", e.clientY - r.top + "px"); }); });

@@ -7,21 +7,21 @@
 <title>Kestrel Trading Terminal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <style>
 /* Layout: terminal-first. A live board sits in the hero as the thesis; quiet sections below explain each tool. Dark-only by design. */
 :root{
-  --ink:#0A0D13;        /* page ground */
-  --panel:#11151E;      /* terminal panels */
-  --raise:#181D29;      /* hover / raised rows */
-  --line:#232A39;       /* hairlines */
-  --fg:#E6E9F0;         /* primary text */
-  --dim:#8A93A6;        /* secondary text */
-  --rufous:#E8833A;     /* brand accent (kestrel plumage) */
-  --rufous-soft:rgba(232,131,58,.14);
+  --ink:#000000;        /* page ground */
+  --panel:#0B0C11;      /* terminal panels */
+  --raise:#15171F;      /* hover / raised rows */
+  --line:#1E2231;       /* hairlines */
+  --fg:#F2F3F7;         /* primary text */
+  --dim:#8C90A1;        /* secondary text */
+  --rufous:#5B6CFF;     /* brand accent (electric blue) */
+  --rufous-soft:rgba(91,108,255,.16);
   --up:#3DD68C; --down:#F0596B; --up-soft:rgba(61,214,140,.14); --down-soft:rgba(240,89,107,.14);
-  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
-  --f-body:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-display:"Inter",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --gutter:clamp(16px,4vw,40px);
   --maxw:1240px;
@@ -39,18 +39,20 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.0
 button{font:inherit;color:inherit;cursor:pointer}
 
 /* ---- nav ---- */
-.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(10,13,19,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.nav .wrap{display:flex;align-items:center;gap:24px;height:60px}
-.brand{display:flex;align-items:center;gap:10px;font:800 19px/1 var(--f-display);text-decoration:none;letter-spacing:-.01em}
-.brand svg{width:26px;height:26px}
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(0,0,0,.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid transparent}
+.nav .wrap{display:flex;align-items:center;gap:24px;height:72px;max-width:none}
+.brand{display:flex;align-items:baseline;gap:8px;font:600 21px/1 var(--f-display);text-decoration:none;letter-spacing:.01em;text-transform:uppercase}
+.brand small{font:400 14px var(--f-body);text-transform:none;color:var(--dim)}
+.brand svg{width:24px;height:24px;align-self:center}
 .nav-links{display:flex;gap:22px;margin-left:12px}
 .nav-links a{text-decoration:none;color:var(--dim);font-size:14px;transition:color .15s}
 .nav-links a:hover{color:var(--fg)}
 .nav-cta{margin-left:auto;display:flex;gap:10px;align-items:center}
-.btn{white-space:nowrap;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:transparent;border-radius:8px;padding:9px 16px;font-weight:500;font-size:14px;text-decoration:none;transition:background .15s,border-color .15s,transform .15s}
+.btn{white-space:nowrap;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:transparent;border-radius:999px;padding:8px 14px;font-weight:500;font-size:14px;text-decoration:none;transition:background .15s,border-color .15s,transform .15s}
 .btn:hover{background:var(--raise);border-color:#2f3850}
-.btn-primary{background:var(--rufous);border-color:var(--rufous);color:#170B02;font-weight:600}
-.btn-primary:hover{background:#F2944F;border-color:#F2944F}
+.btn-primary{background:var(--rufous);border-color:var(--rufous);color:#05061A;font-weight:700}
+.btn-primary:hover{background:#7483FF;border-color:#7483FF}
+.btn-dark{background:#1A1C24;border-color:#1A1C24;font-weight:700}
 .btn:active{transform:translateY(1px)}
 .status{display:flex;align-items:center;gap:6px;font:500 12px var(--f-mono);color:var(--dim)}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--up);box-shadow:0 0 0 0 var(--up-soft);animation:pulse 2s infinite}
@@ -63,20 +65,31 @@ button{font:inherit;color:inherit;cursor:pointer}
 @keyframes marquee{to{transform:translateX(-50%)}}
 
 /* ---- hero ---- */
-.hero{padding-block:clamp(40px,7vw,84px) 40px;position:relative}
-.hero::before{content:"";position:absolute;inset:-60px 0 auto;height:520px;background:radial-gradient(600px 300px at 18% 20%,rgba(232,131,58,.13),transparent 70%);pointer-events:none}
-.hero-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:36px;position:relative}
-.hero h1{font-size:clamp(40px,6.6vw,84px);font-weight:800;letter-spacing:-.035em;max-width:13ch}
-.hero h1 em{font-style:normal;color:var(--rufous)}
-.hero p.lede{font-size:clamp(16px,1.6vw,19px);color:var(--dim);max-width:52ch;margin:20px 0 28px}
-.hero-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-.hero-actions .btn{padding:12px 20px;font-size:15px}
-.hero-meta{display:flex;flex-wrap:wrap;gap:28px;margin-top:34px}
-.hero-meta div{display:flex;flex-direction:column;gap:2px}
-.hero-meta strong{font:700 22px var(--f-mono);font-variant-numeric:tabular-nums}
-.hero-meta span{font-size:12px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+.hero{padding-block:clamp(72px,11vw,150px) 0;position:relative;overflow:hidden;isolation:isolate}
+.stack{position:absolute;inset:0;z-index:-1;pointer-events:none}
+.stack i{position:absolute;right:var(--r);top:var(--t);width:var(--w);bottom:0;border-radius:10px 10px 0 0;
+  background:linear-gradient(200deg,rgba(64,82,220,.55),rgba(30,40,120,.35) 35%,rgba(0,0,0,0) 75%);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 45%);mask-image:linear-gradient(90deg,transparent,#000 45%);
+  opacity:.85;animation:stackIn 1.4s cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--d)}
+@keyframes stackIn{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:.85}}
+.hero-center{display:flex;flex-direction:column;align-items:center;text-align:center;gap:0;position:relative}
+.hero-mark{width:56px;height:56px;margin-bottom:34px}
+.hero h1{font-size:clamp(40px,5.2vw,64px);font-weight:600;letter-spacing:-.02em;max-width:24ch;line-height:1.1}
+.hero p.lede{font-size:clamp(17px,1.7vw,24px);color:var(--dim);max-width:46ch;margin:28px 0 22px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.hero-actions .btn{padding:10px 22px;font-size:18px}
+.built{margin-top:34px;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:14px;color:var(--dim)}
+.built span{display:flex;align-items:center;gap:8px;color:var(--fg);font:500 19px var(--f-mono)}
+.frame{margin:44px auto 0;max-width:1200px;position:relative;background:linear-gradient(180deg,#14151B,#07080B 60%);border-top:3px solid #6B79FF;
+  box-shadow:0 -6px 40px -6px rgba(91,108,255,.55);padding:clamp(16px,5vw,64px) clamp(10px,6vw,90px) clamp(16px,4vw,48px);border-radius:2px 2px 0 0}
+.frame::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 50% at 50% 0%,rgba(91,108,255,.12),transparent);pointer-events:none}
+.frame .terminal{border:2px solid #5B6CFF;border-radius:2px;box-shadow:0 0 30px rgba(91,108,255,.25)}
+.stats{display:flex;justify-content:center;flex-wrap:wrap;gap:clamp(24px,6vw,80px);margin-top:48px}
+.stats div{display:flex;flex-direction:column;align-items:center;gap:4px}
+.stats strong{font:700 28px var(--f-mono);font-variant-numeric:tabular-nums}
+.stats span{font-size:12px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
 .rise{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
-.rise:nth-child(2){animation-delay:.08s}.rise:nth-child(3){animation-delay:.16s}.rise:nth-child(4){animation-delay:.24s}.rise:nth-child(5){animation-delay:.32s}
+.rise:nth-child(2){animation-delay:.08s}.rise:nth-child(3){animation-delay:.16s}.rise:nth-child(4){animation-delay:.24s}.rise:nth-child(5){animation-delay:.32s}.rise:nth-child(6){animation-delay:.4s}
 @keyframes rise{from{transform:translateY(14px)}to{transform:none}}
 
 /* ---- terminal ---- */
@@ -109,7 +122,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 @keyframes fu{from{background:var(--up-soft)}to{background:transparent}}
 @keyframes fd{from{background:var(--down-soft)}to{background:transparent}}
 .bond{height:3px;background:var(--line);border-radius:2px;margin-top:5px;overflow:hidden}
-.bond i{display:block;height:100%;background:linear-gradient(90deg,var(--rufous),#F5C07A);transition:width .6s}
+.bond i{display:block;height:100%;background:linear-gradient(90deg,var(--rufous),#A9B3FF);transition:width .6s}
 
 /* detail / trade panel */
 .detail{padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0;border-top:1px solid var(--line)}
@@ -146,7 +159,8 @@ canvas#chart{width:100%;height:170px;display:block;background:linear-gradient(va
   .col.active{display:flex}
   .nav-links{display:none}
 }
-@media (max-width:560px){.status{display:none}}
+@media (max-width:560px){.status{display:none}.stack{opacity:.45}}
+@media (max-width:1100px){.status{display:none}}
 @media (min-width:821px){.board-tabs{display:none}}
 
 /* ---- sections ---- */
@@ -217,45 +231,40 @@ footer a{text-decoration:none}footer a:hover{color:var(--fg)}
 <!-- BEGIN-BODY -->
 <header class="nav">
   <div class="wrap">
-    <a class="brand" href="#top" aria-label="Kestrel home">
-      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M4 22 L16 6 L28 22 L20 18 L16 26 L12 18 Z" fill="#E8833A"/><path d="M16 6 L20 18 L16 26 L12 18 Z" fill="#F5C07A"/></svg>
-      Kestrel
+    <a class="brand" href="#top" aria-label="Kestrel Pro home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 L29 16 L16 29 L3 16 Z M16 10 L10 16 L16 22 L22 16 Z" fill="#F2F3F7" fill-rule="evenodd"/></svg>
+      Kestrel <small>Pro</small>
     </a>
-    <nav class="nav-links" aria-label="Primary">
-      <a href="#terminal">Terminal</a>
-      <a href="#tools">Tools</a>
-      <a href="#speed">Execution</a>
-      <a href="#fees">Fees</a>
-      <a href="#faq">FAQ</a>
-    </nav>
     <div class="nav-cta">
       <span class="status"><span class="dot"></span><span id="slot" class="mono">slot —</span></span>
-      <a class="btn btn-primary" href="#terminal">Open terminal</a>
+      <a class="btn btn-dark" href="#terminal">Login</a>
+      <a class="btn btn-primary" href="#terminal">Sign up</a>
     </div>
   </div>
 </header>
 
-<div class="ticker" aria-hidden="true"><div class="ticker-track" id="ticker"></div></div>
+<div class="ticker" aria-hidden="true" hidden><div class="ticker-track" id="ticker"></div></div>
 
 <main id="top">
   <section class="hero">
-    <div class="wrap hero-grid">
-      <div>
-        <p class="eyebrow rise">On-chain trading terminal · Solana</p>
-        <h1 class="rise" style="margin-top:16px">Spot it first. <em>Strike</em> in one click.</h1>
-        <p class="lede rise">Kestrel puts new launches, bonding curves, wallet flows and perps on one screen. Orders land through priority routing, so the gap between seeing a token and holding it is measured in milliseconds.</p>
-        <div class="hero-actions rise">
-          <a class="btn btn-primary" href="#terminal">Try the live demo</a>
-          <a class="btn" href="#tools">See every tool</a>
-        </div>
-        <div class="hero-meta rise">
-          <div><strong data-count="2.4" data-dec="1" data-suffix="B">0</strong><span>Monthly volume, USD</span></div>
-          <div><strong data-count="38" data-suffix="ms">0</strong><span>Median land time</span></div>
-          <div><strong data-count="0.75" data-dec="2" data-suffix="%">0</strong><span>Base fee</span></div>
-        </div>
-      </div>
-
-      <div class="terminal" id="terminal">
+    <div class="stack" aria-hidden="true">
+      <i style="--r:2.5%;--t:0px;--w:46%;--d:.0s"></i>
+      <i style="--r:3%;--t:90px;--w:36%;--d:.1s"></i>
+      <i style="--r:10%;--t:180px;--w:28%;--d:.2s"></i>
+      <i style="--r:18%;--t:275px;--w:22%;--d:.3s"></i>
+      <i style="--r:25%;--t:370px;--w:16%;--d:.4s"></i>
+      <i style="--r:35%;--t:500px;--w:10%;--d:.5s"></i>
+    </div>
+    <div class="wrap hero-center">
+      <svg class="hero-mark rise" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 L29 16 L16 29 L3 16 Z M16 10 L10 16 L16 22 L22 16 Z" fill="#F2F3F7" fill-rule="evenodd"/></svg>
+      <h1 class="rise">Trade What Moves, First</h1>
+      <p class="lede rise">Kestrel puts every launch, wallet and market on a single screen.</p>
+      <div class="hero-actions rise"><a class="btn btn-primary" href="#terminal">Start Trading</a></div>
+      <div class="built rise">Built on<span><svg width="22" height="18" viewBox="0 0 22 18" aria-hidden="true"><path d="M4 0h18l-4 4H0zM0 7h18l4 4H4zM4 14h18l-4 4H0z" fill="#9AA6FF"/></svg>Solana</span></div>
+    </div>
+    <div class="wrap">
+      <div class="frame">
+<div class="terminal" id="terminal">
         <div class="term-bar">
           <div class="tabs" role="tablist" aria-label="Terminal view">
             <button class="tab" role="tab" aria-selected="true" data-sort="new">Pulse</button>
@@ -297,6 +306,12 @@ footer a{text-decoration:none}footer a:hover{color:var(--fg)}
             </div>
           </div>
         </div>
+      </div>
+      </div>
+      <div class="stats">
+        <div><strong data-count="2.4" data-dec="1" data-suffix="B">0</strong><span>Monthly volume, USD</span></div>
+        <div><strong data-count="38" data-suffix="ms">0</strong><span>Median land time</span></div>
+        <div><strong data-count="0.75" data-dec="2" data-suffix="%">0</strong><span>Base fee</span></div>
       </div>
     </div>
   </section>
@@ -381,7 +396,7 @@ footer a{text-decoration:none}footer a:hover{color:var(--fg)}
 <footer>
   <div class="wrap">
     <div style="display:grid;gap:10px">
-      <a class="brand" href="#top">Kestrel</a>
+      <a class="brand" href="#top">Kestrel <small>Pro</small></a>
       <p class="disclaimer" style="margin:0">Concept site with a simulated market. Not financial advice. Trading tokens carries a high risk of loss.</p>
       <p style="margin:0">© 2026 Kestrel. Code released under the MIT License.</p>
     </div>
@@ -562,10 +577,10 @@ footer a{text-decoration:none}footer a:hover{color:var(--fg)}
       cx.fillRect(x - Math.max(1, cw * .32), top, Math.max(2, cw * .64), bh);
     });
     const ly = Math.round(y(t.price)) + .5;
-    cx.setLineDash([3, 3]); cx.strokeStyle = "#E8833A";
+    cx.setLineDash([3, 3]); cx.strokeStyle = "#5B6CFF";
     cx.beginPath(); cx.moveTo(0, ly); cx.lineTo(W - padR, ly); cx.stroke(); cx.setLineDash([]);
-    cx.fillStyle = "#E8833A"; cx.fillRect(W - padR + 2, ly - 8, padR - 2, 16);
-    cx.fillStyle = "#170B02"; cx.fillText(fmtUsd(t.price * SUPPLY), W - padR + 5, ly + 3);
+    cx.fillStyle = "#5B6CFF"; cx.fillRect(W - padR + 2, ly - 8, padR - 2, 16);
+    cx.fillStyle = "#05061A"; cx.fillText(fmtUsd(t.price * SUPPLY), W - padR + 5, ly + 3);
   }
 
   let lastPrice = null;

@@ -100,7 +100,7 @@ const POSTS = {
     planet(W / 2, 300, 300, 70);
     g.save(); g.font = `800 150px ${SANS}`; g.textAlign = "center"; g.textBaseline = "middle"; const gr = g.createLinearGradient(W / 2 - 520, 0, W / 2 + 520, 0); gr.addColorStop(0, "#FFFFFF"); gr.addColorStop(.55, PALE); gr.addColorStop(1, BLUE); g.fillStyle = gr; g.shadowColor = "rgba(91,108,255,.7)"; g.shadowBlur = 50; g.fillText("$APGE IS LIVE", W / 2, 560); g.restore();
     rrect(W / 2 - 380, 650, 760, 66, 33); g.fillStyle = "rgba(91,108,255,.14)"; g.fill(); g.strokeStyle = BLUE; g.lineWidth = 2; g.stroke();
-    text("CA: only from @UseApogee", W / 2, 684, 28, FG, { mono: true });
+    text("CA: 0x32141ca91bdb4d0064cd190c198038b8a1e25394", W / 2, 684, 23, FG, { mono: true });
     CH9.forEach((c, i) => badge(W / 2 + (i - 4) * 56, 778, 20, c, i));
     footer("Not financial advice. Verify the contract address on @UseApogee before you buy.");
   },

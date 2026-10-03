@@ -27,4 +27,4 @@ MIT licensed. See `LICENSE`.
 
 The terminal switches between 9 chains from the hero chips or the chain menu in the terminal bar. Picking an EVM chain asks a connected wallet to switch network (wallet_switchEthereumChain). Each chain keeps its own board, balance and positions, and the choice is remembered. The wallet window has a Solana tab (Wallet Standard) and an Ethereum / Robinhood Chain tab that discovers installed EVM wallets through EIP-6963 and reads the address, network and ETH balance through the wallet itself.
 
-Chain logos come from the MIT-licensed [`@web3icons/core`](https://www.npmjs.com/package/@web3icons/core) package and are shown only to identify each network.
+Chain logos, and the MetaMask, Rabby and OKX wallet icons, come from the MIT-licensed [`@web3icons/core`](https://www.npmjs.com/package/@web3icons/core) package and are shown only to identify each network or wallet. The teaser video and thread images use the same chain logos.
